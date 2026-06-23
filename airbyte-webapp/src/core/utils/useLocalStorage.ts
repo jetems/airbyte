@@ -17,6 +17,9 @@ interface AirbyteLocalStorage {
   connectorBuilderLimitWarning: boolean;
   allowlistIpsOpen: boolean;
   airbyteTheme: Theme;
+  // JETEMS-START: 用户语言偏好（en/zh），见 I18nProvider
+  airbyteLocale: string;
+  // JETEMS-END
   "airbyte_connector-grid-show-suggested-connectors": boolean;
   "airbyte_show-dev-tools": boolean;
   "airbyte_workspace-in-title": boolean;

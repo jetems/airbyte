@@ -10,6 +10,10 @@ import { Separator } from "components/ui/Separator";
 import { Text } from "components/ui/Text";
 import { ThemeToggle } from "components/ui/ThemeToggle";
 
+// JETEMS-START: 中英语言切换器（见 JETEMS_DEV.md 第 3.2 条）
+import { LanguageToggle } from "jetems/components/LanguageToggle/LanguageToggle";
+// JETEMS-END
+
 import { useGetConnectorsOutOfDate } from "area/connector/utils/useConnector";
 import { AirbyteHomeLink } from "area/layout/SideBar/AirbyteHomeLink";
 import { OrganizationPicker } from "area/organization/OrganizationPicker/OrganizationPicker";
@@ -210,6 +214,9 @@ export const SideBar: React.FC<PropsWithChildren> = () => {
         <MenuContent>
           {isCloudApp ? <CloudHelpDropdown /> : <HelpDropdown />}
           <ThemeToggle />
+          {/* JETEMS-START: 中英语言切换器（见 JETEMS_DEV.md 第 3.2 条） */}
+          <LanguageToggle />
+          {/* JETEMS-END */}
           {logout && user && (
             <NavDropdown
               isActive={areUserSettingsActive}
