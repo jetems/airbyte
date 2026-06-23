@@ -96,3 +96,7 @@ dd-java-agent.jar
 
 # ignore local gradle build log
 build.log
+
+# JETEMS: ignore Gradle develocity / local build artifacts (see JETEMS_DEV.md)
+scan-journal.log
+gradle.log
