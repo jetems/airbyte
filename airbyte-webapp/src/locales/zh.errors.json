@@ -1,0 +1,20 @@
+{
+  "cron-validation/invalid-timezone": "目前不支持时区 {cronTimezone}，请选择其他时区。",
+  "cron-validation/invalid-expression": "Cron 表达式 {cronExpression} 无效。{validationErrorMessage, select, undefined {} other { 验证错误：{validationErrorMessage}}}",
+  "cron-validation/under-one-hour-not-allowed": "已禁用执行频率高于每小时一次的 Cron 表达式。请联系我们解锁此功能。",
+  "dbtcloud/access-denied": "dbt Cloud 拒绝了访问。请检查您的服务令牌和访问 URL。",
+  "dbtcloud/paid-plan-required": "要使用 dbt Cloud 集成，您必须处于付费计划中。",
+  "dbtcloud/generic": "与 dbt Cloud 通信时出错。",
+  "auth/user-already-exists": "已存在邮箱为 {email} 的用户。",
+  "generate-contribution": "生成贡献时出错：{message}",
+  "generate-contribution/invalid-github-token": "提供的 GitHub 令牌无效。请检查令牌后重试。",
+  "generate-contribution/insufficient-github-token-permissions": "提供的 GitHub 访问令牌权限不足。请提供一个启用了 \"public_repo\" 范围的访问令牌。",
+  "generate-contribution/connector-image-name-in-use": "您提供的连接器标识符已被占用。请选择其他标识符。",
+  "tag-name-too-long": "标签名称最多 30 个字符。",
+  "sso-config-retrieval": "{errorMessage}",
+  "sso-setup": "{errorMessage}",
+  "sso-deletion": "{errorMessage}",
+  "sso-credential-update": "{errorMessage}",
+  "sso-activation": "{errorMessage}",
+  "sso-token-validation": "{errorMessage}"
+}
