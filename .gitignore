@@ -100,3 +100,7 @@ build.log
 # JETEMS: ignore Gradle develocity / local build artifacts (see JETEMS_DEV.md)
 scan-journal.log
 gradle.log
+airbyte-server/airbyte-app.tar
+airbyte-bootloader/airbyte-app.tar
+airbyte-cron/airbyte-app.tar
+airbyte-workers/airbyte-app.tar

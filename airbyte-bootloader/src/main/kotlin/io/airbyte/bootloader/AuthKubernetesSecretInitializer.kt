@@ -26,13 +26,30 @@ class AuthKubernetesSecretInitializer(
   private val airbyteAuthConfig: AirbyteAuthConfig,
   private val kubernetesClient: KubernetesClient,
 ) {
+  // JETEMS-START: docker-compose 本地开发环境无 K8s，所有 K8s secret 操作都需先确认 namespace 可用
+  // （见 JETEMS_DEV.md 第 2.1 条 —— 最小侵入式扩展；正常 K8s 环境行为不变）
+  private fun isK8sAvailable(): Boolean =
+    kubernetesClient.namespace?.let {
+      true
+    } ?: run {
+      logger.warn { "Kubernetes namespace not available — skipping K8s secret operations (non-K8s environment)." }
+      false
+    }
+  // JETEMS-END
+
   fun initializeSecrets() {
+    // JETEMS-START: 非 K8s 环境跳过
+    if (!isK8sAvailable()) return
+    // JETEMS-END
     logger.info { "Initializing auth secret in Kubernetes..." }
     K8sSecretHelper.createOrUpdateSecret(kubernetesClient, airbyteAuthConfig.kubernetesSecret.name, getSecretDataMap())
     logger.info { "Finished initializing auth secret." }
   }
 
   fun checkAccessToSecrets(airbyteVersion: AirbyteVersion) {
+    // JETEMS-START: 非 K8s 环境跳过
+    if (!isK8sAvailable()) return
+    // JETEMS-END
     kubernetesClient.authorization().v1().subjectAccessReview()
     val namespace: String = kubernetesClient.namespace // the namespace the client is operating in
     val review: SelfSubjectAccessReview =

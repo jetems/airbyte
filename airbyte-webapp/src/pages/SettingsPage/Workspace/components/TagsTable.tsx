@@ -116,7 +116,7 @@ export const TagsTable: React.FC = () => {
         },
       }),
     ],
-    [columnHelper, onDelete, onEdit, canEditTags]
+    [columnHelper, formatMessage, onDelete, onEdit, canEditTags]
   );
 
   return (

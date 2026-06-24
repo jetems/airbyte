@@ -1,0 +1,145 @@
+# docker-compose.jetems.yml —— jetems 本地源码运行编排（完整服务）
+#
+# 用途：基于本仓库源码构建的镜像，编排运行完整 Airbyte 服务。
+# 启动：docker compose -f docker-compose.jetems.yml up -d
+# 访问：http://localhost:8000
+# JETEMS: 本地运行编排（见 LOCAL_RUN.md）。
+
+name: airbyte-jetems
+
+x-db-env: &db-env
+  DATABASE_URL: jdbc:postgresql://postgres:5432/airbyte
+  DATABASE_USER: docker
+  DATABASE_PASSWORD: docker
+
+x-temporal-env: &temporal-env
+  TEMPORAL_HOST: temporal:7233
+
+x-airbyte-env: &airbyte-env
+  AIRBYTE_VERSION: dev
+  AIRBYTE_URL: http://server:8000
+  AIRBYTE_API_HOST: http://server:8000
+  # workspace 根目录（无默认值，必须设）
+  WORKSPACE_ROOT: /tmp/airbyte_workspace
+  # 版本号（避免连接器版本校验告警）
+  AIRBYTE_EDITION: COMMUNITY
+  ENTERPRISE_SOURCE_STUBS_URL: "http://localhost:9999"
+  CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION: "0.40.0"
+  JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION: "0.40.0"
+  CONFIG_DATABASE_REPLICA_URL: jdbc:postgresql://postgres:5432/airbyte
+  CONFIG_DATABASE_REPLICA_USER: docker
+  AIRBYTE_LICENSE_KEY: "none"
+  STORAGE_TYPE: minio
+  STORAGE_BUCKET_LOG: airbyte-log
+  STORAGE_BUCKET_STATE: airbyte-state
+  STORAGE_BUCKET_WORKLOAD_OUTPUT: airbyte-workload-output
+  STORAGE_BUCKET_ACTIVITY_PAYLOAD: airbyte-activity-payload
+  STORAGE_BUCKET_AUDIT_LOGGING: airbyte-audit-logging
+  AWS_ACCESS_KEY_ID: minio
+  AWS_SECRET_ACCESS_KEY: minio123
+  MINIO_ENDPOINT: http://minio:9000
+  # docker-compose 无 K8s：禁用 K8s secret 初始化
+  AB_AUTH_SECRET_CREATION_ENABLED: "false"
+  SECRET_PERSISTENCE: NO_OP
+  TRACKING_STRATEGY: logging
+
+services:
+  # ──────────────── 外部依赖 ────────────────
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: airbyte
+    ports: ["5432:5432"]
+    volumes:
+      - airbyte-db:/var/lib/postgresql/data
+      # JETEMS: 初始化 temporal 所需的数据库和用户
+      - ./tools/temporal-init.sql:/docker-entrypoint-initdb.d/temporal-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docker -d airbyte"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  temporal:
+    image: temporalio/auto-setup:1.22
+    environment:
+      DB: postgres12
+      DB_PORT: 5432
+      POSTGRES_SEEDS: postgres
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: temporal
+      DBNAME: temporal
+      VISIBILITY_DBNAME: temporal_visibility
+      # JETEMS: 监听所有地址（默认绑容器 IP，127.0.0.1 探测会被拒）
+    depends_on:
+      postgres: { condition: service_healthy }
+    ports: ["7233:7233"]
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z temporal 7233 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    ports: ["9000:9000", "9001:9001"]
+    volumes: [airbyte-minio:/data]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ──────────────── Airbyte 服务 ────────────────
+  bootloader:
+    image: airbyte/airbyte-bootloader:dev
+    env_file: .env.jetems
+    environment:
+      <<: [*db-env, *temporal-env, *airbyte-env]
+      RUN_DATABASE_MIGRATION_ON_STARTUP: "true"
+      CONNECTOR_REGISTRY_SEED_PROVIDER: local
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  server:
+    image: airbyte/airbyte-server:dev
+    env_file: .env.jetems
+    environment:
+      <<: [*db-env, *temporal-env, *airbyte-env]
+      WEBAPP_SONAR_API_URL: http://localhost:8000
+      WEBAPP_CORAL_AGENTS_API_URL: http://localhost:8000
+      LOG_LEVEL: INFO
+    ports: ["8000:8001"]
+    # JETEMS: temporal 用 service_started（server 有重试机制，不卡在健康检查）
+    depends_on:
+      bootloader: { condition: service_completed_successfully }
+      temporal: { condition: service_started }
+
+  cron:
+    image: airbyte/airbyte-cron:dev
+    env_file: .env.jetems
+    environment:
+      <<: [*db-env, *temporal-env, *airbyte-env]
+    depends_on:
+      bootloader: { condition: service_completed_successfully }
+      temporal: { condition: service_started }
+
+  workers:
+    image: airbyte/airbyte-workers:dev
+    env_file: .env.jetems
+    environment:
+      <<: [*db-env, *temporal-env, *airbyte-env]
+    depends_on:
+      bootloader: { condition: service_completed_successfully }
+      temporal: { condition: service_started }
+
+volumes:
+  airbyte-db:
+  airbyte-minio:

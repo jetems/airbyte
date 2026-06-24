@@ -9,10 +9,8 @@ import { Icon } from "components/ui/Icon";
 import { Separator } from "components/ui/Separator";
 import { Text } from "components/ui/Text";
 import { ThemeToggle } from "components/ui/ThemeToggle";
-
-// JETEMS-START: 中英语言切换器（见 JETEMS_DEV.md 第 3.2 条）
+// JETEMS: 中英语言切换器（见 JETEMS_DEV.md 第 3.2 条）
 import { LanguageToggle } from "jetems/components/LanguageToggle/LanguageToggle";
-// JETEMS-END
 
 import { useGetConnectorsOutOfDate } from "area/connector/utils/useConnector";
 import { AirbyteHomeLink } from "area/layout/SideBar/AirbyteHomeLink";

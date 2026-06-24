@@ -42,28 +42,32 @@ class DataplaneInitializer(
    * Note: if the instance already has valid dataplane credentials, this function does nothing.
    */
   fun createDataplaneIfNotExists() {
-    // If the secret contains credentials that match an existing dataplane + service account,
-    // then do nothing.
-    if (isValidServiceAccount()) {
+    // JETEMS-START: docker-compose 本地开发环境无 K8s，跳过 K8s secret 操作但保留数据库初始化
+    // （见 JETEMS_DEV.md 第 2.1 条 —— 最小侵入式扩展；正常 K8s 环境行为不变）
+    val k8sAvailable = k8sClient.namespace != null
+    if (!k8sAvailable) {
+      log.warn { "Kubernetes namespace not available — skipping K8s secret operations but still initializing dataplane DB records (non-K8s environment)." }
+    }
+    // 非 K8s 环境：跳过 K8s secret 的有效性检查（否则会因 namespace 为 null 抛异常）
+    if (k8sAvailable && isValidServiceAccount()) {
       return
     }
-
-    // We don't have valid credentials stored in the secret. This could be because:
-    // - this is the first install, and the secret and dataplane have never been created.
-    // - the secret was deleted.
-    // - the dataplane was deleted.
-    // - the credentials just don't match.
+    // JETEMS-END
 
     // Get or create the default dataplane group.
     val group = getOrCreateDefaultGroup()
 
     // Create the dataplane and store the secret.
     val dataplane = createDataplane(group)
-    createK8sSecret(dataplane)
+    // JETEMS-START: 非 K8s 环境跳过 K8s secret 创建
+    if (k8sAvailable) {
+      createK8sSecret(dataplane)
+    }
+    // JETEMS-END
 
     // Cloud puts dataplane pods in the jobs namespace, so we need to copy the secret containing
     // the dataplane credentials to the jobs namespace.
-    if (airbyteConfig.edition == AirbyteEdition.CLOUD &&
+    if (k8sAvailable && airbyteConfig.edition == AirbyteEdition.CLOUD &&
       airbyteWorkerConfig.job.kubernetes.namespace
         .isNotBlank()
     ) {
