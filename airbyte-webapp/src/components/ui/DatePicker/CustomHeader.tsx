@@ -2,6 +2,9 @@ import { getMonth, getYear } from "date-fns";
 import range from "lodash/range";
 import React from "react";
 import { ReactDatePickerCustomHeaderProps, ReactDatePickerProps } from "react-datepicker";
+// JETEMS-START: 硬编码 aria-label 改为 i18n（见 JETEMS_DEV.md 第 4 条）
+import { useIntl } from "react-intl";
+// JETEMS-END
 
 import styles from "./CustomHeader.module.scss";
 import { Button } from "../Button";
@@ -29,6 +32,9 @@ export const CustomHeader: React.FC<
   showYearDropdown,
 }) => {
   const years = range(1990, getYear(new Date()) + 1, 1);
+  // JETEMS-START
+  const { formatMessage } = useIntl();
+  // JETEMS-END
   const months = [
     "January",
     "February",
@@ -48,7 +54,7 @@ export const CustomHeader: React.FC<
     <>
       <FlexContainer justifyContent="space-between" alignItems="center" className={styles.currentMonthYearContainer}>
         <Button
-          aria-label="Previous Month"
+          aria-label={formatMessage({ id: "jetems.datePicker.previousMonth" })}
           icon="arrowLeft"
           iconSize="lg"
           variant="clear"
@@ -64,7 +70,7 @@ export const CustomHeader: React.FC<
           })}
         </Text>
         <Button
-          aria-label="Next Month"
+          aria-label={formatMessage({ id: "jetems.datePicker.nextMonth" })}
           icon="arrowRight"
           iconSize="lg"
           variant="clear"

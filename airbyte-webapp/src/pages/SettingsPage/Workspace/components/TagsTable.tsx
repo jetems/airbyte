@@ -95,7 +95,7 @@ export const TagsTable: React.FC = () => {
               variant="clear"
               icon="pencil"
               size="xs"
-              aria-label="Edit"
+              aria-label={formatMessage({ id: "jetems.common.edit" })}
               onClick={() => onEdit(props.row.original)}
               disabled={!canEditTags}
             />
@@ -103,7 +103,7 @@ export const TagsTable: React.FC = () => {
               variant="clear"
               icon="trash"
               size="xs"
-              aria-label="Delete"
+              aria-label={formatMessage({ id: "jetems.common.delete" })}
               onClick={() => onDelete(props.row.original)}
               disabled={!canEditTags}
             />

@@ -192,7 +192,7 @@ export const AttemptLogs: React.FC<AttemptLogsProps> = ({ attempt }) => {
                   selectedValues={selectedLogSources ?? sources}
                   options={logSourceOptions}
                   onSelectValues={(newSources) => setSelectedLogSources(newSources ?? sources)}
-                  label="Log sources"
+                  label={formatMessage({ id: "jetems.attemptLogs.logSources" })}
                 />
               </FlexItem>
               <FlexItem>
@@ -200,7 +200,7 @@ export const AttemptLogs: React.FC<AttemptLogsProps> = ({ attempt }) => {
                   selectedValues={selectedLogLevels ?? levels}
                   options={logLevelOptions}
                   onSelectValues={(newLevels) => setSelectedLogLevels(newLevels ?? levels)}
-                  label="Log levels"
+                  label={formatMessage({ id: "jetems.attemptLogs.logLevels" })}
                 />
               </FlexItem>
             </>

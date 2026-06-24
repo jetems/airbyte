@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 
 import { Box } from "components/ui/Box";
 import { Button } from "components/ui/Button";
@@ -28,6 +28,9 @@ interface ErrorDetailsProps {
 const jsonReplacer = (_: string, value: unknown) => (typeof value === "function" ? `[Function ${value.name}]` : value);
 
 export const ErrorDetails: React.FC<ErrorDetailsProps> = ({ error }) => {
+  // JETEMS-START: 硬编码 label 改为 i18n（见 JETEMS_DEV.md 第 4 条）
+  const { formatMessage } = useIntl();
+  // JETEMS-END
   const formatError = useFormatError();
   const getAllExperiments = useGetAllExperiments();
   const getErrorDetails = useCallback(
@@ -89,7 +92,7 @@ export const ErrorDetails: React.FC<ErrorDetailsProps> = ({ error }) => {
             </FlexContainer>
             <Separator />
             <Collapsible
-              label="Error details"
+              label={formatMessage({ id: "jetems.errorDetails.errorDetails" })}
               className={styles.error__collapsible}
               noBodyPadding
               initiallyOpen={false}
@@ -99,7 +102,7 @@ export const ErrorDetails: React.FC<ErrorDetailsProps> = ({ error }) => {
             </Collapsible>
             {error.stack && (
               <Collapsible
-                label="Stack trace"
+                label={formatMessage({ id: "jetems.errorDetails.stackTrace" })}
                 className={styles.error__collapsible}
                 noBodyPadding
                 initiallyOpen={false}

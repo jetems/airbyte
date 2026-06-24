@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useFormState } from "react-hook-form";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { z } from "zod";
 
 import { Box } from "components/ui/Box";
@@ -28,6 +28,9 @@ export const SimpleAuthLoginForm: React.FC = () => {
   const [loginError, setLoginError] = useState<null | "missing-cookie" | "invalid-credentials">(null);
   const { login } = useAuthService();
   const { defaultOrganizationEmail } = useGetInstanceConfiguration();
+  // JETEMS-START: 硬编码 label 改为 i18n（见 JETEMS_DEV.md 第 4 条）
+  const { formatMessage } = useIntl();
+  // JETEMS-END
 
   if (!login) {
     throw new Error("Login function not available");
@@ -52,8 +55,20 @@ export const SimpleAuthLoginForm: React.FC = () => {
       }}
       reValidateMode="onChange"
     >
-      <FormControl fieldType="input" name="username" label="Email" autoComplete="on" type="email" />
-      <FormControl fieldType="input" name="password" label="Password" autoComplete="on" type="password" />
+      <FormControl
+        fieldType="input"
+        name="username"
+        label={formatMessage({ id: "jetems.simpleAuthLogin.email" })}
+        autoComplete="on"
+        type="email"
+      />
+      <FormControl
+        fieldType="input"
+        name="password"
+        label={formatMessage({ id: "jetems.simpleAuthLogin.password" })}
+        autoComplete="on"
+        type="password"
+      />
       <SubmitButton />
       {loginError && (
         <Box mt="2xl">

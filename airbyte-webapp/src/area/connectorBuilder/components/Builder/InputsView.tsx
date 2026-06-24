@@ -149,6 +149,9 @@ const SortableInput: React.FC<SortableInputProps> = ({ input, id, setInputInEdit
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const permission = useConnectorBuilderPermission();
   const canEdit = permission !== "readOnly";
+  // JETEMS-START: aria-label 改为 i18n（见 JETEMS_DEV.md 第 4 条）
+  const { formatMessage } = useIntl();
+  // JETEMS-END
 
   const style = {
     // set x translate to 0 so that the inputs only move up and down
@@ -203,7 +206,7 @@ const SortableInput: React.FC<SortableInputProps> = ({ input, id, setInputInEdit
               className={styles.itemButton}
               size="sm"
               variant="secondary"
-              aria-label="Edit"
+              aria-label={formatMessage({ id: "jetems.common.edit" })}
               type="button"
               onClick={openInputForm}
             >

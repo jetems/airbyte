@@ -1,16 +1,22 @@
 import { useState } from "react";
 import { useFormState, useWatch } from "react-hook-form";
+// JETEMS-START: 硬编码 title 改为 i18n（见 JETEMS_DEV.md 第 4 条）
+import { useIntl } from "react-intl";
+// JETEMS-END
 
 import styles from "./FormDevToolsInternal.module.scss";
 
 const FormDevToolsInternal = () => {
   const [isOpened, setIsOpened] = useState(false);
+  // JETEMS-START
+  const { formatMessage } = useIntl();
+  // JETEMS-END
   return (
     <>
       <button
         type="button"
         className={styles.button}
-        title="Open dev tools"
+        title={formatMessage({ id: "jetems.formDevTools.openDevTools" })}
         onClick={() => {
           setIsOpened(!isOpened);
         }}
