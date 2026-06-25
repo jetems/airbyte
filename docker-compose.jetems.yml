@@ -22,7 +22,6 @@ x-airbyte-env: &airbyte-env
   # workspace 根目录（无默认值，必须设）
   WORKSPACE_ROOT: /tmp/airbyte_workspace
   # 版本号（避免连接器版本校验告警）
-  AIRBYTE_EDITION: COMMUNITY
   ENTERPRISE_SOURCE_STUBS_URL: "http://localhost:9999"
   CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION: "0.40.0"
   JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION: "0.40.0"
