@@ -67,6 +67,18 @@ keycloakSetup:
 # --- 默认开启、我们保留的核心服务（同步链路）---
 server:
   enabled: true
+  # 本地满栈(12 个 JVM 服务)CPU 争抢下 server 启动慢(连 temporal + 拉远程 definitions)，
+  # 默认探针 ~60s 就把它杀了 → CrashLoop。放宽到 ~3 分钟启动窗口。
+  livenessProbe:
+    initialDelaySeconds: 180
+    periodSeconds: 15
+    timeoutSeconds: 15
+    failureThreshold: 10
+  readinessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 15
+    timeoutSeconds: 15
+    failureThreshold: 10
 worker:
   enabled: true
 workloadApiServer:
