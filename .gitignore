@@ -104,3 +104,6 @@ airbyte-server/airbyte-app.tar
 airbyte-bootloader/airbyte-app.tar
 airbyte-cron/airbyte-app.tar
 airbyte-workers/airbyte-app.tar
+airbyte-keycloak-setup/airbyte-app.tar
+airbyte-workers/WellKnownTypes.json
+.gstack/

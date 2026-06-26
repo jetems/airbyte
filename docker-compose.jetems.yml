@@ -17,7 +17,9 @@ x-temporal-env: &temporal-env
 
 x-airbyte-env: &airbyte-env
   AIRBYTE_VERSION: dev
-  AIRBYTE_URL: http://server:8000
+  # JETEMS: 面向浏览器的公开地址（Keycloak 重定向/frontendUrl 由它派生，必须 localhost 可达）。
+  # 内部服务间调用走 AIRBYTE_API_HOST（仍是 docker 内网 server:8000）。
+  AIRBYTE_URL: http://localhost:8000
   AIRBYTE_API_HOST: http://server:8000
   # workspace 根目录（无默认值，必须设）
   WORKSPACE_ROOT: /tmp/airbyte_workspace
@@ -110,8 +112,11 @@ services:
       KC_DB_USERNAME: docker
       KC_DB_PASSWORD: docker
       KC_HOSTNAME: keycloak
+      # JETEMS: keycloak 在 nginx 反代之后，信任 X-Forwarded-* 头生成正确的外部 URL。
+      KC_PROXY_HEADERS: xforwarded
     depends_on:
       postgres: { condition: service_healthy }
+    # 8100 仍直出，便于排查；浏览器正常走 nginx 的 localhost:8000/auth。
     ports: ["8100:8100"]
     healthcheck:
       test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8100 && echo -e 'GET /auth/realms/master HTTP/1.0\r\nhost: localhost\r\n\r\n' >&3 && head -n 1 <&3 | grep 200"]
@@ -147,12 +152,34 @@ services:
       WEBAPP_SONAR_API_URL: http://localhost:8000
       WEBAPP_CORAL_AGENTS_API_URL: http://localhost:8000
       LOG_LEVEL: INFO
-    ports: ["8000:8001"]
+      # JETEMS: 企业版 Keycloak/OIDC 登录（作为 generic-oidc 提供方接入）。
+      # 激活 generic-oidc Micronaut 环境 → 启用基于 JWKS 的 token 校验 + OIDC 配置。
+      MICRONAUT_ENVIRONMENTS: control-plane,generic-oidc
+      # type 必须正好是 generic-oidc：AuthMode=OIDC 且激活 GenericOidc 解析器，
+      # 同时避开「外部 IdP 联邦」旧版 OidcConfig 的 domain/app-name/client-secret 强校验。
+      IDENTITY_PROVIDER_TYPE: generic-oidc
+      # server 内部取 JWKS 走 docker 内网（keycloak:8100），不依赖 frontendUrl。
+      AB_AIRBYTE_AUTH_JWKS_ENDPOINT: http://keycloak:8100/auth/realms/airbyte/protocol/openid-connect/certs
+      AB_AIRBYTE_AUTH_IDENTITY_PROVIDER_OIDC_CLIENT_ID: airbyte-webapp
+      # 浏览器用它发起 OIDC 跳转。localhost:8000/auth 由 nginx(proxy) 反代到 keycloak:8100。
+      AB_AIRBYTE_AUTH_IDENTITY_PROVIDER_OIDC_ENDPOINTS_AUTHORIZATION_SERVER_ENDPOINT: http://localhost:8000/auth/realms/airbyte
+    # JETEMS: 不再直出 8000 端口——改由 nginx(proxy) 占用 8000 统一入口；server 容器内仍监听 8001。
+    expose: ["8001"]
     # JETEMS: temporal 用 service_started（server 有重试机制，不卡在健康检查）
     depends_on:
       bootloader: { condition: service_completed_successfully }
       keycloak-setup: { condition: service_completed_successfully }
       temporal: { condition: service_started }
+
+  # ──────────────── 反向代理（统一入口 localhost:8000，复刻生产 Ingress）────────────────
+  proxy:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./tools/jetems-nginx.conf:/etc/nginx/nginx.conf:ro
+    ports: ["8000:80"]
+    depends_on:
+      server: { condition: service_started }
+      keycloak: { condition: service_healthy }
 
   cron:
     image: airbyte/airbyte-cron:dev

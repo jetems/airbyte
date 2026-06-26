@@ -46,7 +46,12 @@ internal class EntitlementClientFactory(
         logger.info { "Creating NoEntitlementClient" }
         NoEntitlementClient()
       }
-      Configs.AirbyteEdition.ENTERPRISE -> createStiggEnterpriseClient()
+      // JETEMS: 本地二开/评估——企业版无条件授予所有 entitlement（绕过 license/Stigg）。
+      // 恢复正规行为：改回 createStiggEnterpriseClient()。
+      Configs.AirbyteEdition.ENTERPRISE -> {
+        logger.info { "Creating AllEntitledClient (JETEMS local override)" }
+        AllEntitledClient()
+      }
       Configs.AirbyteEdition.CLOUD -> createStiggCloudClient()
     }
 
@@ -88,6 +93,8 @@ internal class EntitlementClientFactory(
     )
   }
 
+  // JETEMS: 暂被 AllEntitledClient 取代，保留以便恢复正规 license 校验。
+  @Suppress("unused")
   private fun createStiggEnterpriseClient(): EntitlementClient {
     logger.info { "Creating Stigg Enterprise client" }
 

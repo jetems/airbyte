@@ -164,6 +164,10 @@ object Entitlements {
       CommittedDataWorkersEntitlement,
     )
 
+  // JETEMS: 暴露完整 entitlement 清单，供 AllEntitledClient 在本地把所有 entitlement 置为已授权。
+  val all: List<Entitlement>
+    get() = ALL
+
   private val BY_FEATURE_ID: Map<String, Entitlement> =
     ALL.associateBy { it.featureId }
 

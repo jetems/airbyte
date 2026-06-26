@@ -84,6 +84,7 @@ micronaut:
         prefer-native-transport: true
   security:
     authentication-provider-strategy: ALL
+    authentication: bearer
     enabled: ${API_AUTHORIZATION_ENABLED:false}
     # these urls need to match the micronaut.router.static-resources, otherwise the webapp isn't going to work
     intercept-url-map:
@@ -183,6 +184,8 @@ airbyte:
         - ${AB_AIRBYTE_AUTH_IDENTITY_PROVIDER_AUDIENCE:airbyte-server}
         - ${AB_AIRBYTE_AUTH_IDENTITY_PROVIDER_OIDC_AUDIENCE:}
       type: simple
+    instance-admin:
+      password: ${AIRBYTE_AUTH_INSTANCE_ADMIN_PASSWORD:}
   cloud:
     storage:
       type: ${STORAGE_TYPE}

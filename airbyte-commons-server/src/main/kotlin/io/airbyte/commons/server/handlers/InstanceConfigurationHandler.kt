@@ -236,6 +236,9 @@ open class InstanceConfigurationHandler(
 
   @InternalForTesting
   fun currentLicenseStatus(): LicenseStatus? {
+    // JETEMS（本地二开/评估）：强制 PRO，消除前端"License is invalid"横幅。
+    // 恢复正规行为：删除下面这一行。⚠️ 绕过 license 状态属 ELv2 禁止的商用行为，仅限本地非商用。
+    return LicenseStatus.PRO
     if (activeAirbyteLicense.isEmpty) {
       return null
     }
