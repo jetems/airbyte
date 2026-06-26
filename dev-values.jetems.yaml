@@ -1,0 +1,106 @@
+# =============================================================================
+# JETEMS dev values —— 用 abctl + 本地源码构建的 dev 镜像跑企业版（含 workload 层）
+#
+# 用法:
+#   1) 用 Gradle 把所有 airbyte 镜像构建成 :dev（名字须匹配 chart 的 repository，
+#      即 airbyte/server, airbyte/worker, airbyte/workload-api-server ... 单前缀）
+#   2) 创建/启动 abctl 集群后，把这些 dev 镜像 kind load 进 airbyte-abctl 集群
+#      （chart 默认 pullPolicy: IfNotPresent，镜像在节点里就不会去 Docker Hub 拉）
+#   3) abctl local install \
+#        --chart ./charts/v2/airbyte \
+#        --values dev-values.jetems.yaml \
+#        --port 8000 --low-resource-mode
+#
+# 说明:
+#   - 我们的源码改动（AllEntitledClient 全开 entitlement + InstanceConfigurationHandler
+#     强制 licenseStatus=PRO）已编译进 server/worker 镜像，所以 license 只需占位假值。
+#   - docker-compose 那套（nginx 代理 / generic-oidc 环境变量）在 Helm 下不用，
+#     Helm 自带 ingress + 自管 keycloak realm。
+# =============================================================================
+
+global:
+  edition: enterprise
+
+  # abctl 默认把 ingress 暴露在 localhost:8000（与 --port 一致）
+  airbyteUrl: http://localhost:8000
+
+  # 所有 airbyte 镜像统一用 dev tag（= Gradle 产出的 airbyte/<svc>:dev，= Chart.appVersion）
+  image:
+    tag: dev
+
+  # 企业版 license：chart 会把它写进自管 secret 的 AIRBYTE_LICENSE_KEY。
+  # 运行时已被源码绕过（licenseStatus 强制 PRO + AllEntitledClient），所以占位即可。
+  enterprise:
+    licenseKey: "jetems-local-eval-not-a-real-license"
+
+  auth:
+    enabled: true
+    instanceAdmin:
+      firstName: "Jetems"
+      lastName: "Admin"
+      # 登录密码
+      password: "jetems-local-admin"
+
+  # 这版 chart 把 INITIAL_USER_EMAIL 注释掉了，但 keycloak-setup/bootloader 强制要求它非空。
+  # 通过 global.env_vars 注入到 server/bootloader 等（keycloak-setup 不读 global.env_vars，单独在下面 extraEnv 注入）。
+  env_vars:
+    INITIAL_USER_EMAIL: admin@jetems.local
+
+# --- webapp 保持关闭：本版本前端已打进 server 镜像，ingress 只路由到 server ---
+webapp:
+  enabled: false
+
+# --- 企业版必须开启，但 chart 默认关闭的服务 ---
+keycloak:
+  enabled: true
+  # chart 默认 keycloak.protocol=https，但集群内 keycloak 只服务 http，
+  # 否则 keycloak-setup 连接报 NotSslRecordException。
+  protocol: http
+
+keycloakSetup:
+  enabled: true
+  # keycloak-setup Job 不合并 global.env_vars，必须用 extraEnv 注入初始用户邮箱
+  extraEnv:
+    - name: INITIAL_USER_EMAIL
+      value: admin@jetems.local
+
+# --- 默认开启、我们保留的核心服务（同步链路）---
+server:
+  enabled: true
+worker:
+  enabled: true
+workloadApiServer:
+  enabled: true
+  # 此服务的 management 端口 8085 实际未绑定（仅 app 主端口 8007 在听），
+  # 而模板探针硬编码查 8085 → 会 CrashLoop。app 在 8007 功能正常，dev 下直接关探针。
+  # TODO: 查明 8085 management server 为何未启动（launcher 同配置却正常）。
+  livenessProbe:
+    enabled: false
+  readinessProbe:
+    enabled: false
+workloadLauncher:
+  enabled: true
+cron:
+  enabled: true
+airbyteBootloader:
+  enabled: true
+
+# --- 基础设施（外部镜像，直接从 registry 拉，不需要本地构建）---
+temporal:
+  enabled: true
+postgresql:
+  enabled: true
+minio:
+  enabled: true
+
+# --- 关掉评估用不到的可选服务，省去构建这些镜像 ---
+manifestServer:
+  enabled: false      # connector builder 用，评估同步不需要
+metrics:
+  enabled: false
+connectorRolloutWorker:
+  enabled: false
+featureflagServer:
+  enabled: false
+temporalUi:
+  enabled: false
