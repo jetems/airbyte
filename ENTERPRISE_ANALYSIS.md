@@ -379,4 +379,4 @@ AIRBYTE_LICENSE_KEY=  # 空
 
 ### 配置
 - `airbyte-server/src/main/resources/application.yml:154-155`（edition、license-key）
-- `.env.jetems`（jetems 本地运行配置）
+- `dev-values.jetems.yaml`（jetems 本地运行配置：abctl/Helm dev values，见 [LOCAL_RUN.md](./LOCAL_RUN.md)）
