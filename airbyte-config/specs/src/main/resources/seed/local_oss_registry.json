@@ -3393,7 +3393,20 @@
         "sl": 100
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/java-connector-base:2.0.1@sha256:ec89bd1a89e825514dd2fc8730ba299a3ae1544580a078df0e35c5202c2085b3"
+        "baseImage": "docker.io/airbyte/java-connector-base:2.0.4@sha256:5f343797cfcf021ca98ba9bdf5970ef66cbf6222d8cc17b0d61d13860a5bcc2b"
+      },
+      "connectorIPCOptions": {
+        "dataChannel": {
+          "supportedSerialization": [
+            "JSONL",
+            "PROTOBUF"
+          ],
+          "supportedTransport": [
+            "SOCKET",
+            "STDIO"
+          ],
+          "version": "0.0.2"
+        }
       },
       "connectorTestSuitesOptions": [
         {
@@ -3403,24 +3416,8 @@
           "suite": "integrationTests",
           "testSecrets": [
             {
-              "fileName": "azure_config.json",
-              "name": "SECRET_DESTINATION-DATABRICKS_AZURE__CREDS",
-              "secretStore": {
-                "alias": "airbyte-connector-testing-secret-store",
-                "type": "GSM"
-              }
-            },
-            {
               "fileName": "config.json",
               "name": "SECRET_DESTINATION-DATABRICKS__CREDS",
-              "secretStore": {
-                "alias": "airbyte-connector-testing-secret-store",
-                "type": "GSM"
-              }
-            },
-            {
-              "fileName": "staging_config.json",
-              "name": "SECRET_DESTINATION-DATABRICKS__STAGING_CREDS",
               "secretStore": {
                 "alias": "airbyte-connector-testing-secret-store",
                 "type": "GSM"
@@ -3447,7 +3444,7 @@
       ],
       "custom": false,
       "destinationDefinitionId": "072d5540-f236-4294-ba7c-ade8fd918496",
-      "dockerImageTag": "3.3.8",
+      "dockerImageTag": "4.0.0",
       "dockerRepository": "airbyte/destination-databricks",
       "documentationUrl": "https://docs.airbyte.com/integrations/destinations/databricks",
       "externalDocumentationUrls": [
@@ -3479,10 +3476,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "devin-ai-integration[bot]",
-          "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
-          "commit_sha": "a8c22d51c88554b1ee1cdaa05e3d2da6a48698d6",
-          "commit_timestamp": "2026-03-12T14:13:41-07:00"
+          "commit_author": "Sunil Kuruba",
+          "commit_author_email": "sunil.kuruba@airbyte.io",
+          "commit_sha": "d3634b81028b85f0f5de5e4904ffd164e85ef898",
+          "commit_timestamp": "2026-07-02T14:47:28-07:00"
         },
         "metrics": {
           "all": {
@@ -3498,12 +3495,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-databricks/3.3.8.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-databricks/4.0.0.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/destination-databricks/latest/metadata.yaml",
-          "metadata_last_modified": "2026-03-12T21:22:49.206000+00:00",
-          "registry_entry_generated_at": "2026-03-12T21:23:59.297963"
+          "metadata_last_modified": "2026-07-02T21:51:16.537132+00:00",
+          "registry_entry_generated_at": "2026-07-02T21:51:16.537132+00:00"
         }
       },
       "githubIssueLabel": "destination-databricks",
@@ -3526,6 +3523,12 @@
             "message": "This version adds an `_airbyte_generation_id` column to the raw and final tables. If you ran a sync using 2.0.0, you MUST manually drop the raw and final tables and then clear (reset) your connection; this release will not automatically upgrade your tables.\n",
             "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/destinations/databricks-migrations#3.0.0",
             "upgradeDeadline": "2025-01-31"
+          },
+          "4.0.0": {
+            "deadlineAction": "auto_upgrade",
+            "message": "This version upgrades Destination Databricks to the [Direct-Load](https://docs.airbyte.com/platform/using-airbyte/core-concepts/direct-load-tables) paradigm, which improves performance and reduces warehouse spend. Raw tables (`_airbyte_raw_*`) are no longer produced. If you do not interact with the raw tables, you can safely upgrade. If you do, update any downstream dbt models or SQL queries to reference the final tables instead, then drop old raw tables after verifying.\n",
+            "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/destinations/databricks-migrations#4.0.0",
+            "upgradeDeadline": "2026-10-01"
           }
         },
         "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/destinations/databricks-migrations"
@@ -3545,32 +3548,52 @@
       "spec": {
         "connectionSpecification": {
           "$schema": "http://json-schema.org/draft-07/schema#",
+          "additionalProperties": true,
+          "groups": [
+            {
+              "id": "connection",
+              "title": "Connection"
+            },
+            {
+              "id": "sync_behavior",
+              "title": "Sync Behavior"
+            }
+          ],
           "properties": {
             "accept_terms": {
               "default": false,
               "description": "You must agree to the Databricks JDBC Driver <a href=\"https://databricks.com/jdbc-odbc-driver-license\">Terms & Conditions</a> to use this connector.",
-              "order": 1,
+              "group": "connection",
+              "order": 6,
               "title": "Agree to the Databricks JDBC Driver Terms & Conditions",
               "type": "boolean"
             },
             "authentication": {
-              "default": "OAUTH",
-              "description": "Authentication mechanism for Staging files and running queries",
+              "description": "Determines the type of authentication used to connect to Databricks. OAuth2 is recommended for production use.",
+              "group": "connection",
               "oneOf": [
                 {
+                  "additionalProperties": true,
+                  "description": "Authentication using OAuth2 client credentials.",
                   "properties": {
                     "auth_type": {
-                      "const": "OAUTH",
-                      "order": 0,
+                      "default": "OAUTH",
+                      "enum": [
+                        "OAUTH"
+                      ],
                       "type": "string"
                     },
                     "client_id": {
+                      "description": "Enter the OAuth2 client ID for your Databricks <a href=\"https://docs.databricks.com/en/dev-tools/auth/oauth-m2m.html\">service principal</a>.",
                       "order": 1,
+                      "title": "Client ID",
                       "type": "string"
                     },
                     "secret": {
                       "airbyte_secret": true,
+                      "description": "Enter the OAuth2 secret associated with the client ID.",
                       "order": 2,
+                      "title": "Secret",
                       "type": "string"
                     }
                   },
@@ -3579,18 +3602,25 @@
                     "client_id",
                     "secret"
                   ],
-                  "title": "OAuth2 (Recommended)"
+                  "title": "OAuth2 (Recommended)",
+                  "type": "object"
                 },
                 {
+                  "additionalProperties": true,
+                  "description": "Authentication using a personal access token.",
                   "properties": {
                     "auth_type": {
-                      "const": "BASIC",
-                      "order": 0,
+                      "default": "BASIC",
+                      "enum": [
+                        "BASIC"
+                      ],
                       "type": "string"
                     },
                     "personal_access_token": {
                       "airbyte_secret": true,
+                      "description": "Enter your Databricks <a href=\"https://docs.databricks.com/en/dev-tools/auth/pat.html\">personal access token</a>.",
                       "order": 1,
+                      "title": "Personal Access Token",
                       "type": "string"
                     }
                   },
@@ -3598,80 +3628,96 @@
                     "auth_type",
                     "personal_access_token"
                   ],
-                  "title": "Personal Access Token"
+                  "title": "Personal Access Token",
+                  "type": "object"
                 }
               ],
-              "order": 8,
+              "order": 5,
               "title": "Authentication",
               "type": "object"
             },
+            "cdc_deletion_mode": {
+              "always_show": true,
+              "default": "Hard delete",
+              "description": "Whether to execute CDC deletions as hard deletes (i.e. propagate source deletions to the destination), or soft deletes (i.e. leave a tombstone record in the destination). Defaults to hard deletes.",
+              "enum": [
+                "Hard delete",
+                "Soft delete"
+              ],
+              "group": "sync_behavior",
+              "order": 7,
+              "title": "CDC deletion mode",
+              "type": "string"
+            },
             "database": {
-              "description": "The name of the unity catalog for the database",
-              "order": 5,
+              "description": "Enter the name of the <a href=\"https://docs.databricks.com/en/data-governance/unity-catalog/index.html\">Unity Catalog</a> that you want to sync data into.",
+              "examples": [
+                "AIRBYTE_DATABASE"
+              ],
+              "group": "connection",
+              "order": 3,
               "title": "Databricks Unity Catalog Name",
               "type": "string"
             },
             "hostname": {
-              "description": "Databricks Cluster Server Hostname.",
+              "description": "Enter your Databricks workspace <a href=\"https://docs.databricks.com/en/integrations/compute-details.html\">server hostname</a> (e.g., abc-12345678-wxyz.cloud.databricks.com). You can find this in your cluster or SQL warehouse connection details.",
               "examples": [
                 "abc-12345678-wxyz.cloud.databricks.com"
               ],
-              "order": 2,
+              "group": "connection",
+              "order": 1,
               "title": "Server Hostname",
               "type": "string"
             },
             "http_path": {
-              "description": "Databricks Cluster HTTP Path.",
+              "description": "Enter the <a href=\"https://docs.databricks.com/en/integrations/compute-details.html\">HTTP path</a> for your Databricks SQL warehouse or cluster. You can find this in the connection details of your compute resource.",
               "examples": [
                 "sql/1.0/warehouses/0000-1111111-abcd90"
               ],
-              "order": 3,
+              "group": "connection",
+              "order": 2,
               "title": "HTTP Path",
               "type": "string"
             },
             "port": {
               "default": "443",
-              "description": "Databricks Cluster Port.",
+              "description": "Enter the port number for the Databricks cluster connection. The default port is 443 (HTTPS).",
               "examples": [
                 "443"
               ],
-              "order": 4,
+              "group": "connection",
+              "order": 9,
               "title": "Port",
               "type": "string"
             },
             "purge_staging_data": {
               "default": true,
-              "description": "Default to 'true'. Switch it to 'false' for debugging purpose.",
-              "order": 9,
+              "description": "Whether to delete staging files and tables after data has been loaded. Disable this option for debugging purposes.",
+              "group": "sync_behavior",
+              "order": 8,
               "title": "Purge Staging Files and Tables",
               "type": "boolean"
             },
-            "raw_schema_override": {
-              "default": "airbyte_internal",
-              "description": "The schema to write raw tables into (default: airbyte_internal)",
-              "order": 10,
-              "title": "Raw Table Schema Name",
-              "type": "string"
-            },
             "schema": {
               "default": "default",
-              "description": "The default schema tables are written. If not specified otherwise, the \"default\" will be used.",
+              "description": "Enter the name of the default <a href=\"https://docs.databricks.com/en/sql/language-manual/sql-ref-schema.html\">schema</a> where tables will be written. If not specified, \"default\" will be used.",
               "examples": [
-                "default"
+                "AIRBYTE_SCHEMA"
               ],
-              "order": 6,
+              "group": "connection",
+              "order": 4,
               "title": "Default Schema",
               "type": "string"
             }
           },
           "required": [
-            "accept_terms",
             "hostname",
             "http_path",
             "database",
-            "authentication"
+            "authentication",
+            "accept_terms"
           ],
-          "title": "Databricks Lakehouse Destination Spec",
+          "title": "Databricks Specification",
           "type": "object"
         },
         "documentationUrl": "https://docs.airbyte.com/integrations/destinations/databricks",
@@ -3686,7 +3732,6 @@
       },
       "supportLevel": "certified",
       "supportsDataActivation": false,
-      "supportsFileTransfer": false,
       "supportsRefreshes": true,
       "tags": [
         "language:java"
@@ -7520,7 +7565,7 @@
       ],
       "custom": false,
       "destinationDefinitionId": "65de8962-48c9-11ee-be56-0242ac120002",
-      "dockerImageTag": "0.0.58",
+      "dockerImageTag": "0.0.60",
       "dockerRepository": "airbyte/destination-milvus",
       "documentationUrl": "https://docs.airbyte.com/integrations/destinations/milvus",
       "externalDocumentationUrls": [
@@ -7544,8 +7589,8 @@
         "git": {
           "commit_author": "Aaron (\"AJ\") Steers",
           "commit_author_email": "aj@airbyte.io",
-          "commit_sha": "c343b133c7de7b28e421af8fbe2473c0f0bdd9c2",
-          "commit_timestamp": "2026-03-30T20:36:32-07:00"
+          "commit_sha": "9815aae30244de21617332353c5b76fb904f1cb6",
+          "commit_timestamp": "2026-07-02T14:20:47-07:00"
         },
         "metrics": {
           "all": {
@@ -7561,12 +7606,12 @@
             "usage": "medium"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-milvus/0.0.58.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-milvus/0.0.60.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/destination-milvus/latest/metadata.yaml",
-          "metadata_last_modified": "2026-03-31T03:44:55.284710+00:00",
-          "registry_entry_generated_at": "2026-03-31T03:44:55.284710+00:00"
+          "metadata_last_modified": "2026-07-02T21:28:21.493754+00:00",
+          "registry_entry_generated_at": "2026-07-02T21:28:21.493754+00:00"
         }
       },
       "githubIssueLabel": "destination-milvus",
@@ -10361,7 +10406,7 @@
       ],
       "custom": false,
       "destinationDefinitionId": "e0e06cd9-57a9-4d39-b032-bedd874ae875",
-      "dockerImageTag": "0.1.9",
+      "dockerImageTag": "0.1.11",
       "dockerRepository": "airbyte/destination-pgvector",
       "documentationUrl": "https://docs.airbyte.com/integrations/destinations/pgvector",
       "externalDocumentationUrls": [
@@ -10380,8 +10425,8 @@
         "git": {
           "commit_author": "Aaron (\"AJ\") Steers",
           "commit_author_email": "aj@airbyte.io",
-          "commit_sha": "c343b133c7de7b28e421af8fbe2473c0f0bdd9c2",
-          "commit_timestamp": "2026-03-30T20:36:32-07:00"
+          "commit_sha": "1aee552fc7317205fbd625186987ce91d11df30e",
+          "commit_timestamp": "2026-07-02T14:14:21-07:00"
         },
         "metrics": {
           "all": {
@@ -10397,12 +10442,12 @@
             "usage": "medium"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-pgvector/0.1.9.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-pgvector/0.1.11.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/destination-pgvector/latest/metadata.yaml",
-          "metadata_last_modified": "2026-03-31T03:46:04.738386+00:00",
-          "registry_entry_generated_at": "2026-03-31T03:46:04.738386+00:00"
+          "metadata_last_modified": "2026-07-02T21:22:55.845039+00:00",
+          "registry_entry_generated_at": "2026-07-02T21:22:55.845039+00:00"
         }
       },
       "githubIssueLabel": "destination-pgvector",
@@ -10990,7 +11035,7 @@
       ],
       "custom": false,
       "destinationDefinitionId": "3d2b6f84-7f0d-4e3f-a5e5-7c7d4b50eabd",
-      "dockerImageTag": "0.1.48",
+      "dockerImageTag": "0.1.50",
       "dockerRepository": "airbyte/destination-pinecone",
       "documentationUrl": "https://docs.airbyte.com/integrations/destinations/pinecone",
       "externalDocumentationUrls": [
@@ -11022,10 +11067,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "Justin Pye",
-          "commit_author_email": "justin.pye@airbyte.io",
-          "commit_sha": "7335565d4fefc5d3499a0367d5a58c8c59765ec1",
-          "commit_timestamp": "2026-03-18T11:47:58+12:00"
+          "commit_author": "Aaron (\"AJ\") Steers",
+          "commit_author_email": "aj@airbyte.io",
+          "commit_sha": "f4c014b785c269b58ebc04192e1f266b9058155d",
+          "commit_timestamp": "2026-07-02T14:14:49-07:00"
         },
         "metrics": {
           "all": {
@@ -11041,12 +11086,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-pinecone/0.1.48.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-pinecone/0.1.50.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/destination-pinecone/latest/metadata.yaml",
-          "metadata_last_modified": "2026-03-17T23:56:39.831000+00:00",
-          "registry_entry_generated_at": "2026-03-17T23:57:54.813920"
+          "metadata_last_modified": "2026-07-02T21:22:09.234696+00:00",
+          "registry_entry_generated_at": "2026-07-02T21:22:09.234696+00:00"
         }
       },
       "githubIssueLabel": "destination-pinecone",
@@ -11530,8 +11575,6 @@
       },
       "supportLevel": "certified",
       "supportsDataActivation": false,
-      "supportsFileTransfer": false,
-      "supportsRefreshes": false,
       "tags": [
         "language:python",
         "cdk:python"
@@ -16805,7 +16848,7 @@
       ],
       "custom": false,
       "destinationDefinitionId": "d9e5418d-f0f4-4d19-a8b1-5630543638e2",
-      "dockerImageTag": "0.2.28",
+      "dockerImageTag": "0.2.29",
       "dockerRepository": "airbyte/destination-snowflake-cortex",
       "documentationUrl": "https://docs.airbyte.com/integrations/destinations/snowflake-cortex",
       "externalDocumentationUrls": [
@@ -16829,8 +16872,8 @@
         "git": {
           "commit_author": "Aaron (\"AJ\") Steers",
           "commit_author_email": "aj@airbyte.io",
-          "commit_sha": "c343b133c7de7b28e421af8fbe2473c0f0bdd9c2",
-          "commit_timestamp": "2026-03-30T20:36:32-07:00"
+          "commit_sha": "3a056a25a99e165a0838c99d69afef5282935d07",
+          "commit_timestamp": "2026-07-02T13:33:44-07:00"
         },
         "metrics": {
           "all": {
@@ -16846,12 +16889,12 @@
             "usage": "low"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-snowflake-cortex/0.2.28.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-snowflake-cortex/0.2.29.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/destination-snowflake-cortex/latest/metadata.yaml",
-          "metadata_last_modified": "2026-03-31T03:45:34.888192+00:00",
-          "registry_entry_generated_at": "2026-03-31T03:45:34.888192+00:00"
+          "metadata_last_modified": "2026-07-02T20:41:29.537987+00:00",
+          "registry_entry_generated_at": "2026-07-02T20:41:29.537987+00:00"
         }
       },
       "githubIssueLabel": "destination-snowflake-cortex",
@@ -17436,11 +17479,11 @@
         "metrics": {
           "all": {
             "sync_success_rate": "low",
-            "usage": "medium"
+            "usage": "low"
           },
           "oss": {
             "sync_success_rate": "low",
-            "usage": "medium"
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-sqlite/0.2.9.spdx.json",
@@ -18837,7 +18880,7 @@
       ],
       "custom": false,
       "destinationDefinitionId": "7b7d7a0d-954c-45a0-bcfc-39a634b97736",
-      "dockerImageTag": "0.2.61",
+      "dockerImageTag": "0.2.63",
       "dockerRepository": "airbyte/destination-weaviate",
       "documentationUrl": "https://docs.airbyte.com/integrations/destinations/weaviate",
       "externalDocumentationUrls": [
@@ -18861,8 +18904,8 @@
         "git": {
           "commit_author": "Aaron (\"AJ\") Steers",
           "commit_author_email": "aj@airbyte.io",
-          "commit_sha": "c343b133c7de7b28e421af8fbe2473c0f0bdd9c2",
-          "commit_timestamp": "2026-03-30T20:36:32-07:00"
+          "commit_sha": "8af439b4a477a5ebeed9ae479d43680a13d21b2e",
+          "commit_timestamp": "2026-07-02T13:33:13-07:00"
         },
         "metrics": {
           "all": {
@@ -18878,12 +18921,12 @@
             "usage": "low"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-weaviate/0.2.61.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/destination-weaviate/0.2.63.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/destination-weaviate/latest/metadata.yaml",
-          "metadata_last_modified": "2026-03-31T03:44:31.454393+00:00",
-          "registry_entry_generated_at": "2026-03-31T03:44:31.454393+00:00"
+          "metadata_last_modified": "2026-07-02T20:40:52.197445+00:00",
+          "registry_entry_generated_at": "2026-07-02T20:40:52.197445+00:00"
         }
       },
       "githubIssueLabel": "destination-weaviate",
@@ -21416,7 +21459,7 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.3@sha256:60bdf3b1b4384b2599a229445609a3a8f9ff11fefb8a62e3be9c62fc32485310"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.4@sha256:f63c39a8a6f28ec20ada2ddf5861f3b1fb7b6a1ef1a8a8d1d537ff684ee3f9bd"
       },
       "connectorTestSuitesOptions": [
         {
@@ -21454,7 +21497,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "4.6.30",
+      "dockerImageTag": "4.6.31",
       "dockerRepository": "airbyte/source-airtable",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/airtable",
       "externalDocumentationUrls": [
@@ -21479,10 +21522,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "Daryna Ishchenko",
-          "commit_author_email": "darina.ishchenko17@gmail.com",
-          "commit_sha": "5b5d3d42805949c68aa46300375932963860257f",
-          "commit_timestamp": "2026-06-24T16:28:59+03:00"
+          "commit_author": "octavia-bot-hoard[bot]",
+          "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
+          "commit_sha": "499f6bcb47e6f36e04752d901b836190da0d4026",
+          "commit_timestamp": "2026-07-07T04:34:40+00:00"
         },
         "metrics": {
           "all": {
@@ -21498,12 +21541,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-airtable/4.6.30.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-airtable/4.6.31.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-airtable/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-24T13:33:05.168276+00:00",
-          "registry_entry_generated_at": "2026-06-24T13:33:05.168276+00:00"
+          "metadata_last_modified": "2026-07-07T04:38:39.136528+00:00",
+          "registry_entry_generated_at": "2026-07-07T04:38:39.136528+00:00"
         }
       },
       "githubIssueLabel": "source-airtable",
@@ -22357,7 +22400,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "9.0.2",
+      "dockerImageTag": "9.0.3",
       "dockerRepository": "airbyte/source-amazon-ads",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/amazon-ads",
       "externalDocumentationUrls": [
@@ -22389,10 +22432,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "octavia-bot-hoard[bot]",
-          "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "a715b945df9d73775ae68923880d8e41769a2a05",
-          "commit_timestamp": "2026-06-30T04:45:46+00:00"
+          "commit_author": "Ilja Herdt (Airbyte)",
+          "commit_author_email": "ilja.herdt@airbyte.io",
+          "commit_sha": "bfe944884cfcfacd63c208e1fbcc2a8c81a73333",
+          "commit_timestamp": "2026-07-01T08:34:08-07:00"
         },
         "metrics": {
           "all": {
@@ -22408,12 +22451,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-amazon-ads/9.0.2.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-amazon-ads/9.0.3.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-amazon-ads/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T04:50:04.438571+00:00",
-          "registry_entry_generated_at": "2026-06-30T04:50:04.438571+00:00"
+          "metadata_last_modified": "2026-07-01T15:38:29.597943+00:00",
+          "registry_entry_generated_at": "2026-07-01T15:38:29.597943+00:00"
         }
       },
       "githubIssueLabel": "source-amazon-ads",
@@ -22760,7 +22803,7 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.19.3@sha256:b4796c8ad8a6b1918bbd2bdf9e874f149309194f5c2f5a23e05b51e6172d9b78"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.4@sha256:f63c39a8a6f28ec20ada2ddf5861f3b1fb7b6a1ef1a8a8d1d537ff684ee3f9bd"
       },
       "connectorTestSuitesOptions": [
         {
@@ -22790,7 +22833,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "5.7.10",
+      "dockerImageTag": "5.8.0",
       "dockerRepository": "airbyte/source-amazon-seller-partner",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/amazon-seller-partner",
       "erdUrl": "https://dbdocs.io/airbyteio/source-amazon-seller-partner?view=relationships",
@@ -22825,8 +22868,8 @@
         "git": {
           "commit_author": "devin-ai-integration[bot]",
           "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
-          "commit_sha": "da18c0db85aa010c0d41e1fd261b60dede83946d",
-          "commit_timestamp": "2026-06-24T10:08:41-07:00"
+          "commit_sha": "834b79570285c98432836e0c3cf68389c4245859",
+          "commit_timestamp": "2026-07-08T12:41:16+00:00"
         },
         "metrics": {
           "all": {
@@ -22842,12 +22885,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-amazon-seller-partner/5.7.10.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-amazon-seller-partner/5.8.0.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-amazon-seller-partner/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-24T17:12:36.900077+00:00",
-          "registry_entry_generated_at": "2026-06-24T17:12:36.900077+00:00"
+          "metadata_last_modified": "2026-07-08T12:45:08.970159+00:00",
+          "registry_entry_generated_at": "2026-07-08T12:45:08.970159+00:00"
         }
       },
       "githubIssueLabel": "source-amazon-seller-partner",
@@ -23148,6 +23191,7 @@
                 "ES",
                 "FR",
                 "GB",
+                "IE",
                 "IN",
                 "IT",
                 "JP",
@@ -23258,8 +23302,10 @@
                       "GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE",
                       "GET_VENDOR_FORECASTING_REPORT",
                       "GET_VENDOR_INVENTORY_REPORT",
+                      "GET_VENDOR_NET_PURE_PRODUCT_MARGIN_REPORT",
                       "GET_VENDOR_REAL_TIME_INVENTORY_REPORT",
                       "GET_VENDOR_SALES_REPORT",
+                      "GET_VENDOR_TRAFFIC_REPORT",
                       "GET_XML_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL",
                       "GET_XML_BROWSE_TREE_DATA"
                     ],
@@ -23625,7 +23671,7 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.2@sha256:19eb795baa82bad71c097a7388313c1fd9f36978f543a8c7a245bbedb0c9a153"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.4@sha256:f63c39a8a6f28ec20ada2ddf5861f3b1fb7b6a1ef1a8a8d1d537ff684ee3f9bd"
       },
       "connectorTestSuitesOptions": [
         {
@@ -23668,32 +23714,37 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.7.32",
+      "dockerImageTag": "0.7.34",
       "dockerRepository": "airbyte/source-amplitude",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/amplitude",
       "externalDocumentationUrls": [
         {
           "title": "Analytics API",
           "type": "api_reference",
-          "url": "https://www.docs.developers.amplitude.com/analytics/apis/http-v2-api/"
+          "url": "https://amplitude.com/docs/apis/analytics/http-v2"
         },
         {
           "title": "Authentication",
           "type": "authentication_guide",
-          "url": "https://www.docs.developers.amplitude.com/analytics/apis/authentication/"
+          "url": "https://amplitude.com/docs/apis/authentication"
         },
         {
           "title": "Rate limits",
           "type": "rate_limits",
-          "url": "https://www.docs.developers.amplitude.com/analytics/apis/http-v2-api/#rate-limits"
+          "url": "https://amplitude.com/docs/apis/analytics/http-v2"
+        },
+        {
+          "title": "Product Updates",
+          "type": "api_release_history",
+          "url": "https://amplitude.com/releases"
         }
       ],
       "generated": {
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "514167599ce3b50038acb3259f600101029fb704",
-          "commit_timestamp": "2026-06-23T05:14:29+00:00"
+          "commit_sha": "e81f4816b4dbc743495635e349089b825a61511f",
+          "commit_timestamp": "2026-07-07T05:23:40+00:00"
         },
         "metrics": {
           "all": {
@@ -23709,12 +23760,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-amplitude/0.7.32.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-amplitude/0.7.34.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-amplitude/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-23T05:18:26.402995+00:00",
-          "registry_entry_generated_at": "2026-06-23T05:18:26.402995+00:00"
+          "metadata_last_modified": "2026-07-07T05:27:38.438867+00:00",
+          "registry_entry_generated_at": "2026-07-07T05:27:38.438867+00:00"
         }
       },
       "githubIssueLabel": "source-amplitude",
@@ -26570,7 +26621,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.8.22",
+      "dockerImageTag": "0.8.23",
       "dockerRepository": "airbyte/source-azure-blob-storage",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/azure-blob-storage",
       "externalDocumentationUrls": [
@@ -26584,8 +26635,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "d4a080929163c2f9781d9f4559bb6062ccf799b4",
-          "commit_timestamp": "2026-06-30T05:04:34+00:00"
+          "commit_sha": "bec9a60577cea34a9ccddf5d69cc6d502b278230",
+          "commit_timestamp": "2026-07-07T04:48:02+00:00"
         },
         "metrics": {
           "all": {
@@ -26601,12 +26652,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-azure-blob-storage/0.8.22.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-azure-blob-storage/0.8.23.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-azure-blob-storage/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T05:12:28.431874+00:00",
-          "registry_entry_generated_at": "2026-06-30T05:12:28.431874+00:00"
+          "metadata_last_modified": "2026-07-07T04:55:19.430691+00:00",
+          "registry_entry_generated_at": "2026-07-07T04:55:19.430691+00:00"
         }
       },
       "githubIssueLabel": "source-azure-blob-storage",
@@ -28347,7 +28398,7 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.17.2@sha256:1bfcca53335b2669b02414180fe9ad96b0abd9c95d6cbf50089c1d881fc07801"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.2@sha256:19eb795baa82bad71c097a7388313c1fd9f36978f543a8c7a245bbedb0c9a153"
       },
       "connectorTestSuitesOptions": [
         {
@@ -28413,7 +28464,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "3.0.0",
+      "dockerImageTag": "3.0.1",
       "dockerRepository": "airbyte/source-bing-ads",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/bing-ads",
       "erdUrl": "https://dbdocs.io/airbyteio/source-bing-ads?view=relationships",
@@ -28431,10 +28482,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "Anatolii Yatsuk",
-          "commit_author_email": "tolikyatsuk@gmail.com",
-          "commit_sha": "1b38d07331372f3a52e6d82ae16c5fd7e1697a38",
-          "commit_timestamp": "2026-06-17T15:33:36+03:00"
+          "commit_author": "devin-ai-integration[bot]",
+          "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
+          "commit_sha": "ef6fa619a54a59f10aba2972e9291f1c7158c4ed",
+          "commit_timestamp": "2026-07-08T16:29:49+03:00"
         },
         "metrics": {
           "all": {
@@ -28450,12 +28501,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-bing-ads/3.0.0.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-bing-ads/3.0.1.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-bing-ads/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-17T12:37:40.833769+00:00",
-          "registry_entry_generated_at": "2026-06-17T12:37:40.833769+00:00"
+          "metadata_last_modified": "2026-07-08T13:34:16.236054+00:00",
+          "registry_entry_generated_at": "2026-07-08T13:34:16.236054+00:00"
         }
       },
       "githubIssueLabel": "source-bing-ads",
@@ -29393,15 +29444,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -29696,7 +29747,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.3.33",
+      "dockerImageTag": "0.3.34",
       "dockerRepository": "airbyte/source-braintree",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/braintree",
       "externalDocumentationUrls": [
@@ -29730,8 +29781,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "f5f5403aaa386efe55befa579d46fd8e592d2237",
-          "commit_timestamp": "2026-06-23T04:53:53+00:00"
+          "commit_sha": "fa455c58fd9b2563d188fe55033855a97664b89a",
+          "commit_timestamp": "2026-07-07T04:54:52+00:00"
         },
         "metrics": {
           "all": {
@@ -29747,12 +29798,12 @@
             "usage": "medium"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-braintree/0.3.33.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-braintree/0.3.34.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-braintree/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-23T04:59:19.245930+00:00",
-          "registry_entry_generated_at": "2026-06-23T04:59:19.245930+00:00"
+          "metadata_last_modified": "2026-07-07T05:00:54.224426+00:00",
+          "registry_entry_generated_at": "2026-07-07T05:00:54.224426+00:00"
         }
       },
       "githubIssueLabel": "source-braintree",
@@ -31798,16 +31849,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "cloud": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "oss": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-capsule-crm/0.0.47.spdx.json",
@@ -32172,7 +32223,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.3.53",
+      "dockerImageTag": "0.3.54",
       "dockerRepository": "airbyte/source-cart",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/cart",
       "externalDocumentationUrls": [
@@ -32191,8 +32242,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "87f9c61f9a19cd48738fadb4914e4a19657eb855",
-          "commit_timestamp": "2026-06-30T05:28:56+00:00"
+          "commit_sha": "db48a033cffd0743ff951ac73dc639355289c6b8",
+          "commit_timestamp": "2026-07-07T05:03:13+00:00"
         },
         "metrics": {
           "all": {
@@ -32208,12 +32259,12 @@
             "usage": "low"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-cart/0.3.53.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-cart/0.3.54.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-cart/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T05:35:31.372648+00:00",
-          "registry_entry_generated_at": "2026-06-30T05:35:31.372648+00:00"
+          "metadata_last_modified": "2026-07-07T05:09:22.995850+00:00",
+          "registry_entry_generated_at": "2026-07-07T05:09:22.995850+00:00"
         }
       },
       "githubIssueLabel": "source-cart",
@@ -39981,7 +40032,7 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.2@sha256:19eb795baa82bad71c097a7388313c1fd9f36978f543a8c7a245bbedb0c9a153"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.4@sha256:f63c39a8a6f28ec20ada2ddf5861f3b1fb7b6a1ef1a8a8d1d537ff684ee3f9bd"
       },
       "connectorTestSuitesOptions": [
         {
@@ -40002,15 +40053,15 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.2.5",
+      "dockerImageTag": "0.2.6",
       "dockerRepository": "airbyte/source-devin-ai",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/devin-ai",
       "generated": {
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "a93802d53abe244f09af8f5299d49d5b7728c788",
-          "commit_timestamp": "2026-06-23T05:59:16+00:00"
+          "commit_sha": "4965db5fe74e8128ad005178fade1aa6eb736ff1",
+          "commit_timestamp": "2026-07-07T05:42:35+00:00"
         },
         "metrics": {
           "all": {
@@ -40026,12 +40077,12 @@
             "usage": "low"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-devin-ai/0.2.5.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-devin-ai/0.2.6.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-devin-ai/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-23T06:04:30.789062+00:00",
-          "registry_entry_generated_at": "2026-06-23T06:04:30.789062+00:00"
+          "metadata_last_modified": "2026-07-07T05:46:33.224192+00:00",
+          "registry_entry_generated_at": "2026-07-07T05:46:33.224192+00:00"
         }
       },
       "githubIssueLabel": "source-devin-ai",
@@ -44172,15 +44223,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "high"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "high"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "high"
           }
         },
@@ -45811,7 +45862,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "7.1.1",
+      "dockerImageTag": "7.2.0",
       "dockerRepository": "airbyte/source-faker",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/faker",
       "externalDocumentationUrls": [
@@ -45828,10 +45879,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "Aaron (\"AJ\") Steers",
-          "commit_author_email": "aj@airbyte.io",
-          "commit_sha": "07ae55ced0de0c7427ff21be9e4a0be74a69208f",
-          "commit_timestamp": "2026-05-13T12:49:57-07:00"
+          "commit_author": "octavia-bot[bot]",
+          "commit_author_email": "108746235+octavia-bot[bot]@users.noreply.github.com",
+          "commit_sha": "8bce4287ec4d9090a15095a6aa110c738ac1c8c0",
+          "commit_timestamp": "2026-07-09T22:54:04+00:00"
         },
         "metrics": {
           "all": {
@@ -45847,12 +45898,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-faker/7.1.1.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-faker/7.2.0.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-faker/latest/metadata.yaml",
-          "metadata_last_modified": "2026-05-13T19:56:10.666727+00:00",
-          "registry_entry_generated_at": "2026-05-13T19:56:10.666727+00:00"
+          "metadata_last_modified": "2026-07-09T23:00:33.976408+00:00",
+          "registry_entry_generated_at": "2026-07-09T23:00:33.976408+00:00"
         }
       },
       "githubIssueLabel": "source-faker",
@@ -45901,226 +45952,14 @@
           }
         },
         "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/faker-migrations",
-        "releaseCandidates": {
-          "7.2.0-rc.2": {
-            "ab_internal": {
-              "isEnterprise": false,
-              "ql": 300,
-              "requireVersionIncrementsInPullRequests": true,
-              "sl": 100
-            },
-            "allowedHosts": {
-              "hosts": []
-            },
-            "connectorBuildOptions": {
-              "baseImage": "docker.io/airbyte/python-connector-base:4.0.2@sha256:9fdb1888c4264cf6fee473649ecb593f56f58e5d0096a87ee0b231777e2e3e73"
-            },
-            "connectorTestSuitesOptions": [
-              {
-                "suite": "liveTests",
-                "testConnections": [
-                  {
-                    "id": "73abc3a9-3fea-4e7c-b58d-2c8236464a95",
-                    "name": "faker_config_dev_null"
-                  }
-                ]
-              },
-              {
-                "suite": "unitTests"
-              },
-              {
-                "suite": "acceptanceTests",
-                "testSecrets": [
-                  {
-                    "fileName": "config.json",
-                    "name": "SECRET_SOURCE-FAKER_CREDS",
-                    "secretStore": {
-                      "alias": "airbyte-connector-testing-secret-store",
-                      "type": "GSM"
-                    }
-                  }
-                ]
-              }
-            ],
-            "custom": false,
-            "dockerImageTag": "7.2.0-rc.2",
-            "dockerRepository": "airbyte/source-faker",
-            "documentationUrl": "https://docs.airbyte.com/integrations/sources/faker",
-            "externalDocumentationUrls": [
-              {
-                "title": "Python Faker Library Documentation",
-                "type": "api_reference",
-                "url": "https://faker.readthedocs.io/en/master/"
-              },
-              {
-                "title": "Faker Changelog",
-                "type": "api_release_history",
-                "url": "https://github.com/joke2k/faker/blob/master/CHANGELOG.md"
-              }
-            ],
-            "generated": {
-              "git": {
-                "commit_author": "Aaron (\"AJ\") Steers",
-                "commit_author_email": "aj@airbyte.io",
-                "commit_sha": "3386f605679afdef0b3078070b3361a26f69f3ad",
-                "commit_timestamp": "2026-06-24T10:59:36-07:00"
-              },
-              "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-faker/7.2.0-rc.2.spdx.json",
-              "source_file_info": {
-                "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
-                "metadata_file_path": "metadata/airbyte/source-faker/7.2.0-rc.2/metadata.yaml",
-                "metadata_last_modified": "2026-06-24T18:05:50.483208+00:00",
-                "registry_entry_generated_at": "2026-06-24T18:05:50.483208+00:00"
-              }
-            },
-            "githubIssueLabel": "source-faker",
-            "icon": "icon.svg",
-            "iconUrl": "https://connectors.airbyte.com/files/metadata/airbyte/source-faker/latest/icon.svg",
-            "language": "python",
-            "license": "ELv2",
-            "name": "Sample Data",
-            "packageInfo": {
-              "cdk_version": "python:6.61.6"
-            },
-            "public": true,
-            "releaseStage": "beta",
-            "releases": {
-              "breakingChanges": {
-                "4.0.0": {
-                  "message": "This is a breaking change message",
-                  "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/faker-migrations#4.0.0",
-                  "upgradeDeadline": "2023-07-19"
-                },
-                "5.0.0": {
-                  "message": "ID and products.year fields are changing to be integers instead of floats.",
-                  "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/faker-migrations#5.0.0",
-                  "upgradeDeadline": "2023-08-31"
-                },
-                "6.0.0": {
-                  "message": "Declare 'id' columns as primary keys.",
-                  "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/faker-migrations#6.0.0",
-                  "upgradeDeadline": "2024-04-01"
-                },
-                "7.0.0": {
-                  "deadlineAction": "disable",
-                  "message": "This is a test breaking change to validate breaking change infrastructure.",
-                  "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/faker-migrations#7.0.0",
-                  "scopedImpact": [
-                    {
-                      "impactedScopes": [
-                        "users",
-                        "products",
-                        "purchases"
-                      ],
-                      "scopeType": "stream"
-                    }
-                  ],
-                  "upgradeDeadline": "2026-03-19"
-                }
-              },
-              "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/faker-migrations",
-              "rolloutConfiguration": {
-                "advanceDelayMinutes": 10,
-                "autopilotConfig": {
-                  "autoPromoteStages": true,
-                  "autoStart": true,
-                  "strategy": "fast"
-                },
-                "defaultRolloutMode": "autopilot",
-                "enableProgressiveRollout": true,
-                "initialPercentage": 0,
-                "maxPercentage": 50
-              }
-            },
-            "remoteRegistries": {
-              "pypi": {
-                "enabled": true,
-                "packageName": "airbyte-source-faker"
-              }
-            },
-            "resourceRequirements": {
-              "jobSpecific": [
-                {
-                  "jobType": "sync",
-                  "resourceRequirements": {
-                    "cpu_limit": "4.0",
-                    "cpu_request": "1.0"
-                  }
-                }
-              ]
-            },
-            "sourceDefinitionId": "dfd88b22-b603-4c3d-aad7-3701784586b1",
-            "sourceType": "api",
-            "spec": {
-              "connectionSpecification": {
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "additionalProperties": true,
-                "properties": {
-                  "always_updated": {
-                    "default": true,
-                    "description": "Should the updated_at values for every record be new each sync?  Setting this to false will case the source to stop emitting records after COUNT records have been emitted.",
-                    "title": "Always Updated",
-                    "type": "boolean"
-                  },
-                  "count": {
-                    "default": 1000,
-                    "description": "How many users should be generated in total. The purchases table will be scaled to match, with 10 purchases created per 10 users. This setting does not apply to the products stream.",
-                    "minimum": 1,
-                    "order": 0,
-                    "title": "Count",
-                    "type": "integer"
-                  },
-                  "parallelism": {
-                    "default": 4,
-                    "description": "How many parallel workers should we use to generate fake data?  Choose a value equal to the number of CPUs you will allocate to this source.",
-                    "minimum": 1,
-                    "order": 4,
-                    "title": "Parallelism",
-                    "type": "integer"
-                  },
-                  "records_per_slice": {
-                    "default": 1000,
-                    "description": "How many fake records will be in each page (stream slice), before a state message is emitted?",
-                    "minimum": 1,
-                    "order": 2,
-                    "title": "Records Per Stream Slice",
-                    "type": "integer"
-                  },
-                  "seed": {
-                    "default": -1,
-                    "description": "Manually control the faker random seed to return the same values on subsequent runs (leave -1 for random)",
-                    "order": 1,
-                    "title": "Seed",
-                    "type": "integer"
-                  }
-                },
-                "required": [],
-                "title": "Faker Source Spec",
-                "type": "object"
-              },
-              "documentationUrl": "https://docs.airbyte.com/integrations/sources/faker",
-              "supportsDBT": false,
-              "supportsNormalization": false
-            },
-            "suggestedStreams": {
-              "streams": [
-                "users",
-                "products",
-                "purchases"
-              ]
-            },
-            "supportLevel": "community",
-            "supportsDataActivation": false,
-            "supportsFileTransfer": false,
-            "tags": [
-              "language:python",
-              "cdk:python"
-            ],
-            "tombstone": false
-          }
-        },
         "rolloutConfiguration": {
           "advanceDelayMinutes": 10,
+          "autopilotConfig": {
+            "autoPromoteStages": true,
+            "autoStart": true,
+            "strategy": "fast"
+          },
+          "defaultRolloutMode": "autopilot",
           "enableProgressiveRollout": false,
           "initialPercentage": 0,
           "maxPercentage": 50
@@ -49024,16 +48863,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "high",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "cloud": {
-            "sync_success_rate": "high",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "oss": {
-            "sync_success_rate": "high",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-flowlu/0.0.55.spdx.json",
@@ -49136,15 +48975,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -50634,15 +50473,15 @@
         "metrics": {
           "all": {
             "sync_success_rate": "medium",
-            "usage": "high"
+            "usage": "medium"
           },
           "cloud": {
             "sync_success_rate": "medium",
-            "usage": "high"
+            "usage": "medium"
           },
           "oss": {
             "sync_success_rate": "medium",
-            "usage": "high"
+            "usage": "medium"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-front/0.0.48.spdx.json",
@@ -50866,16 +50705,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "cloud": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "oss": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-fullstory/0.2.23.spdx.json",
@@ -51186,7 +51025,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.10.20",
+      "dockerImageTag": "0.10.21",
       "dockerRepository": "airbyte/source-gcs",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/gcs",
       "externalDocumentationUrls": [
@@ -51210,8 +51049,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "b6ae01e96e00bf80fb7982bca5e04698ac26294b",
-          "commit_timestamp": "2026-06-30T06:14:48+00:00"
+          "commit_sha": "a0bd47a52ec6b76d8d9f358be02b5ae5ce3b5358",
+          "commit_timestamp": "2026-07-07T06:00:01+00:00"
         },
         "metrics": {
           "all": {
@@ -51227,12 +51066,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-gcs/0.10.20.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-gcs/0.10.21.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-gcs/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T06:22:27.426605+00:00",
-          "registry_entry_generated_at": "2026-06-30T06:22:27.426605+00:00"
+          "metadata_last_modified": "2026-07-07T06:07:49.268499+00:00",
+          "registry_entry_generated_at": "2026-07-07T06:07:49.268499+00:00"
         }
       },
       "githubIssueLabel": "source-gcs",
@@ -52707,7 +52546,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "2.1.34",
+      "dockerImageTag": "2.1.35",
       "dockerRepository": "airbyte/source-github",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/github",
       "erdUrl": "https://dbdocs.io/airbyteio/source-github?view=relationships",
@@ -52757,8 +52596,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "63e65fc6f2469703d63d4cf7b719d7e72b39f594",
-          "commit_timestamp": "2026-06-30T06:17:08+00:00"
+          "commit_sha": "4d0ab6e76ccada4b23bbca5c90d91d157eda58b6",
+          "commit_timestamp": "2026-07-07T05:18:35+00:00"
         },
         "metrics": {
           "all": {
@@ -52774,12 +52613,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-github/2.1.34.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-github/2.1.35.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-github/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T06:23:32.841913+00:00",
-          "registry_entry_generated_at": "2026-06-30T06:23:32.841913+00:00"
+          "metadata_last_modified": "2026-07-07T05:24:52.128003+00:00",
+          "registry_entry_generated_at": "2026-07-07T05:24:52.128003+00:00"
         }
       },
       "githubIssueLabel": "source-github",
@@ -52816,6 +52655,451 @@
           }
         },
         "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/github-migrations",
+        "releaseCandidates": {
+          "2.1.36-rc.1": {
+            "ab_internal": {
+              "isEnterprise": false,
+              "ql": 400,
+              "requireVersionIncrementsInPullRequests": true,
+              "sl": 300
+            },
+            "allowedHosts": {
+              "hosts": [
+                "${api_url}"
+              ]
+            },
+            "connectorBuildOptions": {
+              "baseImage": "docker.io/airbyte/python-connector-base:4.1.0@sha256:1d1aa21d34e851df4e8a87b391c27724c06e2597608e7161f4d167be853bd7b6"
+            },
+            "connectorTestSuitesOptions": [
+              {
+                "suite": "liveTests",
+                "testConnections": [
+                  {
+                    "id": "00d7a7eb-9922-4463-9d9d-fac37438bc12",
+                    "name": "github_config_dev_null"
+                  },
+                  {
+                    "id": "65c98c6e-c8e5-4ff4-a822-32b79d10468b",
+                    "name": "github_config_oauth_dev_null"
+                  }
+                ]
+              },
+              {
+                "suite": "unitTests"
+              },
+              {
+                "suite": "acceptanceTests",
+                "testSecrets": [
+                  {
+                    "fileName": "config.json",
+                    "name": "SECRET_SOURCE-GITHUB_CREDS",
+                    "secretStore": {
+                      "alias": "airbyte-connector-testing-secret-store",
+                      "type": "GSM"
+                    }
+                  },
+                  {
+                    "fileName": "config_oauth.json",
+                    "name": "SECRET_SOURCE-GITHUB_OAUTH_CREDS",
+                    "secretStore": {
+                      "alias": "airbyte-connector-testing-secret-store",
+                      "type": "GSM"
+                    }
+                  }
+                ]
+              }
+            ],
+            "custom": false,
+            "dockerImageTag": "2.1.36-rc.1",
+            "dockerRepository": "airbyte/source-github",
+            "documentationUrl": "https://docs.airbyte.com/integrations/sources/github",
+            "erdUrl": "https://dbdocs.io/airbyteio/source-github?view=relationships",
+            "externalDocumentationUrls": [
+              {
+                "title": "Breaking changes",
+                "type": "api_deprecations",
+                "url": "https://docs.github.com/en/rest/about-the-rest-api/breaking-changes"
+              },
+              {
+                "title": "GitHub REST API reference",
+                "type": "api_reference",
+                "url": "https://docs.github.com/en/rest"
+              },
+              {
+                "title": "API Versions",
+                "type": "api_release_history",
+                "url": "https://docs.github.com/en/rest/about-the-rest-api/api-versions"
+              },
+              {
+                "title": "GitHub API changelog",
+                "type": "api_release_history",
+                "url": "https://github.blog/changelog/label/api/"
+              },
+              {
+                "title": "GitHub authentication",
+                "type": "authentication_guide",
+                "url": "https://docs.github.com/en/rest/overview/authenticating-to-the-rest-api"
+              },
+              {
+                "title": "GitHub REST API OpenAPI specification",
+                "type": "openapi_spec",
+                "url": "https://github.com/github/rest-api-description"
+              },
+              {
+                "title": "GitHub rate limits",
+                "type": "rate_limits",
+                "url": "https://docs.github.com/en/rest/overview/rate-limits-for-the-rest-api"
+              },
+              {
+                "title": "GitHub Status",
+                "type": "status_page",
+                "url": "https://www.githubstatus.com/"
+              }
+            ],
+            "generated": {
+              "git": {
+                "commit_author": "devin-ai-integration[bot]",
+                "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
+                "commit_sha": "0f4e2b626e991d1304c5c81bd21815cd2c09622b",
+                "commit_timestamp": "2026-07-08T15:31:18+03:00"
+              },
+              "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-github/2.1.36-rc.1.spdx.json",
+              "source_file_info": {
+                "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
+                "metadata_file_path": "metadata/airbyte/source-github/2.1.36-rc.1/metadata.yaml",
+                "metadata_last_modified": "2026-07-08T12:37:30.175842+00:00",
+                "registry_entry_generated_at": "2026-07-08T12:37:30.175842+00:00"
+              }
+            },
+            "githubIssueLabel": "source-github",
+            "icon": "github.svg",
+            "iconUrl": "https://connectors.airbyte.com/files/metadata/airbyte/source-github/latest/icon.svg",
+            "language": "python",
+            "license": "ELv2",
+            "maxSecondsBetweenMessages": 3600,
+            "name": "GitHub",
+            "packageInfo": {
+              "cdk_version": "python:7.23.4"
+            },
+            "public": true,
+            "releaseStage": "generally_available",
+            "releases": {
+              "breakingChanges": {
+                "2.0.0": {
+                  "message": "This release renames reaction fields for compatibility across all destinations. The +1 and -1 fields have been renamed to plus_one and minus_one in streams containing reactions (comments, commit_comments, issue_events, issues, releases, review_comments). Users should refresh their source schema and reset affected streams after upgrading.",
+                  "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/github-migrations#2.0.0",
+                  "scopedImpact": [
+                    {
+                      "impactedScopes": [
+                        "comments",
+                        "commit_comments",
+                        "issue_events",
+                        "issues",
+                        "releases",
+                        "review_comments"
+                      ],
+                      "scopeType": "stream"
+                    }
+                  ],
+                  "upgradeDeadline": "2025-11-21"
+                }
+              },
+              "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/github-migrations",
+              "rolloutConfiguration": {
+                "advanceDelayMinutes": 10,
+                "enableProgressiveRollout": true,
+                "initialPercentage": 0,
+                "maxPercentage": 50
+              }
+            },
+            "remoteRegistries": {
+              "pypi": {
+                "enabled": true,
+                "packageName": "airbyte-source-github"
+              }
+            },
+            "sourceDefinitionId": "ef69ef6e-aa7f-4af1-a01d-ef775033524e",
+            "sourceType": "api",
+            "spec": {
+              "advanced_auth": {
+                "auth_flow_type": "oauth2.0",
+                "oauth_config_specification": {
+                  "complete_oauth_output_specification": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "access_token": {
+                        "path_in_connector_config": [
+                          "credentials",
+                          "access_token"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "complete_oauth_server_input_specification": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "client_id": {
+                        "type": "string"
+                      },
+                      "client_secret": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "complete_oauth_server_output_specification": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "client_id": {
+                        "path_in_connector_config": [
+                          "credentials",
+                          "client_id"
+                        ],
+                        "type": "string"
+                      },
+                      "client_secret": {
+                        "path_in_connector_config": [
+                          "credentials",
+                          "client_secret"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "oauth_connector_input_specification": {
+                    "access_token_url": "https://github.com/login/oauth/access_token?{{client_id_param}}&{{client_secret_param}}&{{auth_code_param}}&{{redirect_uri_param}}",
+                    "consent_url": "https://github.com/login/oauth/authorize?{{client_id_param}}&{{redirect_uri_param}}&{{scopes_param}}&{{state_param}}",
+                    "extract_output": [
+                      "access_token"
+                    ],
+                    "scopes": [
+                      {
+                        "scope": "repo"
+                      },
+                      {
+                        "scope": "read:org"
+                      },
+                      {
+                        "scope": "read:repo_hook"
+                      },
+                      {
+                        "scope": "read:user"
+                      },
+                      {
+                        "scope": "read:project"
+                      },
+                      {
+                        "scope": "read:discussion"
+                      },
+                      {
+                        "scope": "workflow"
+                      }
+                    ]
+                  }
+                },
+                "predicate_key": [
+                  "credentials",
+                  "option_title"
+                ],
+                "predicate_value": "OAuth Credentials"
+              },
+              "connectionSpecification": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "additionalProperties": true,
+                "properties": {
+                  "api_url": {
+                    "default": "https://api.github.com/",
+                    "description": "Please enter your basic URL from self-hosted GitHub instance or leave it empty to use GitHub.",
+                    "examples": [
+                      "https://github.com",
+                      "https://github.company.org"
+                    ],
+                    "order": 3,
+                    "title": "API URL",
+                    "type": "string"
+                  },
+                  "branch": {
+                    "airbyte_hidden": true,
+                    "description": "(DEPRCATED) Space-delimited list of GitHub repository branches to pull commits for, e.g. `airbytehq/airbyte/master`. If no branches are specified for a repository, the default branch will be pulled.",
+                    "examples": [
+                      "airbytehq/airbyte/master airbytehq/airbyte/my-branch"
+                    ],
+                    "pattern_descriptor": "org/repo/branch1 org/repo/branch2",
+                    "title": "Branch",
+                    "type": "string"
+                  },
+                  "branches": {
+                    "description": "List of GitHub repository branches to pull commits for, e.g. `airbytehq/airbyte/master`. If no branches are specified for a repository, the default branch will be pulled.",
+                    "examples": [
+                      "airbytehq/airbyte/master",
+                      "airbytehq/airbyte/my-branch"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "order": 4,
+                    "pattern_descriptor": "org/repo/branch1 org/repo/branch2",
+                    "title": "Branches",
+                    "type": "array"
+                  },
+                  "credentials": {
+                    "description": "Choose how to authenticate to GitHub",
+                    "group": "auth",
+                    "oneOf": [
+                      {
+                        "properties": {
+                          "access_token": {
+                            "airbyte_secret": true,
+                            "description": "OAuth access token",
+                            "title": "Access Token",
+                            "type": "string"
+                          },
+                          "client_id": {
+                            "airbyte_secret": true,
+                            "description": "OAuth Client Id",
+                            "title": "Client Id",
+                            "type": "string"
+                          },
+                          "client_secret": {
+                            "airbyte_secret": true,
+                            "description": "OAuth Client secret",
+                            "title": "Client secret",
+                            "type": "string"
+                          },
+                          "option_title": {
+                            "const": "OAuth Credentials",
+                            "order": 0,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "access_token"
+                        ],
+                        "title": "OAuth",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "option_title": {
+                            "const": "PAT Credentials",
+                            "order": 0,
+                            "type": "string"
+                          },
+                          "personal_access_token": {
+                            "airbyte_secret": true,
+                            "description": "Log into GitHub and then generate a <a href=\"https://github.com/settings/tokens\">personal access token</a>. To load balance your API quota consumption across multiple API tokens, input multiple tokens separated with \",\"",
+                            "title": "Personal Access Tokens",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "personal_access_token"
+                        ],
+                        "title": "Personal Access Token",
+                        "type": "object"
+                      }
+                    ],
+                    "order": 0,
+                    "title": "Authentication",
+                    "type": "object"
+                  },
+                  "max_waiting_time": {
+                    "default": 120,
+                    "description": "Max time (in minutes) the connector will wait when all API tokens are rate-limited before failing. GitHub rate limits reset every 60 minutes, so values above 60 allow the connector to wait for a full reset cycle.",
+                    "examples": [
+                      10,
+                      60,
+                      120
+                    ],
+                    "maximum": 240,
+                    "minimum": 1,
+                    "order": 5,
+                    "title": "Max Waiting Time (in minutes)",
+                    "type": "integer"
+                  },
+                  "repositories": {
+                    "description": "List of GitHub organizations/repositories, e.g. `airbytehq/airbyte` for single repository, `airbytehq/*` for get all repositories from organization and `airbytehq/a* for matching multiple repositories by pattern.",
+                    "examples": [
+                      "airbytehq/airbyte",
+                      "airbytehq/another-repo",
+                      "airbytehq/*",
+                      "airbytehq/a*"
+                    ],
+                    "items": {
+                      "pattern": "^[\\w.-]+/(([\\w.-]*\\*)|[\\w.-]+(?<!\\.git))$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "order": 1,
+                    "pattern_descriptor": "org/repo org/another-repo org/* org/a*",
+                    "title": "GitHub Repositories",
+                    "type": "array"
+                  },
+                  "repository": {
+                    "airbyte_hidden": true,
+                    "description": "(DEPRCATED) Space-delimited list of GitHub organizations/repositories, e.g. `airbytehq/airbyte` for single repository, `airbytehq/*` for get all repositories from organization and `airbytehq/airbyte airbytehq/another-repo` for multiple repositories.",
+                    "examples": [
+                      "airbytehq/airbyte airbytehq/another-repo",
+                      "airbytehq/*",
+                      "airbytehq/airbyte"
+                    ],
+                    "pattern": "^([\\w.-]+/(\\*|[\\w.-]+(?<!\\.git))\\s+)*[\\w.-]+/(\\*|[\\w.-]+(?<!\\.git))$",
+                    "pattern_descriptor": "org/repo org/another-repo org/*",
+                    "title": "GitHub Repositories",
+                    "type": "string"
+                  },
+                  "start_date": {
+                    "description": "The date from which you'd like to replicate data from GitHub in the format YYYY-MM-DDT00:00:00Z. If the date is not set, all data will be replicated.  For the streams which support this configuration, only data generated on or after the start date will be replicated. This field doesn't apply to all streams, see the <a href=\"https://docs.airbyte.com/integrations/sources/github\">docs</a> for more info",
+                    "examples": [
+                      "2021-03-01T00:00:00Z"
+                    ],
+                    "format": "date-time",
+                    "order": 2,
+                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+                    "pattern_descriptor": "YYYY-MM-DDTHH:mm:ssZ",
+                    "title": "Start date",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "credentials",
+                  "repositories"
+                ],
+                "title": "GitHub Source Spec",
+                "type": "object"
+              },
+              "documentationUrl": "https://docs.airbyte.com/integrations/sources/github",
+              "supportsDBT": false,
+              "supportsNormalization": false
+            },
+            "suggestedStreams": {
+              "streams": [
+                "branches",
+                "comments",
+                "issues",
+                "organizations",
+                "pull_requests",
+                "repositories",
+                "stargazers",
+                "tags",
+                "teams",
+                "users"
+              ]
+            },
+            "supportLevel": "certified",
+            "supportsDataActivation": false,
+            "supportsFileTransfer": false,
+            "tags": [
+              "language:python",
+              "cdk:low-code"
+            ],
+            "tombstone": false
+          }
+        },
         "rolloutConfiguration": {
           "advanceDelayMinutes": 10,
           "enableProgressiveRollout": false,
@@ -54640,7 +54924,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "1.2.8",
+      "dockerImageTag": "1.2.9",
       "dockerRepository": "airbyte/source-gong",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/gong",
       "externalDocumentationUrls": [
@@ -54662,10 +54946,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "octavia-bot-hoard[bot]",
-          "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "20e1736447f7af5ee408c023d2de2936bf1bcbf6",
-          "commit_timestamp": "2026-06-30T06:10:37+00:00"
+          "commit_author": "devin-ai-integration[bot]",
+          "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
+          "commit_sha": "7ca56d75dac39c56faa4956be5f4987e1fe20ca0",
+          "commit_timestamp": "2026-07-07T07:54:14-07:00"
         },
         "metrics": {
           "all": {
@@ -54681,12 +54965,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-gong/1.2.8.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-gong/1.2.9.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-gong/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T06:15:04.000648+00:00",
-          "registry_entry_generated_at": "2026-06-30T06:15:04.000648+00:00"
+          "metadata_last_modified": "2026-07-07T15:03:38.153910+00:00",
+          "registry_entry_generated_at": "2026-07-07T15:03:38.153910+00:00"
         }
       },
       "githubIssueLabel": "source-gong",
@@ -54948,7 +55232,7 @@
               "type": "integer"
             },
             "start_date": {
-              "description": "The date from which to list calls, in the ISO-8601 format; if not specified, the calls start with the earliest recorded call. For web-conference calls recorded by Gong, the date denotes its scheduled time, otherwise, it denotes its actual start time.",
+              "description": "The date from which to list calls, in the ISO-8601 format; if not specified, the connector syncs all available data from the earliest recorded call. For web-conference calls recorded by Gong, the date denotes its scheduled time, otherwise, it denotes its actual start time.",
               "examples": [
                 "2018-02-18T08:00:00Z"
               ],
@@ -55071,7 +55355,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "6.0.0",
+      "dockerImageTag": "6.1.0",
       "dockerRepository": "airbyte/source-google-ads",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/google-ads",
       "externalDocumentationUrls": [
@@ -55081,16 +55365,22 @@
           "url": "https://developers.google.com/google-ads/api/docs/release-notes"
         },
         {
+          "title": "Deprecation and sunset dates",
+          "type": "api_deprecations",
+          "url": "https://developers.google.com/google-ads/api/docs/sunset-dates"
+        },
+        {
           "title": "Developer blog",
+          "type": "api_release_history",
           "url": "https://ads-developers.googleblog.com/"
         }
       ],
       "generated": {
         "git": {
-          "commit_author": "Daryna Ishchenko",
-          "commit_author_email": "darina.ishchenko17@gmail.com",
-          "commit_sha": "e30459e1f2bb63440be5c5d3bb0dd56e3293229f",
-          "commit_timestamp": "2026-05-29T23:58:06+03:00"
+          "commit_author": "Serhii Lazebnyi",
+          "commit_author_email": "GL_serhii.lazebnyi@airbyte.io",
+          "commit_sha": "aa7fbdd6d433bde8cee1350f4da2e78fc5898cc5",
+          "commit_timestamp": "2026-07-06T17:40:16+01:00"
         },
         "metrics": {
           "all": {
@@ -55106,12 +55396,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-google-ads/6.0.0.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-google-ads/6.1.0.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-google-ads/latest/metadata.yaml",
-          "metadata_last_modified": "2026-05-29T21:05:10.419447+00:00",
-          "registry_entry_generated_at": "2026-05-29T21:05:10.419447+00:00"
+          "metadata_last_modified": "2026-07-06T16:47:21.628732+00:00",
+          "registry_entry_generated_at": "2026-07-06T16:47:21.628732+00:00"
         }
       },
       "githubIssueLabel": "source-google-ads",
@@ -58775,7 +59065,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.5.22",
+      "dockerImageTag": "0.5.23",
       "dockerRepository": "airbyte/source-google-drive",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/google-drive",
       "externalDocumentationUrls": [
@@ -58804,8 +59094,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "92ca1e15d7b8d8d974eeb845928bfb256199547e",
-          "commit_timestamp": "2026-06-30T06:40:39+00:00"
+          "commit_sha": "de8486e672d1cba3c4237aca1a854db2b351cdf7",
+          "commit_timestamp": "2026-07-07T06:56:15+00:00"
         },
         "metrics": {
           "all": {
@@ -58821,12 +59111,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-google-drive/0.5.22.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-google-drive/0.5.23.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-google-drive/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T06:48:10.858958+00:00",
-          "registry_entry_generated_at": "2026-06-30T06:48:10.858958+00:00"
+          "metadata_last_modified": "2026-07-07T07:03:46.047251+00:00",
+          "registry_entry_generated_at": "2026-07-07T07:03:46.047251+00:00"
         }
       },
       "githubIssueLabel": "source-google-drive",
@@ -66622,16 +66912,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-ip2whois/0.2.57.spdx.json",
@@ -68342,15 +68632,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -70791,15 +71081,15 @@
         "metrics": {
           "all": {
             "sync_success_rate": "medium",
-            "usage": "medium"
+            "usage": "low"
           },
           "cloud": {
             "sync_success_rate": "medium",
-            "usage": "medium"
+            "usage": "low"
           },
           "oss": {
             "sync_success_rate": "medium",
-            "usage": "medium"
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-lever-hiring/0.4.35.spdx.json",
@@ -77857,16 +78147,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-miro/0.0.58.spdx.json",
@@ -78245,7 +78535,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "4.0.0",
+      "dockerImageTag": "4.0.1",
       "dockerRepository": "airbyte/source-mixpanel",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/mixpanel",
       "externalDocumentationUrls": [
@@ -78272,10 +78562,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "devin-ai-integration[bot]",
-          "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
-          "commit_sha": "39f14783381adc16ce1ba780c3152fad1da8f8d3",
-          "commit_timestamp": "2026-05-22T10:56:25-07:00"
+          "commit_author": "Aaron (\"AJ\") Steers",
+          "commit_author_email": "aj@airbyte.io",
+          "commit_sha": "8472a84813e452de7b650db62010c31d26871925",
+          "commit_timestamp": "2026-07-02T14:00:38-07:00"
         },
         "metrics": {
           "all": {
@@ -78291,12 +78581,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-mixpanel/4.0.0.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-mixpanel/4.0.1.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-mixpanel/latest/metadata.yaml",
-          "metadata_last_modified": "2026-05-22T18:02:26.489965+00:00",
-          "registry_entry_generated_at": "2026-05-22T18:02:26.489965+00:00"
+          "metadata_last_modified": "2026-07-02T21:07:04.587981+00:00",
+          "registry_entry_generated_at": "2026-07-02T21:07:04.587981+00:00"
         }
       },
       "githubIssueLabel": "source-mixpanel",
@@ -83330,16 +83620,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "high",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "cloud": {
-            "sync_success_rate": "high",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "oss": {
-            "sync_success_rate": "high",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-nocrm/0.0.55.spdx.json",
@@ -84173,16 +84463,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-nytimes/0.2.34.spdx.json",
@@ -84802,16 +85092,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "cloud": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "oss": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-onepagecrm/0.0.57.spdx.json",
@@ -88724,15 +89014,15 @@
         "metrics": {
           "all": {
             "sync_success_rate": "medium",
-            "usage": "low"
+            "usage": "medium"
           },
           "cloud": {
             "sync_success_rate": "medium",
-            "usage": "low"
+            "usage": "medium"
           },
           "oss": {
             "sync_success_rate": "medium",
-            "usage": "low"
+            "usage": "medium"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-pandadoc/0.0.57.spdx.json",
@@ -92997,7 +93287,7 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.2@sha256:19eb795baa82bad71c097a7388313c1fd9f36978f543a8c7a245bbedb0c9a153"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.4@sha256:f63c39a8a6f28ec20ada2ddf5861f3b1fb7b6a1ef1a8a8d1d537ff684ee3f9bd"
       },
       "connectorTestSuitesOptions": [
         {
@@ -93024,7 +93314,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.3.59",
+      "dockerImageTag": "0.3.60",
       "dockerRepository": "airbyte/source-pokeapi",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/pokeapi",
       "externalDocumentationUrls": [
@@ -93036,10 +93326,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "Aaron (\"AJ\") Steers",
-          "commit_author_email": "aj@airbyte.io",
-          "commit_sha": "a402252fbb699244cba6f8e3bccd394b4af9bc12",
-          "commit_timestamp": "2026-06-25T13:08:41-07:00"
+          "commit_author": "octavia-bot-hoard[bot]",
+          "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
+          "commit_sha": "9092f263852903b33bbd471ee42474b901891226",
+          "commit_timestamp": "2026-06-30T08:04:30+00:00"
         },
         "metrics": {
           "all": {
@@ -93055,12 +93345,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-pokeapi/0.3.59.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-pokeapi/0.3.60.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-pokeapi/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-25T20:12:52.152583+00:00",
-          "registry_entry_generated_at": "2026-06-25T20:12:52.152583+00:00"
+          "metadata_last_modified": "2026-06-30T08:08:31.516174+00:00",
+          "registry_entry_generated_at": "2026-06-30T08:08:31.516174+00:00"
         }
       },
       "githubIssueLabel": "source-pokeapi",
@@ -93074,1040 +93364,6 @@
       "releaseDate": "2020-05-14",
       "releaseStage": "alpha",
       "releases": {
-        "releaseCandidates": {
-          "0.3.60": {
-            "ab_internal": {
-              "isEnterprise": false,
-              "ql": 100,
-              "requireVersionIncrementsInPullRequests": true,
-              "sl": 100
-            },
-            "allowedHosts": {
-              "hosts": [
-                "*"
-              ]
-            },
-            "connectorBuildOptions": {
-              "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.4@sha256:f63c39a8a6f28ec20ada2ddf5861f3b1fb7b6a1ef1a8a8d1d537ff684ee3f9bd"
-            },
-            "connectorTestSuitesOptions": [
-              {
-                "suite": "liveTests",
-                "testConnections": [
-                  {
-                    "id": "5a290dcf-b2cf-4768-ac2d-a1aaca90c186",
-                    "name": "pokeapi_config_dev_null"
-                  }
-                ]
-              },
-              {
-                "suite": "acceptanceTests",
-                "testSecrets": [
-                  {
-                    "fileName": "config.json",
-                    "name": "SECRET_SOURCE-POKEAPI__CREDS",
-                    "secretStore": {
-                      "alias": "airbyte-connector-testing-secret-store",
-                      "type": "GSM"
-                    }
-                  }
-                ]
-              }
-            ],
-            "custom": false,
-            "dockerImageTag": "0.3.60",
-            "dockerRepository": "airbyte/source-pokeapi",
-            "documentationUrl": "https://docs.airbyte.com/integrations/sources/pokeapi",
-            "externalDocumentationUrls": [
-              {
-                "title": "Pok\u00e9API documentation",
-                "type": "api_reference",
-                "url": "https://pokeapi.co/docs/v2"
-              }
-            ],
-            "generated": {
-              "git": {
-                "commit_author": "octavia-bot-hoard[bot]",
-                "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-                "commit_sha": "9092f263852903b33bbd471ee42474b901891226",
-                "commit_timestamp": "2026-06-30T08:04:30+00:00"
-              },
-              "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-pokeapi/0.3.60.spdx.json",
-              "source_file_info": {
-                "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
-                "metadata_file_path": "metadata/airbyte/source-pokeapi/0.3.60/metadata.yaml",
-                "metadata_last_modified": "2026-06-30T08:08:31.516174+00:00",
-                "registry_entry_generated_at": "2026-06-30T08:08:31.516174+00:00"
-              }
-            },
-            "githubIssueLabel": "source-pokeapi",
-            "icon": "pokeapi.svg",
-            "iconUrl": "https://connectors.airbyte.com/files/metadata/airbyte/source-pokeapi/latest/icon.svg",
-            "language": "manifest-only",
-            "license": "ELv2",
-            "name": "PokeAPI",
-            "packageInfo": {},
-            "public": true,
-            "releaseDate": "2020-05-14",
-            "releaseStage": "alpha",
-            "releases": {
-              "rolloutConfiguration": {
-                "advanceDelayMinutes": 10,
-                "autopilotConfig": {
-                  "autoPromoteStages": true,
-                  "autoStart": true,
-                  "strategy": "fast"
-                },
-                "defaultRolloutMode": "autopilot",
-                "enableProgressiveRollout": true,
-                "initialPercentage": 0,
-                "maxPercentage": 50
-              }
-            },
-            "remoteRegistries": {
-              "pypi": {
-                "enabled": false,
-                "packageName": "airbyte-source-pokeapi"
-              }
-            },
-            "sourceDefinitionId": "6371b14b-bc68-4236-bfbd-468e8df8e968",
-            "sourceType": "api",
-            "spec": {
-              "connectionSpecification": {
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "additionalProperties": true,
-                "properties": {
-                  "pokemon_name": {
-                    "description": "Pokemon requested from the API.",
-                    "enum": [
-                      "bulbasaur",
-                      "ivysaur",
-                      "venusaur",
-                      "charmander",
-                      "charmeleon",
-                      "charizard",
-                      "squirtle",
-                      "wartortle",
-                      "blastoise",
-                      "caterpie",
-                      "metapod",
-                      "butterfree",
-                      "weedle",
-                      "kakuna",
-                      "beedrill",
-                      "pidgey",
-                      "pidgeotto",
-                      "pidgeot",
-                      "rattata",
-                      "raticate",
-                      "spearow",
-                      "fearow",
-                      "ekans",
-                      "arbok",
-                      "pikachu",
-                      "raichu",
-                      "sandshrew",
-                      "sandslash",
-                      "nidoran-f",
-                      "nidorina",
-                      "nidoqueen",
-                      "nidoran-m",
-                      "nidorino",
-                      "nidoking",
-                      "clefairy",
-                      "clefable",
-                      "vulpix",
-                      "ninetales",
-                      "jigglypuff",
-                      "wigglytuff",
-                      "zubat",
-                      "golbat",
-                      "oddish",
-                      "gloom",
-                      "vileplume",
-                      "paras",
-                      "parasect",
-                      "venonat",
-                      "venomoth",
-                      "diglett",
-                      "dugtrio",
-                      "meowth",
-                      "persian",
-                      "psyduck",
-                      "golduck",
-                      "mankey",
-                      "primeape",
-                      "growlithe",
-                      "arcanine",
-                      "poliwag",
-                      "poliwhirl",
-                      "poliwrath",
-                      "abra",
-                      "kadabra",
-                      "alakazam",
-                      "machop",
-                      "machoke",
-                      "machamp",
-                      "bellsprout",
-                      "weepinbell",
-                      "victreebel",
-                      "tentacool",
-                      "tentacruel",
-                      "geodude",
-                      "graveler",
-                      "golem",
-                      "ponyta",
-                      "rapidash",
-                      "slowpoke",
-                      "slowbro",
-                      "magnemite",
-                      "magneton",
-                      "farfetchd",
-                      "doduo",
-                      "dodrio",
-                      "seel",
-                      "dewgong",
-                      "grimer",
-                      "muk",
-                      "shellder",
-                      "cloyster",
-                      "gastly",
-                      "haunter",
-                      "gengar",
-                      "onix",
-                      "drowzee",
-                      "hypno",
-                      "krabby",
-                      "kingler",
-                      "voltorb",
-                      "electrode",
-                      "exeggcute",
-                      "exeggutor",
-                      "cubone",
-                      "marowak",
-                      "hitmonlee",
-                      "hitmonchan",
-                      "lickitung",
-                      "koffing",
-                      "weezing",
-                      "rhyhorn",
-                      "rhydon",
-                      "chansey",
-                      "tangela",
-                      "kangaskhan",
-                      "horsea",
-                      "seadra",
-                      "goldeen",
-                      "seaking",
-                      "staryu",
-                      "starmie",
-                      "mrmime",
-                      "scyther",
-                      "jynx",
-                      "electabuzz",
-                      "magmar",
-                      "pinsir",
-                      "tauros",
-                      "magikarp",
-                      "gyarados",
-                      "lapras",
-                      "ditto",
-                      "eevee",
-                      "vaporeon",
-                      "jolteon",
-                      "flareon",
-                      "porygon",
-                      "omanyte",
-                      "omastar",
-                      "kabuto",
-                      "kabutops",
-                      "aerodactyl",
-                      "snorlax",
-                      "articuno",
-                      "zapdos",
-                      "moltres",
-                      "dratini",
-                      "dragonair",
-                      "dragonite",
-                      "mewtwo",
-                      "mew",
-                      "chikorita",
-                      "bayleef",
-                      "meganium",
-                      "cyndaquil",
-                      "quilava",
-                      "typhlosion",
-                      "totodile",
-                      "croconaw",
-                      "feraligatr",
-                      "sentret",
-                      "furret",
-                      "hoothoot",
-                      "noctowl",
-                      "ledyba",
-                      "ledian",
-                      "spinarak",
-                      "ariados",
-                      "crobat",
-                      "chinchou",
-                      "lanturn",
-                      "pichu",
-                      "cleffa",
-                      "igglybuff",
-                      "togepi",
-                      "togetic",
-                      "natu",
-                      "xatu",
-                      "mareep",
-                      "flaaffy",
-                      "ampharos",
-                      "bellossom",
-                      "marill",
-                      "azumarill",
-                      "sudowoodo",
-                      "politoed",
-                      "hoppip",
-                      "skiploom",
-                      "jumpluff",
-                      "aipom",
-                      "sunkern",
-                      "sunflora",
-                      "yanma",
-                      "wooper",
-                      "quagsire",
-                      "espeon",
-                      "umbreon",
-                      "murkrow",
-                      "slowking",
-                      "misdreavus",
-                      "unown",
-                      "wobbuffet",
-                      "girafarig",
-                      "pineco",
-                      "forretress",
-                      "dunsparce",
-                      "gligar",
-                      "steelix",
-                      "snubbull",
-                      "granbull",
-                      "qwilfish",
-                      "scizor",
-                      "shuckle",
-                      "heracross",
-                      "sneasel",
-                      "teddiursa",
-                      "ursaring",
-                      "slugma",
-                      "magcargo",
-                      "swinub",
-                      "piloswine",
-                      "corsola",
-                      "remoraid",
-                      "octillery",
-                      "delibird",
-                      "mantine",
-                      "skarmory",
-                      "houndour",
-                      "houndoom",
-                      "kingdra",
-                      "phanpy",
-                      "donphan",
-                      "porygon2",
-                      "stantler",
-                      "smeargle",
-                      "tyrogue",
-                      "hitmontop",
-                      "smoochum",
-                      "elekid",
-                      "magby",
-                      "miltank",
-                      "blissey",
-                      "raikou",
-                      "entei",
-                      "suicune",
-                      "larvitar",
-                      "pupitar",
-                      "tyranitar",
-                      "lugia",
-                      "ho-oh",
-                      "celebi",
-                      "treecko",
-                      "grovyle",
-                      "sceptile",
-                      "torchic",
-                      "combusken",
-                      "blaziken",
-                      "mudkip",
-                      "marshtomp",
-                      "swampert",
-                      "poochyena",
-                      "mightyena",
-                      "zigzagoon",
-                      "linoone",
-                      "wurmple",
-                      "silcoon",
-                      "beautifly",
-                      "cascoon",
-                      "dustox",
-                      "lotad",
-                      "lombre",
-                      "ludicolo",
-                      "seedot",
-                      "nuzleaf",
-                      "shiftry",
-                      "taillow",
-                      "swellow",
-                      "wingull",
-                      "pelipper",
-                      "ralts",
-                      "kirlia",
-                      "gardevoir",
-                      "surskit",
-                      "masquerain",
-                      "shroomish",
-                      "breloom",
-                      "slakoth",
-                      "vigoroth",
-                      "slaking",
-                      "nincada",
-                      "ninjask",
-                      "shedinja",
-                      "whismur",
-                      "loudred",
-                      "exploud",
-                      "makuhita",
-                      "hariyama",
-                      "azurill",
-                      "nosepass",
-                      "skitty",
-                      "delcatty",
-                      "sableye",
-                      "mawile",
-                      "aron",
-                      "lairon",
-                      "aggron",
-                      "meditite",
-                      "medicham",
-                      "electrike",
-                      "manectric",
-                      "plusle",
-                      "minun",
-                      "volbeat",
-                      "illumise",
-                      "roselia",
-                      "gulpin",
-                      "swalot",
-                      "carvanha",
-                      "sharpedo",
-                      "wailmer",
-                      "wailord",
-                      "numel",
-                      "camerupt",
-                      "torkoal",
-                      "spoink",
-                      "grumpig",
-                      "spinda",
-                      "trapinch",
-                      "vibrava",
-                      "flygon",
-                      "cacnea",
-                      "cacturne",
-                      "swablu",
-                      "altaria",
-                      "zangoose",
-                      "seviper",
-                      "lunatone",
-                      "solrock",
-                      "barboach",
-                      "whiscash",
-                      "corphish",
-                      "crawdaunt",
-                      "baltoy",
-                      "claydol",
-                      "lileep",
-                      "cradily",
-                      "anorith",
-                      "armaldo",
-                      "feebas",
-                      "milotic",
-                      "castform",
-                      "kecleon",
-                      "shuppet",
-                      "banette",
-                      "duskull",
-                      "dusclops",
-                      "tropius",
-                      "chimecho",
-                      "absol",
-                      "wynaut",
-                      "snorunt",
-                      "glalie",
-                      "spheal",
-                      "sealeo",
-                      "walrein",
-                      "clamperl",
-                      "huntail",
-                      "gorebyss",
-                      "relicanth",
-                      "luvdisc",
-                      "bagon",
-                      "shelgon",
-                      "salamence",
-                      "beldum",
-                      "metang",
-                      "metagross",
-                      "regirock",
-                      "regice",
-                      "registeel",
-                      "latias",
-                      "latios",
-                      "kyogre",
-                      "groudon",
-                      "rayquaza",
-                      "jirachi",
-                      "deoxys",
-                      "turtwig",
-                      "grotle",
-                      "torterra",
-                      "chimchar",
-                      "monferno",
-                      "infernape",
-                      "piplup",
-                      "prinplup",
-                      "empoleon",
-                      "starly",
-                      "staravia",
-                      "staraptor",
-                      "bidoof",
-                      "bibarel",
-                      "kricketot",
-                      "kricketune",
-                      "shinx",
-                      "luxio",
-                      "luxray",
-                      "budew",
-                      "roserade",
-                      "cranidos",
-                      "rampardos",
-                      "shieldon",
-                      "bastiodon",
-                      "burmy",
-                      "wormadam",
-                      "mothim",
-                      "combee",
-                      "vespiquen",
-                      "pachirisu",
-                      "buizel",
-                      "floatzel",
-                      "cherubi",
-                      "cherrim",
-                      "shellos",
-                      "gastrodon",
-                      "ambipom",
-                      "drifloon",
-                      "drifblim",
-                      "buneary",
-                      "lopunny",
-                      "mismagius",
-                      "honchkrow",
-                      "glameow",
-                      "purugly",
-                      "chingling",
-                      "stunky",
-                      "skuntank",
-                      "bronzor",
-                      "bronzong",
-                      "bonsly",
-                      "mimejr",
-                      "happiny",
-                      "chatot",
-                      "spiritomb",
-                      "gible",
-                      "gabite",
-                      "garchomp",
-                      "munchlax",
-                      "riolu",
-                      "lucario",
-                      "hippopotas",
-                      "hippowdon",
-                      "skorupi",
-                      "drapion",
-                      "croagunk",
-                      "toxicroak",
-                      "carnivine",
-                      "finneon",
-                      "lumineon",
-                      "mantyke",
-                      "snover",
-                      "abomasnow",
-                      "weavile",
-                      "magnezone",
-                      "lickilicky",
-                      "rhyperior",
-                      "tangrowth",
-                      "electivire",
-                      "magmortar",
-                      "togekiss",
-                      "yanmega",
-                      "leafeon",
-                      "glaceon",
-                      "gliscor",
-                      "mamoswine",
-                      "porygon-z",
-                      "gallade",
-                      "probopass",
-                      "dusknoir",
-                      "froslass",
-                      "rotom",
-                      "uxie",
-                      "mesprit",
-                      "azelf",
-                      "dialga",
-                      "palkia",
-                      "heatran",
-                      "regigigas",
-                      "giratina",
-                      "cresselia",
-                      "phione",
-                      "manaphy",
-                      "darkrai",
-                      "shaymin",
-                      "arceus",
-                      "victini",
-                      "snivy",
-                      "servine",
-                      "serperior",
-                      "tepig",
-                      "pignite",
-                      "emboar",
-                      "oshawott",
-                      "dewott",
-                      "samurott",
-                      "patrat",
-                      "watchog",
-                      "lillipup",
-                      "herdier",
-                      "stoutland",
-                      "purrloin",
-                      "liepard",
-                      "pansage",
-                      "simisage",
-                      "pansear",
-                      "simisear",
-                      "panpour",
-                      "simipour",
-                      "munna",
-                      "musharna",
-                      "pidove",
-                      "tranquill",
-                      "unfezant",
-                      "blitzle",
-                      "zebstrika",
-                      "roggenrola",
-                      "boldore",
-                      "gigalith",
-                      "woobat",
-                      "swoobat",
-                      "drilbur",
-                      "excadrill",
-                      "audino",
-                      "timburr",
-                      "gurdurr",
-                      "conkeldurr",
-                      "tympole",
-                      "palpitoad",
-                      "seismitoad",
-                      "throh",
-                      "sawk",
-                      "sewaddle",
-                      "swadloon",
-                      "leavanny",
-                      "venipede",
-                      "whirlipede",
-                      "scolipede",
-                      "cottonee",
-                      "whimsicott",
-                      "petilil",
-                      "lilligant",
-                      "basculin",
-                      "sandile",
-                      "krokorok",
-                      "krookodile",
-                      "darumaka",
-                      "darmanitan",
-                      "maractus",
-                      "dwebble",
-                      "crustle",
-                      "scraggy",
-                      "scrafty",
-                      "sigilyph",
-                      "yamask",
-                      "cofagrigus",
-                      "tirtouga",
-                      "carracosta",
-                      "archen",
-                      "archeops",
-                      "trubbish",
-                      "garbodor",
-                      "zorua",
-                      "zoroark",
-                      "minccino",
-                      "cinccino",
-                      "gothita",
-                      "gothorita",
-                      "gothitelle",
-                      "solosis",
-                      "duosion",
-                      "reuniclus",
-                      "ducklett",
-                      "swanna",
-                      "vanillite",
-                      "vanillish",
-                      "vanilluxe",
-                      "deerling",
-                      "sawsbuck",
-                      "emolga",
-                      "karrablast",
-                      "escavalier",
-                      "foongus",
-                      "amoonguss",
-                      "frillish",
-                      "jellicent",
-                      "alomomola",
-                      "joltik",
-                      "galvantula",
-                      "ferroseed",
-                      "ferrothorn",
-                      "klink",
-                      "klang",
-                      "klinklang",
-                      "tynamo",
-                      "eelektrik",
-                      "eelektross",
-                      "elgyem",
-                      "beheeyem",
-                      "litwick",
-                      "lampent",
-                      "chandelure",
-                      "axew",
-                      "fraxure",
-                      "haxorus",
-                      "cubchoo",
-                      "beartic",
-                      "cryogonal",
-                      "shelmet",
-                      "accelgor",
-                      "stunfisk",
-                      "mienfoo",
-                      "mienshao",
-                      "druddigon",
-                      "golett",
-                      "golurk",
-                      "pawniard",
-                      "bisharp",
-                      "bouffalant",
-                      "rufflet",
-                      "braviary",
-                      "vullaby",
-                      "mandibuzz",
-                      "heatmor",
-                      "durant",
-                      "deino",
-                      "zweilous",
-                      "hydreigon",
-                      "larvesta",
-                      "volcarona",
-                      "cobalion",
-                      "terrakion",
-                      "virizion",
-                      "tornadus",
-                      "thundurus",
-                      "reshiram",
-                      "zekrom",
-                      "landorus",
-                      "kyurem",
-                      "keldeo",
-                      "meloetta",
-                      "genesect",
-                      "chespin",
-                      "quilladin",
-                      "chesnaught",
-                      "fennekin",
-                      "braixen",
-                      "delphox",
-                      "froakie",
-                      "frogadier",
-                      "greninja",
-                      "bunnelby",
-                      "diggersby",
-                      "fletchling",
-                      "fletchinder",
-                      "talonflame",
-                      "scatterbug",
-                      "spewpa",
-                      "vivillon",
-                      "litleo",
-                      "pyroar",
-                      "flabebe",
-                      "floette",
-                      "florges",
-                      "skiddo",
-                      "gogoat",
-                      "pancham",
-                      "pangoro",
-                      "furfrou",
-                      "espurr",
-                      "meowstic",
-                      "honedge",
-                      "doublade",
-                      "aegislash",
-                      "spritzee",
-                      "aromatisse",
-                      "swirlix",
-                      "slurpuff",
-                      "inkay",
-                      "malamar",
-                      "binacle",
-                      "barbaracle",
-                      "skrelp",
-                      "dragalge",
-                      "clauncher",
-                      "clawitzer",
-                      "helioptile",
-                      "heliolisk",
-                      "tyrunt",
-                      "tyrantrum",
-                      "amaura",
-                      "aurorus",
-                      "sylveon",
-                      "hawlucha",
-                      "dedenne",
-                      "carbink",
-                      "goomy",
-                      "sliggoo",
-                      "goodra",
-                      "klefki",
-                      "phantump",
-                      "trevenant",
-                      "pumpkaboo",
-                      "gourgeist",
-                      "bergmite",
-                      "avalugg",
-                      "noibat",
-                      "noivern",
-                      "xerneas",
-                      "yveltal",
-                      "zygarde",
-                      "diancie",
-                      "hoopa",
-                      "volcanion",
-                      "rowlet",
-                      "dartrix",
-                      "decidueye",
-                      "litten",
-                      "torracat",
-                      "incineroar",
-                      "popplio",
-                      "brionne",
-                      "primarina",
-                      "pikipek",
-                      "trumbeak",
-                      "toucannon",
-                      "yungoos",
-                      "gumshoos",
-                      "grubbin",
-                      "charjabug",
-                      "vikavolt",
-                      "crabrawler",
-                      "crabominable",
-                      "oricorio",
-                      "cutiefly",
-                      "ribombee",
-                      "rockruff",
-                      "lycanroc",
-                      "wishiwashi",
-                      "mareanie",
-                      "toxapex",
-                      "mudbray",
-                      "mudsdale",
-                      "dewpider",
-                      "araquanid",
-                      "fomantis",
-                      "lurantis",
-                      "morelull",
-                      "shiinotic",
-                      "salandit",
-                      "salazzle",
-                      "stufful",
-                      "bewear",
-                      "bounsweet",
-                      "steenee",
-                      "tsareena",
-                      "comfey",
-                      "oranguru",
-                      "passimian",
-                      "wimpod",
-                      "golisopod",
-                      "sandygast",
-                      "palossand",
-                      "pyukumuku",
-                      "typenull",
-                      "silvally",
-                      "minior",
-                      "komala",
-                      "turtonator",
-                      "togedemaru",
-                      "mimikyu",
-                      "bruxish",
-                      "drampa",
-                      "dhelmise",
-                      "jangmo-o",
-                      "hakamo-o",
-                      "kommo-o",
-                      "tapukoko",
-                      "tapulele",
-                      "tapubulu",
-                      "tapufini",
-                      "cosmog",
-                      "cosmoem",
-                      "solgaleo",
-                      "lunala",
-                      "nihilego",
-                      "buzzwole",
-                      "pheromosa",
-                      "xurkitree",
-                      "celesteela",
-                      "kartana",
-                      "guzzlord",
-                      "necrozma",
-                      "magearna",
-                      "marshadow",
-                      "poipole",
-                      "naganadel",
-                      "stakataka",
-                      "blacephalon",
-                      "zeraora",
-                      "meltan",
-                      "melmetal",
-                      "grookey",
-                      "thwackey",
-                      "rillaboom",
-                      "scorbunny",
-                      "raboot",
-                      "cinderace",
-                      "sobble",
-                      "drizzile",
-                      "inteleon",
-                      "skwovet",
-                      "greedent",
-                      "rookidee",
-                      "corvisquire",
-                      "corviknight",
-                      "blipbug",
-                      "dottler",
-                      "orbeetle",
-                      "nickit",
-                      "thievul",
-                      "gossifleur",
-                      "eldegoss",
-                      "wooloo",
-                      "dubwool",
-                      "chewtle",
-                      "drednaw",
-                      "yamper",
-                      "boltund",
-                      "rolycoly",
-                      "carkol",
-                      "coalossal",
-                      "applin",
-                      "flapple",
-                      "appletun",
-                      "silicobra",
-                      "sandaconda",
-                      "cramorant",
-                      "arrokuda",
-                      "barraskewda",
-                      "toxel",
-                      "toxtricity",
-                      "sizzlipede",
-                      "centiskorch",
-                      "clobbopus",
-                      "grapploct",
-                      "sinistea",
-                      "polteageist",
-                      "hatenna",
-                      "hattrem",
-                      "hatterene",
-                      "impidimp",
-                      "morgrem",
-                      "grimmsnarl",
-                      "obstagoon",
-                      "perrserker",
-                      "cursola",
-                      "sirfetchd",
-                      "mrrime",
-                      "runerigus",
-                      "milcery",
-                      "alcremie",
-                      "falinks",
-                      "pincurchin",
-                      "snom",
-                      "frosmoth",
-                      "stonjourner",
-                      "eiscue",
-                      "indeedee",
-                      "morpeko",
-                      "cufant",
-                      "copperajah",
-                      "dracozolt",
-                      "arctozolt",
-                      "dracovish",
-                      "arctovish",
-                      "duraludon",
-                      "dreepy",
-                      "drakloak",
-                      "dragapult",
-                      "zacian",
-                      "zamazenta",
-                      "eternatus",
-                      "kubfu",
-                      "urshifu",
-                      "zarude",
-                      "regieleki",
-                      "regidrago",
-                      "glastrier",
-                      "spectrier",
-                      "calyrex"
-                    ],
-                    "examples": [
-                      "ditto",
-                      "luxray",
-                      "snorlax"
-                    ],
-                    "order": 0,
-                    "pattern": "^[a-z0-9_\\-]+$",
-                    "title": "Pokemon Name",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "pokemon_name"
-                ],
-                "type": "object"
-              },
-              "supportsDBT": false,
-              "supportsNormalization": false
-            },
-            "supportLevel": "community",
-            "supportsDataActivation": false,
-            "supportsFileTransfer": false,
-            "tags": [
-              "cdk:low-code",
-              "language:manifest-only"
-            ],
-            "tombstone": false
-          }
-        },
         "rolloutConfiguration": {
           "advanceDelayMinutes": 10,
           "autopilotConfig": {
@@ -97218,7 +96474,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.2.35",
+      "dockerImageTag": "0.2.36",
       "dockerRepository": "airbyte/source-public-apis",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/public-apis",
       "externalDocumentationUrls": [
@@ -97232,8 +96488,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "f353053ebb8f0d64e5bfca5c870659a487da9e0b",
-          "commit_timestamp": "2026-06-23T08:11:31+00:00"
+          "commit_sha": "7bbe547223db0630bd7c81e164cfd9b18f0450ab",
+          "commit_timestamp": "2026-07-07T08:02:09+00:00"
         },
         "metrics": {
           "all": {
@@ -97245,12 +96501,12 @@
             "usage": null
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-public-apis/0.2.35.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-public-apis/0.2.36.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-public-apis/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-23T08:17:18.921026+00:00",
-          "registry_entry_generated_at": "2026-06-23T08:17:18.921026+00:00"
+          "metadata_last_modified": "2026-07-07T08:08:20.157658+00:00",
+          "registry_entry_generated_at": "2026-07-07T08:08:20.157658+00:00"
         }
       },
       "githubIssueLabel": "source-public-apis",
@@ -98204,15 +97460,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "medium"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "medium"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "medium"
           }
         },
@@ -99861,10 +99117,10 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.2@sha256:19eb795baa82bad71c097a7388313c1fd9f36978f543a8c7a245bbedb0c9a153"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.4@sha256:f63c39a8a6f28ec20ada2ddf5861f3b1fb7b6a1ef1a8a8d1d537ff684ee3f9bd"
       },
       "custom": false,
-      "dockerImageTag": "0.0.45",
+      "dockerImageTag": "0.0.46",
       "dockerRepository": "airbyte/source-retailexpress-by-maropost",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/retailexpress-by-maropost",
       "externalDocumentationUrls": [
@@ -99878,8 +99134,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "ea04f5930f57cfea9f74607f5f0b6ff0a0b37996",
-          "commit_timestamp": "2026-06-23T08:48:04+00:00"
+          "commit_sha": "4b7aca47495ba4f48839442a20a43e94fbbaba94",
+          "commit_timestamp": "2026-07-07T08:10:57+00:00"
         },
         "metrics": {
           "all": {
@@ -99895,12 +99151,12 @@
             "usage": null
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-retailexpress-by-maropost/0.0.45.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-retailexpress-by-maropost/0.0.46.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-retailexpress-by-maropost/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-23T08:52:22.835940+00:00",
-          "registry_entry_generated_at": "2026-06-23T08:52:22.835940+00:00"
+          "metadata_last_modified": "2026-07-07T08:14:54.743905+00:00",
+          "registry_entry_generated_at": "2026-07-07T08:14:54.743905+00:00"
         }
       },
       "githubIssueLabel": "source-retailexpress-by-maropost",
@@ -100276,10 +99532,10 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.2@sha256:19eb795baa82bad71c097a7388313c1fd9f36978f543a8c7a245bbedb0c9a153"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.4@sha256:f63c39a8a6f28ec20ada2ddf5861f3b1fb7b6a1ef1a8a8d1d537ff684ee3f9bd"
       },
       "custom": false,
-      "dockerImageTag": "0.0.53",
+      "dockerImageTag": "0.0.54",
       "dockerRepository": "airbyte/source-revolut-merchant",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/revolut-merchant",
       "externalDocumentationUrls": [
@@ -100298,8 +99554,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "2e4157b7b5587865049ebc429a780c4104b07c40",
-          "commit_timestamp": "2026-06-23T08:15:44+00:00"
+          "commit_sha": "dc3f406c12480c6794e4fa144b0425522d13c8c3",
+          "commit_timestamp": "2026-07-07T08:11:09+00:00"
         },
         "metrics": {
           "all": {
@@ -100315,12 +99571,12 @@
             "usage": null
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-revolut-merchant/0.0.53.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-revolut-merchant/0.0.54.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-revolut-merchant/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-23T08:20:30.633601+00:00",
-          "registry_entry_generated_at": "2026-06-23T08:20:30.633601+00:00"
+          "metadata_last_modified": "2026-07-07T08:15:05.166063+00:00",
+          "registry_entry_generated_at": "2026-07-07T08:15:05.166063+00:00"
         }
       },
       "githubIssueLabel": "source-revolut-merchant",
@@ -100897,15 +100153,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -101860,7 +101116,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "4.15.11",
+      "dockerImageTag": "4.15.12",
       "dockerRepository": "airbyte/source-s3",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/s3",
       "externalDocumentationUrls": [
@@ -101874,8 +101130,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "9f75b888800ee206afda7d9dec565a4e9098af9b",
-          "commit_timestamp": "2026-06-30T08:43:53+00:00"
+          "commit_sha": "4ce096bad641c87e876ce426438ca757070b5e93",
+          "commit_timestamp": "2026-07-07T08:33:44+00:00"
         },
         "metrics": {
           "all": {
@@ -101891,12 +101147,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-s3/4.15.11.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-s3/4.15.12.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-s3/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T08:51:45.475726+00:00",
-          "registry_entry_generated_at": "2026-06-30T08:51:45.475726+00:00"
+          "metadata_last_modified": "2026-07-07T08:41:43.801005+00:00",
+          "registry_entry_generated_at": "2026-07-07T08:41:43.801005+00:00"
         }
       },
       "githubIssueLabel": "source-s3",
@@ -103201,7 +102457,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "2.7.23",
+      "dockerImageTag": "2.7.24",
       "dockerRepository": "airbyte/source-salesforce",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/salesforce",
       "externalDocumentationUrls": [
@@ -103218,10 +102474,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "Serhii Lazebnyi",
-          "commit_author_email": "GL_serhii.lazebnyi@airbyte.io",
-          "commit_sha": "d69e0ff7b441475d7ca97202f39b8fd2bd3caae9",
-          "commit_timestamp": "2026-05-22T00:41:30+01:00"
+          "commit_author": "devin-ai-integration[bot]",
+          "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
+          "commit_sha": "8d9377f5bc2b1c53f8f01b906a600056777ecc83",
+          "commit_timestamp": "2026-07-09T11:16:39+03:00"
         },
         "metrics": {
           "all": {
@@ -103237,12 +102493,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-salesforce/2.7.23.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-salesforce/2.7.24.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-salesforce/latest/metadata.yaml",
-          "metadata_last_modified": "2026-05-21T23:47:34.965829+00:00",
-          "registry_entry_generated_at": "2026-05-21T23:47:34.965829+00:00"
+          "metadata_last_modified": "2026-07-09T08:24:15.923773+00:00",
+          "registry_entry_generated_at": "2026-07-09T08:24:15.923773+00:00"
         }
       },
       "githubIssueLabel": "source-salesforce",
@@ -103253,7 +102509,7 @@
       "maxSecondsBetweenMessages": 86400,
       "name": "Salesforce",
       "packageInfo": {
-        "cdk_version": "python:7.17.4"
+        "cdk_version": "python:7.23.5"
       },
       "public": true,
       "releaseStage": "generally_available",
@@ -103414,6 +102670,13 @@
               "order": 8,
               "title": "Lookback Window for Incremental sync",
               "type": "string"
+            },
+            "preserve_na_values": {
+              "default": false,
+              "description": "By default, string values such as \"NA\", \"N/A\", \"NULL\", \"None\" and \"NaN\" returned by the Salesforce Bulk API are treated as missing and synced as null. Enable this option to keep these values as literal strings (for example, \"NA\" meaning \"North America\"). Empty fields are still synced as null. Leaving this disabled preserves the connector's historical behavior.",
+              "order": 10,
+              "title": "Preserve \"NA\" and similar string values",
+              "type": "boolean"
             },
             "refresh_token": {
               "airbyte_secret": true,
@@ -104372,10 +103635,10 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.2@sha256:19eb795baa82bad71c097a7388313c1fd9f36978f543a8c7a245bbedb0c9a153"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.4@sha256:f63c39a8a6f28ec20ada2ddf5861f3b1fb7b6a1ef1a8a8d1d537ff684ee3f9bd"
       },
       "custom": false,
-      "dockerImageTag": "0.0.57",
+      "dockerImageTag": "0.0.58",
       "dockerRepository": "airbyte/source-savvycal",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/savvycal",
       "externalDocumentationUrls": [
@@ -104389,8 +103652,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "e63942dc73f97b0ed205b69d58b170f110d2953f",
-          "commit_timestamp": "2026-06-23T08:30:26+00:00"
+          "commit_sha": "af1aac51c66240f92cfe3c40ebfb78f7395f44aa",
+          "commit_timestamp": "2026-07-07T08:14:45+00:00"
         },
         "metrics": {
           "all": {
@@ -104406,12 +103669,12 @@
             "usage": null
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-savvycal/0.0.57.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-savvycal/0.0.58.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-savvycal/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-23T08:34:45.539961+00:00",
-          "registry_entry_generated_at": "2026-06-23T08:34:45.539961+00:00"
+          "metadata_last_modified": "2026-07-07T08:18:39.332354+00:00",
+          "registry_entry_generated_at": "2026-07-07T08:18:39.332354+00:00"
         }
       },
       "githubIssueLabel": "source-savvycal",
@@ -111671,7 +110934,7 @@
         "hosts": []
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/python-connector-base:4.0.2@sha256:9fdb1888c4264cf6fee473649ecb593f56f58e5d0096a87ee0b231777e2e3e73"
+        "baseImage": "docker.io/airbyte/python-connector-base:4.0.0@sha256:d9894b6895923b379f3006fa251147806919c62b7d9021b5cd125bb67d7bbe22"
       },
       "connectorTestSuitesOptions": [
         {
@@ -111679,15 +110942,15 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.1.0",
+      "dockerImageTag": "0.1.2",
       "dockerRepository": "airbyte/source-smoke-test",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/smoke-test",
       "generated": {
         "git": {
           "commit_author": "Aaron (\"AJ\") Steers",
           "commit_author_email": "aj@airbyte.io",
-          "commit_sha": "7de41d9a73837fd7d775d61f79c8eb36fa70fae7",
-          "commit_timestamp": "2026-03-19T12:33:19-07:00"
+          "commit_sha": "cd4475d47601993677aab85f97e1b97ef3e59d69",
+          "commit_timestamp": "2026-07-02T12:41:52-07:00"
         },
         "metrics": {
           "all": {
@@ -111703,12 +110966,12 @@
             "usage": "low"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-smoke-test/0.1.0.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-smoke-test/0.1.2.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-smoke-test/latest/metadata.yaml",
-          "metadata_last_modified": "2026-03-19T19:42:50.938000+00:00",
-          "registry_entry_generated_at": "2026-03-19T19:44:03.715752"
+          "metadata_last_modified": "2026-07-02T19:49:56.196928+00:00",
+          "registry_entry_generated_at": "2026-07-02T19:49:56.196928+00:00"
         }
       },
       "githubIssueLabel": "source-smoke-test",
@@ -111718,7 +110981,7 @@
       "license": "ELv2",
       "name": "Smoke Test",
       "packageInfo": {
-        "cdk_version": "python:7.13.0"
+        "cdk_version": "python:7.21.0"
       },
       "public": true,
       "releaseStage": "alpha",
@@ -116443,12 +115706,12 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "oss": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-teradata/0.2.6.spdx.json",
@@ -116860,15 +116123,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "medium",
+            "sync_success_rate": "low",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "medium",
+            "sync_success_rate": "low",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "medium",
+            "sync_success_rate": "low",
             "usage": "low"
           }
         },
@@ -120401,7 +119664,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "1.0.6",
+      "dockerImageTag": "1.0.7",
       "dockerRepository": "airbyte/source-twilio",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/twilio",
       "externalDocumentationUrls": [
@@ -120438,10 +119701,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "octavia-bot-hoard[bot]",
-          "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "1dd327a0a688d5a5c35d8dfdd4267f39a609c177",
-          "commit_timestamp": "2026-06-30T09:20:09+00:00"
+          "commit_author": "devin-ai-integration[bot]",
+          "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
+          "commit_sha": "7f5c501125c9df2c3f7851c9e83cb0ec118489ca",
+          "commit_timestamp": "2026-07-09T23:29:43+03:00"
         },
         "metrics": {
           "all": {
@@ -120457,12 +119720,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-twilio/1.0.6.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-twilio/1.0.7.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-twilio/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T09:24:08.463416+00:00",
-          "registry_entry_generated_at": "2026-06-30T09:24:08.463416+00:00"
+          "metadata_last_modified": "2026-07-09T20:33:30.130723+00:00",
+          "registry_entry_generated_at": "2026-07-09T20:33:30.130723+00:00"
         }
       },
       "githubIssueLabel": "source-twilio",
@@ -122325,16 +121588,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "cloud": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "oss": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-veeqo/0.0.55.spdx.json",
@@ -123066,16 +122329,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "cloud": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "oss": {
-            "sync_success_rate": "low",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-wasabi-stats-api/0.0.1.spdx.json",
@@ -125645,15 +124908,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -128181,7 +127444,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "5.3.1",
+      "dockerImageTag": "5.4.1",
       "dockerRepository": "airbyte/source-zendesk-support",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/zendesk-support",
       "externalDocumentationUrls": [
@@ -128218,10 +127481,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "octavia-bot-hoard[bot]",
-          "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "12b469059651d8e317ac412166a301e0fa9eefa1",
-          "commit_timestamp": "2026-06-30T09:58:32+00:00"
+          "commit_author": "devin-ai-integration[bot]",
+          "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
+          "commit_sha": "3d54f92e42bf2e2105f200b1bee581cb97ca7772",
+          "commit_timestamp": "2026-07-06T17:27:55+00:00"
         },
         "metrics": {
           "all": {
@@ -128237,12 +127500,12 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-zendesk-support/5.3.1.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-zendesk-support/5.4.1.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-zendesk-support/latest/metadata.yaml",
-          "metadata_last_modified": "2026-06-30T10:02:27.867684+00:00",
-          "registry_entry_generated_at": "2026-06-30T10:02:27.867684+00:00"
+          "metadata_last_modified": "2026-07-06T17:32:17.936262+00:00",
+          "registry_entry_generated_at": "2026-07-06T17:32:17.936262+00:00"
         }
       },
       "githubIssueLabel": "source-zendesk-support",
@@ -128606,6 +127869,7 @@
           "ticket_comments",
           "ticket_fields",
           "ticket_forms",
+          "ticket_events",
           "ticket_metric_events",
           "ticket_metrics",
           "tickets",

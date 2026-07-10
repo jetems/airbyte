@@ -2053,7 +2053,7 @@
   "settings.notifications.webhookUrl": "Webhook URL",
   "settings.organization": "组织",
   "settings.organization.billing.accountBalance": "账户余额",
-  "settings.organization.billing.accountBalance.standardPlanTooltip": "如果即将到来的发票金额达到 $2,000（美元），您将被自动扣款。",
+  "settings.organization.billing.accountBalance.standardPlanTooltip": "如果即将到来的发票金额达到 $10,000（美元），您将被自动扣款。",
   "settings.organization.billing.accountBalanceError": "加载账户余额出错",
   "settings.organization.billing.billingInformation": "账单信息",
   "settings.organization.billing.billingInformationError": "加载账单信息出错",
