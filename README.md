@@ -43,7 +43,7 @@ Airbyte 官方将连接器做成遵循 [Airbyte Protocol](https://docs.airbyte.c
 ### 4. 镜像发布到华为云 SWR
 
 - 按 Tag 自动构建 **原生 amd64 + arm64** 平台镜像（不使用 QEMU）
-- 推送到 `swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<服务>:<tag>`
+- 推送到 `swr.cn-south-1.myhuaweicloud.com/jetems/<服务>:<tag>`
 - Tag 格式：`YYYYMMDD-<commit-sha前6位>`，例如 `20260711-a1b2c3`
 
 ---
@@ -140,7 +140,7 @@ Tag 示例：`20260711-a1b2c3`
 镜像示例：
 
 ```text
-swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/server:20260711-a1b2c3
+swr.cn-south-1.myhuaweicloud.com/jetems/server:20260711-a1b2c3
 ```
 ---
 

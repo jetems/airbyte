@@ -42,7 +42,7 @@ jobs:
             echo "## Docker Hub image check — skipped"
             echo ""
             echo "Jetems publishes platform images to **Huawei Cloud SWR**"
-            echo "(\`swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/*\`),"
+            echo "(\`swr.cn-south-1.myhuaweicloud.com/jetems/*\`),"
             echo "not Docker Hub \`airbyte/*:dev\`."
             echo ""
             echo "See \`tools/JETEMS_IMAGE_PUBLISH.md\` and workflow **Jetems Publish Platform Images**."

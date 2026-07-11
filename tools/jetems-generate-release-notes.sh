@@ -45,7 +45,8 @@ IMAGES=(
 remote_ref() {
   local name="$1"
   local tag="$2"
-  echo "${DOCKER_REGISTRY}/airbyte/${name}:${tag}"
+  # swr.../jetems/<name>:<tag>（无 airbyte/ 前缀）
+  echo "${DOCKER_REGISTRY}/${name}:${tag}"
 }
 
 # 用单引号 heredoc 避免 markdown 反引号被 shell 当作命令替换
@@ -70,7 +71,7 @@ ${commit_line}
 ### 使用说明
 
 1. 登录华为云 SWR 后拉取（或配置集群 imagePullSecrets）。
-2. Helm / abctl 部署时，将镜像仓库指向 \`${DOCKER_REGISTRY}/airbyte\`，版本设为 \`${DOCKER_TAG}\`。
+2. Helm / abctl 部署时，将镜像仓库指向 \`${DOCKER_REGISTRY}\`，版本设为 \`${DOCKER_TAG}\`（形如 jetems/server，无 airbyte 路径段）。
 3. 多架构 tag（无 \`-amd64\`/\`-arm64\` 后缀）会按节点架构自动选择。
 
 \`\`\`bash

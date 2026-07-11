@@ -9,10 +9,11 @@
 #   - docker push 并行
 #   - manifest 合并并行
 #
-# 镜像命名（Airbyte 插件固定 airbyte/ 前缀）:
-#   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>
-#   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>-amd64
-#   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>-arm64
+# 镜像命名（SWR 组织 jetems，无 airbyte/ 中间路径）:
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>-amd64
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>-arm64
+# Gradle 本地仍构建为 airbyte/<name>:<tag>（插件固定），push 时 retag 到 jetems/<name>。
 #
 # 环境变量:
 #   DOCKER_TAG        必填，发布 tag，如 20260711-a1b2c3（不要带 -amd64/-arm64）
@@ -80,7 +81,8 @@ swr_login() {
 remote_ref() {
   local name="$1"
   local tag="$2"
-  echo "${DOCKER_REGISTRY}/airbyte/${name}:${tag}"
+  # DOCKER_REGISTRY 默认含组织名 jetems → swr.../jetems/<name>:<tag>
+  echo "${DOCKER_REGISTRY}/${name}:${tag}"
 }
 
 nproc_safe() {

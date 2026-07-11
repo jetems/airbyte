@@ -3,10 +3,10 @@
 # 不使用 QEMU 交叉编译。
 #
 # Tag 格式: YYYYMMDD-<commit-sha 前 6 位>   例: 20260711-a1b2c3
-# 镜像:
-#   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>        (multi-arch)
-#   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>-amd64
-#   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>-arm64
+# 镜像（无 airbyte/ 前缀）:
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>        (multi-arch)
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>-amd64
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>-arm64
 #
 # Jobs: validate-tag → build(amd64|arm64) → manifest → release
 # release: 创建 GitHub Release，正文含全部镜像链接与中文介绍
@@ -202,7 +202,7 @@ jobs:
         if: always()
         run: |
           echo "### Built arch \`${{ matrix.arch }}\` on \`${{ matrix.runner }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "Pushed: \`${{ env.DOCKER_REGISTRY }}/airbyte/*:${{ env.DOCKER_TAG }}-${{ matrix.arch }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Pushed: \`${{ env.DOCKER_REGISTRY }}/*:${{ env.DOCKER_TAG }}-${{ matrix.arch }}\`" >> "$GITHUB_STEP_SUMMARY"
 
   # 合并 multi-arch manifest（仅列表清单，不重新编译）
   manifest:
@@ -253,13 +253,13 @@ jobs:
             echo ""
             echo "### Pull (multi-arch)"
             echo "\`\`\`"
-            echo "docker pull ${{ env.DOCKER_REGISTRY }}/airbyte/server:${{ env.DOCKER_TAG }}"
+            echo "docker pull ${{ env.DOCKER_REGISTRY }}/server:${{ env.DOCKER_TAG }}"
             echo "\`\`\`"
             echo ""
             echo "### Per-arch tags"
             echo "\`\`\`"
-            echo "docker pull ${{ env.DOCKER_REGISTRY }}/airbyte/server:${{ env.DOCKER_TAG }}-amd64"
-            echo "docker pull ${{ env.DOCKER_REGISTRY }}/airbyte/server:${{ env.DOCKER_TAG }}-arm64"
+            echo "docker pull ${{ env.DOCKER_REGISTRY }}/server:${{ env.DOCKER_TAG }}-amd64"
+            echo "docker pull ${{ env.DOCKER_REGISTRY }}/server:${{ env.DOCKER_TAG }}-arm64"
             echo "\`\`\`"
           } >> "$GITHUB_STEP_SUMMARY"
 

@@ -4,7 +4,7 @@
 
 - **Tag 格式**：`YYYYMMDD-<commit-sha前6位>`，例：`20260711-a1b2c3`
 - **架构**：**原生** `linux/amd64` + `linux/arm64`（**不使用 QEMU**）
-- **仓库**：`swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>`
+- **仓库**：`swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>`（**无** `airbyte/` 中间路径）
 
 ## 构建策略（无 QEMU）
 
@@ -55,13 +55,12 @@ SWR 需有命名空间 **`jetems`**（区域 `cn-south-1`）。
 ## 镜像示例
 
 ```text
-swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/server:20260711-a1b2c3
-swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/server:20260711-a1b2c3-amd64
-swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/server:20260711-a1b2c3-arm64
+swr.cn-south-1.myhuaweicloud.com/jetems/server:20260711-a1b2c3
+swr.cn-south-1.myhuaweicloud.com/jetems/server:20260711-a1b2c3-amd64
+swr.cn-south-1.myhuaweicloud.com/jetems/server:20260711-a1b2c3-arm64
 ```
 
-（Gradle 插件固定在 registry 后加 `airbyte/` 前缀。）
-
+本地 Gradle 仍产出 `airbyte/<name>:<tag>`；发布脚本 **retag** 为 `jetems/<name>:<tag>` 再 push（去掉 `airbyte/`）。
 ## 默认构建列表
 
 base-java-image、server、worker、workload-api-server、workload-launcher、cron、bootloader、keycloak、keycloak-setup、db、container-orchestrator、connector-sidecar、workload-init-container。
