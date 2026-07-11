@@ -61,7 +61,7 @@ write_body() {
   cat <<EOF
 ## Jetems 平台镜像发布
 
-**版本标签**：\`${DOCKER_TAG}\`
+**版本标签**：\`${DOCKER_TAG}\`（同时覆盖 multi-arch \`latest\`）
 **架构**：\`linux/amd64\` + \`linux/arm64\`（原生构建，无 QEMU）
 **镜像仓库**：华为云 SWR \`${DOCKER_REGISTRY}\`
 ${commit_line}
@@ -71,15 +71,18 @@ ${commit_line}
 ### 使用说明
 
 1. 登录华为云 SWR 后拉取（或配置集群 imagePullSecrets）。
-2. Helm / abctl 部署时，将镜像仓库指向 \`${DOCKER_REGISTRY}\`，版本设为 \`${DOCKER_TAG}\`（形如 jetems/server，无 airbyte 路径段）。
-3. 多架构 tag（无 \`-amd64\`/\`-arm64\` 后缀）会按节点架构自动选择。
+2. Helm / abctl 部署时，将镜像仓库指向 \`${DOCKER_REGISTRY}\`。
+3. **固定版本**：用 \`${DOCKER_TAG}\`；**滚动最新**：用 \`latest\`（每次发版会覆盖）。
+4. 多架构 tag（无 \`-amd64\`/\`-arm64\` 后缀）会按节点架构自动选择。
 
 \`\`\`bash
 # 登录 SWR（示例）
 docker login -u '<SWR_USERNAME>' swr.cn-south-1.myhuaweicloud.com
 
-# 拉取示例（server）
+# 固定版本
 docker pull $(remote_ref server "$DOCKER_TAG")
+# 或始终拉最新发版
+docker pull $(remote_ref server latest)
 \`\`\`
 
 ### 镜像列表（multi-arch）
@@ -110,18 +113,32 @@ EOF
   cat <<EOF
 \`\`\`
 
+### latest（multi-arch，每次发版覆盖）
+
+\`\`\`text
+EOF
+
+  for entry in "${IMAGES[@]}"; do
+    remote_ref "${entry%%|*}" "latest"
+  done
+
+  cat <<EOF
+\`\`\`
+
 ### 单架构 tag（调试用）
 
 每个镜像另有：
 
-- \`…/<name>:${DOCKER_TAG}-amd64\`
-- \`…/<name>:${DOCKER_TAG}-arm64\`
+- \`…/<name>:${DOCKER_TAG}-amd64\` / \`…/<name>:${DOCKER_TAG}-arm64\`
+- \`…/<name>:latest-amd64\` / \`…/<name>:latest-arm64\`
 
 示例：
 
 \`\`\`bash
 docker pull $(remote_ref server "${DOCKER_TAG}-amd64")
 docker pull $(remote_ref server "${DOCKER_TAG}-arm64")
+docker pull $(remote_ref server latest-amd64)
+docker pull $(remote_ref server latest-arm64)
 \`\`\`
 
 ### 镜像说明详情
@@ -137,8 +154,9 @@ EOF
 ${desc}
 
 - multi-arch: \`$(remote_ref "$name" "$DOCKER_TAG")\`
-- amd64: \`$(remote_ref "$name" "${DOCKER_TAG}-amd64")\`
-- arm64: \`$(remote_ref "$name" "${DOCKER_TAG}-arm64")\`
+- latest: \`$(remote_ref "$name" "latest")\`
+- amd64: \`$(remote_ref "$name" "${DOCKER_TAG}-amd64")\` / \`$(remote_ref "$name" "latest-amd64")\`
+- arm64: \`$(remote_ref "$name" "${DOCKER_TAG}-arm64")\` / \`$(remote_ref "$name" "latest-arm64")\`
 
 EOF
   done

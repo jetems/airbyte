@@ -141,6 +141,7 @@ Tag 示例：`20260711-a1b2c3`
 
 ```text
 swr.cn-south-1.myhuaweicloud.com/jetems/server:20260711-a1b2c3
+swr.cn-south-1.myhuaweicloud.com/jetems/server:latest   # 每次发版覆盖
 ```
 ---
 

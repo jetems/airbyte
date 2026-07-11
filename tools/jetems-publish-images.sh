@@ -10,9 +10,12 @@
 #   - manifest 合并并行
 #
 # 镜像命名（SWR 组织 jetems，无 airbyte/ 中间路径）:
-#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>           (multi-arch)
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:latest          (multi-arch，每次发版覆盖)
 #   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>-amd64
 #   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:<tag>-arm64
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:latest-amd64
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:latest-arm64
 # Gradle 本地仍构建为 airbyte/<name>:<tag>（插件固定），push 时 retag 到 jetems/<name>。
 #
 # 环境变量:
@@ -23,6 +26,7 @@
 #   IMAGES            可选，覆盖模块列表
 #   SKIP_PUSH         若为 1，只本地 build 不推送
 #   CREATE_MANIFEST   若为 1，假设 -amd64/-arm64 均已推送，合并最终 tag
+#   PUBLISH_LATEST    默认 1；设为 0 则不推 latest / latest-<arch>
 #   PUSH_JOBS         并行 push 数，默认 4
 #   MANIFEST_JOBS     并行 manifest 数，默认 4
 #
@@ -45,6 +49,7 @@ SKIP_PUSH="${SKIP_PUSH:-0}"
 CREATE_MANIFEST="${CREATE_MANIFEST:-0}"
 PUSH_JOBS="${PUSH_JOBS:-4}"
 MANIFEST_JOBS="${MANIFEST_JOBS:-4}"
+PUBLISH_LATEST="${PUBLISH_LATEST:-1}"
 
 # Gradle 任务 → 本地镜像名 airbyte/<imageName>
 # imageName 来自各模块 build.gradle.kts 的 docker { imageName = "..." }
@@ -100,20 +105,30 @@ if [[ "$CREATE_MANIFEST" == "1" ]]; then
 
   manifest_one() {
     local name="$1"
-    local dest src_amd src_arm
+    local dest src_amd src_arm dest_latest
     dest="$(remote_ref "$name" "$DOCKER_TAG")"
     src_amd="$(remote_ref "$name" "${DOCKER_TAG}-amd64")"
     src_arm="$(remote_ref "$name" "${DOCKER_TAG}-arm64")"
     echo ">>> imagetools create $dest"
-    if docker buildx imagetools create -t "$dest" "$src_amd" "$src_arm"; then
-      echo ">>> OK $dest"
-      return 0
+    if ! docker buildx imagetools create -t "$dest" "$src_amd" "$src_arm"; then
+      echo ">>> FAIL $dest" >&2
+      return 1
     fi
-    echo ">>> FAIL $dest" >&2
-    return 1
+    echo ">>> OK $dest"
+    # 每次发版同步 multi-arch latest（指向同一组 arch 镜像）
+    if [[ "${PUBLISH_LATEST:-1}" == "1" ]]; then
+      dest_latest="$(remote_ref "$name" "latest")"
+      echo ">>> imagetools create $dest_latest (from same arch digests)"
+      if ! docker buildx imagetools create -t "$dest_latest" "$src_amd" "$src_arm"; then
+        echo ">>> FAIL $dest_latest" >&2
+        return 1
+      fi
+      echo ">>> OK $dest_latest"
+    fi
+    return 0
   }
   export -f manifest_one remote_ref
-  export DOCKER_REGISTRY DOCKER_TAG
+  export DOCKER_REGISTRY DOCKER_TAG PUBLISH_LATEST
 
   FAILED_FILE="$(mktemp)"
   trap 'rm -f "$FAILED_FILE"' EXIT
@@ -263,12 +278,13 @@ if [[ ${#REST_TASKS[@]} -gt 0 ]]; then
   fi
 fi
 
-# tag + push（可并行）
+# tag + push（可并行）：版本 arch tag + latest-<arch>
 tag_and_push_one() {
   local name="$1"
   local local_img="airbyte/${name}:${ARCH_TAG}"
-  local remote_img
+  local remote_img remote_latest
   remote_img="$(remote_ref "$name" "$ARCH_TAG")"
+  remote_latest="$(remote_ref "$name" "latest-${DOCKER_ARCH}")"
 
   if ! docker image inspect "$local_img" >/dev/null 2>&1; then
     echo ">>> MISSING local image $local_img" >&2
@@ -280,11 +296,19 @@ tag_and_push_one() {
     echo ">>> docker push $remote_img"
     docker push "$remote_img"
   fi
+  if [[ "${PUBLISH_LATEST:-1}" == "1" ]]; then
+    echo ">>> docker tag $local_img → $remote_latest"
+    docker tag "$local_img" "$remote_latest"
+    if [[ "$SKIP_PUSH" != "1" ]]; then
+      echo ">>> docker push $remote_latest"
+      docker push "$remote_latest"
+    fi
+  fi
   echo ">>> OK $name"
   return 0
 }
 export -f tag_and_push_one remote_ref
-export ARCH_TAG DOCKER_REGISTRY SKIP_PUSH
+export ARCH_TAG DOCKER_ARCH DOCKER_REGISTRY SKIP_PUSH PUBLISH_LATEST
 
 FAILED_FILE="$(mktemp)"
 OK_FILE="$(mktemp)"
@@ -314,11 +338,14 @@ echo "=========================================="
 echo "Arch=$DOCKER_ARCH Succeeded (${#SUCCEEDED[@]}): ${SUCCEEDED[*]:-none}"
 echo "Arch=$DOCKER_ARCH Failed (${#FAILED[@]}): ${FAILED[*]:-none}"
 echo "Pushed tags: *-${ARCH_TAG}"
-echo "Next: run on the other arch, then CREATE_MANIFEST=1 to merge ${DOCKER_TAG%-*}"
+if [[ "$PUBLISH_LATEST" == "1" ]]; then
+  echo "Also pushed: *:latest-${DOCKER_ARCH}"
+fi
+echo "Next: run on the other arch, then CREATE_MANIFEST=1 to merge version + latest"
 # DOCKER_TAG was overwritten with ARCH_TAG for gradle; recover base from ARCH_TAG
 BASE_TAG="${ARCH_TAG%-amd64}"
 BASE_TAG="${BASE_TAG%-arm64}"
-echo "Manifest tag would be: $BASE_TAG"
+echo "Manifest tags would be: $BASE_TAG and latest"
 echo "=========================================="
 
 if [[ ${#FAILED[@]} -gt 0 ]] || [[ "$BUILD_RC" -ne 0 && ${#SUCCEEDED[@]} -eq 0 ]]; then
