@@ -160,6 +160,12 @@ open http://localhost:8000
 - **登录**（simple auth）：`admin@jetems.com` / `jetems-local-admin`
   （注意邮箱是 **`.com`**——这是 `jetems-abctl-up.sh` 完成时打印的登录信息；
   若登录不通，试 `dev-values.jetems.yaml` 里 `INITIAL_USER_EMAIL` 设的 `admin@jetems.local`）。
+- **Keycloak Admin Console**：`http://localhost:8000/auth/admin/`  
+  账号 `airbyteAdmin` / `airbyte123`。  
+  若 302 到 `http://localhost/auth/...`（丢了 `:8000`），重跑  
+  `./tools/jetems-abctl-fix-ingress.sh`（会钉死 `KEYCLOAK_HOSTNAME_URL` /
+  `KEYCLOAK_HOSTNAME_ADMIN_URL`）。勿在 Helm values 的 extraEnv 里重复定义
+  `KEYCLOAK_HOSTNAME_URL`（与 chart 的 valueFrom 冲突会导致 Pod 无法创建）。
 - **验证中文化**：登录后在**侧边栏底部**找 🌐 语言切换器（globe 图标，在深浅色主题切换旁），点击切换中/英文。
 - **验证企业解锁**：顶部不应再有 “License is invalid” 横幅，企业功能（如 SSO、RBAC 等门禁项）可见。
 
@@ -181,7 +187,16 @@ kubectl get pods -n airbyte-abctl
 - `webapp.enabled: false`：前端已打进 server 镜像，ingress 只路由到 server。
 - `keycloak.enabled: true` + `keycloak.protocol: http`：集群内 keycloak 只服务 http，
   设 https 会让 keycloak-setup 报 `NotSslRecordException`。
+- `keycloak.extraEnv` 含 `KEYCLOAK_HOSTNAME_ADMIN_URL=http://localhost:8000/auth`；
+  `KEYCLOAK_HOSTNAME_URL` 由 `jetems-abctl-fix-ingress.sh` 用 `kubectl set env` 钉死
+  （chart 企业版 configmap 默认为空，且不能用 extraEnv 重复同名项）。
 - `keycloakSetup.extraEnv` 注入 `INITIAL_USER_EMAIL`：keycloak-setup Job 不合并 `global.env_vars`，必须单独注入。
+- **连接器中文设置指南**：UI 语言为中文时，`POST /v1/connector_documentation/get` 带 `locale=zh`，
+  优先读 `airbyte-commons-server/src/main/resources/docs-zh/integrations/**`（与官方 path 对齐，
+  如 `sources/airtable.md`）；无稿则回退 GitHub 英文。
+  - Phase 2a 已批量生成 **Top ~55** 源/目标中文指南（见 `docs-zh/manifest.json`）。
+  - 续译 / 全量：`python3 tools/jetems-docs-zh/translate_batch.py --top` 或按 path；
+    默认 Google 机译（`deep-translator`），可用 `--engine openai` + API Key。
 - `server` 探针放宽（liveness 初始延迟 180s）：本地满栈 CPU 争抢下 server 启动慢，默认探针会误杀成 CrashLoop。
 - `workloadApiServer` 探针关闭：模板硬编码查 management 端口 8085，但该端口未绑定（app 主端口 8007 正常）。
 - 关掉评估用不到的可选服务（manifest-server / metrics / connector-rollout-worker / featureflag-server / temporal-ui），省构建。

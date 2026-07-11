@@ -1,6 +1,7 @@
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 
 import { useCurrentWorkspaceId } from "area/workspace/utils";
+import { useI18nContext } from "core/services/i18n";
 import { AppActionCodes, trackAction } from "core/utils/datadog";
 import { isDevelopment } from "core/utils/isDevelopment";
 import { links } from "core/utils/links";
@@ -28,8 +29,8 @@ export const EXCLUDED_DOC_URLS = ["https://example.org"];
 
 const connectorDocumentationKeys = {
   all: ["connectorDocumentation"] as const,
-  get: (workspaceId: string, actorDefinitionId: string | undefined, actorId?: string) =>
-    [...connectorDocumentationKeys.all, "get", { workspaceId, actorDefinitionId, actorId }] as const,
+  get: (workspaceId: string, actorDefinitionId: string | undefined, actorId: string | undefined, locale: string) =>
+    [...connectorDocumentationKeys.all, "get", { workspaceId, actorDefinitionId, actorId, locale }] as const,
 };
 
 export const useConnectorDocumentation = (
@@ -41,6 +42,8 @@ export const useConnectorDocumentation = (
   const requestOptions = useRequestOptions();
   const workspaceId = useCurrentWorkspaceId();
   const isDev = isDevelopment();
+  // JETEMS: pass UI locale so server can prefer docs-zh static guides.
+  const { locale: jetemsLocale } = useI18nContext();
 
   let fetchDocumentation = async () => {
     if (actorDefinitionId?.startsWith("source-")) {
@@ -63,13 +66,18 @@ export const useConnectorDocumentation = (
       return { doc: text };
     } else if (actorType && actorDefinitionId) {
       // Case 2: Handle regular connector documentation
-      return getConnectorDocumentation({ actorType, actorDefinitionId, workspaceId, actorId }, requestOptions);
+      return getConnectorDocumentation(
+        { actorType, actorDefinitionId, workspaceId, actorId, locale: jetemsLocale },
+        requestOptions
+      );
     }
     // Case 3: Return undefined if neither condition is met
     return undefined;
   };
 
-  if (isDev && documentationUrl) {
+  // Dev-only: serve local airbyte/docs checkout when present. Production always uses the API
+  // (which applies jetems docs-zh + EN fallback). Skip local override for zh so the API path is tested.
+  if (isDev && documentationUrl && jetemsLocale !== "zh") {
     const localDocPath = documentationUrl.replace(DOCS_URL, LOCAL_DOCS_PATH);
     fetchDocumentation = () =>
       fetch(`${localDocPath}.md`)
@@ -81,14 +89,18 @@ export const useConnectorDocumentation = (
         });
   }
 
-  return useQuery(connectorDocumentationKeys.get(workspaceId, actorDefinitionId, actorId), fetchDocumentation, {
-    onError: (error) => {
-      trackAction(AppActionCodes.CONNECTOR_DOCUMENTATION_FETCH_ERROR, {
-        workspaceId,
-        actorDefinitionId,
-        actorId,
-        error,
-      });
-    },
-  });
+  return useQuery(
+    connectorDocumentationKeys.get(workspaceId, actorDefinitionId, actorId, jetemsLocale),
+    fetchDocumentation,
+    {
+      onError: (error) => {
+        trackAction(AppActionCodes.CONNECTOR_DOCUMENTATION_FETCH_ERROR, {
+          workspaceId,
+          actorDefinitionId,
+          actorId,
+          error,
+        });
+      },
+    }
+  );
 };

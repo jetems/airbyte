@@ -13,6 +13,7 @@ import io.airbyte.config.persistence.ActorDefinitionVersionHelper
 import io.airbyte.config.specs.RemoteDefinitionsProvider
 import io.airbyte.data.services.DestinationService
 import io.airbyte.data.services.SourceService
+import io.airbyte.jetems.docs.JetemsConnectorDocumentationStore
 import jakarta.annotation.Nullable
 import jakarta.inject.Singleton
 import java.util.UUID
@@ -27,6 +28,7 @@ open class ConnectorDocumentationHandler(
   private val remoteDefinitionsProvider: RemoteDefinitionsProvider,
   private val sourceService: SourceService,
   private val destinationService: DestinationService,
+  private val jetemsConnectorDocumentationStore: JetemsConnectorDocumentationStore,
 ) {
   fun getConnectorDocumentation(request: ConnectorDocumentationRequestBody): ConnectorDocumentationRead {
     val actorDefinitionVersion =
@@ -38,6 +40,15 @@ open class ConnectorDocumentationHandler(
     val dockerRepo = actorDefinitionVersion.dockerRepository
     val version = actorDefinitionVersion.dockerImageTag
     val documentationUrl = actorDefinitionVersion.documentationUrl
+
+    // JETEMS: Chinese static docs first when UI locale is zh (fallback to EN below).
+    val locale = request.locale
+    if (jetemsConnectorDocumentationStore.isChineseLocale(locale)) {
+      val zhDoc = jetemsConnectorDocumentationStore.findChineseDoc(documentationUrl)
+      if (zhDoc.isPresent) {
+        return ConnectorDocumentationRead().doc(zhDoc.get())
+      }
+    }
 
     // Prioritize live docs from GitHub (docs.airbyte.com source of truth)
     // This ensures users see the most up-to-date documentation even if the connector

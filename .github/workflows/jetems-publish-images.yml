@@ -1,0 +1,224 @@
+# =============================================================================
+# Jetems: 按 release tag 在原生 amd64 / arm64 runner 上构建镜像，推送到华为云 SWR
+# 不使用 QEMU 交叉编译。
+#
+# Tag 格式: YYYYMMDD-<commit-sha 前 6 位>   例: 20260711-a1b2c3
+# 镜像:
+#   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>        (multi-arch)
+#   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>-amd64
+#   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>-arm64
+#
+# 创建 tag: ./tools/jetems-create-release-tag.sh
+#
+# Secrets:
+#   SWR_USERNAME / SWR_PASSWORD
+# =============================================================================
+name: Jetems Publish Platform Images
+
+on:
+  push:
+    tags:
+      - "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "镜像 tag（YYYYMMDD-sha6）。留空则按当前 UTC 日期 + HEAD sha6 生成"
+        required: false
+        type: string
+      images:
+        description: "可选：覆盖构建列表（空格分隔 name|gradleTask 或仅 gradleTask）。留空=默认全套"
+        required: false
+        type: string
+
+concurrency:
+  group: jetems-publish-images-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  SWR_HOST: swr.cn-south-1.myhuaweicloud.com
+  DOCKER_REGISTRY: swr.cn-south-1.myhuaweicloud.com/jetems
+  JAVA_VERSION: "21"
+  NODE_VERSION: "20.19.0"
+
+jobs:
+  validate-tag:
+    name: Validate tag
+    runs-on: ubuntu-latest
+    outputs:
+      docker_tag: ${{ steps.tag.outputs.docker_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve DOCKER_TAG
+        id: tag
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            INPUT="${{ inputs.tag }}"
+            if [[ -n "$INPUT" ]]; then
+              TAG="$INPUT"
+            else
+              TAG="$(date -u +%Y%m%d)-$(git rev-parse --short=6 HEAD)"
+            fi
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+
+          if ! [[ "$TAG" =~ ^[0-9]{8}-[0-9a-f]{6}$ ]]; then
+            echo "::error::Tag '$TAG' must match YYYYMMDD-sha6 (e.g. 20260711-a1b2c3)"
+            exit 1
+          fi
+
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            EXPECTED="$(git rev-parse --short=6 "$TAG^{commit}")"
+            GOT="${TAG##*-}"
+            if [[ "$GOT" != "$EXPECTED" ]]; then
+              echo "::warning::Tag suffix '$GOT' != commit short sha '$EXPECTED' (continuing anyway)"
+            fi
+          fi
+
+          echo "docker_tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Resolved DOCKER_TAG=$TAG"
+
+  # 原生 amd64 / arm64 并行构建，不使用 QEMU
+  build:
+    name: Build ${{ matrix.arch }}
+    needs: validate-tag
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            platform: linux/amd64
+          - arch: arm64
+            # GitHub 托管原生 ARM64 runner（无需 QEMU）
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    runs-on: ${{ matrix.runner }}
+    env:
+      DOCKER_TAG: ${{ needs.validate-tag.outputs.docker_tag }}
+      DOCKER_ARCH: ${{ matrix.arch }}
+      VERSION: ${{ needs.validate-tag.outputs.docker_tag }}-${{ matrix.arch }}
+      SWR_USERNAME: ${{ secrets.SWR_USERNAME }}
+      SWR_PASSWORD: ${{ secrets.SWR_PASSWORD }}
+      IMAGES: ${{ inputs.images }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Free disk space
+        if: matrix.arch == 'amd64'
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # 单架构原生构建，使用默认 docker driver 即可（不要 multi-platform buildx+qemu）
+      - name: Set up Docker Buildx (docker driver)
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
+          install: true
+
+      - name: Login to Huawei Cloud SWR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.SWR_HOST }}
+          username: ${{ secrets.SWR_USERNAME }}
+          password: ${{ secrets.SWR_PASSWORD }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Native build & push (${{ matrix.arch }})
+        run: |
+          set -euo pipefail
+          chmod +x tools/jetems-publish-images.sh
+          uname -m
+          ./tools/jetems-publish-images.sh
+
+      - name: Arch summary
+        if: always()
+        run: |
+          echo "### Built arch \`${{ matrix.arch }}\` on \`${{ matrix.runner }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Pushed: \`${{ env.DOCKER_REGISTRY }}/airbyte/*:${{ env.DOCKER_TAG }}-${{ matrix.arch }}\`" >> "$GITHUB_STEP_SUMMARY"
+
+  # 合并 multi-arch manifest（仅列表清单，不重新编译）
+  manifest:
+    name: Create multi-arch manifests
+    needs: [validate-tag, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      DOCKER_TAG: ${{ needs.validate-tag.outputs.docker_tag }}
+      SWR_USERNAME: ${{ secrets.SWR_USERNAME }}
+      SWR_PASSWORD: ${{ secrets.SWR_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Huawei Cloud SWR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.SWR_HOST }}
+          username: ${{ secrets.SWR_USERNAME }}
+          password: ${{ secrets.SWR_PASSWORD }}
+
+      - name: Create multi-arch manifests
+        run: |
+          set -euo pipefail
+          chmod +x tools/jetems-publish-images.sh
+          CREATE_MANIFEST=1 ./tools/jetems-publish-images.sh
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Jetems image publish (native amd64 + arm64)"
+            echo ""
+            echo "| Item | Value |"
+            echo "|------|-------|"
+            echo "| Tag | \`${{ env.DOCKER_TAG }}\` |"
+            echo "| Registry | \`${{ env.DOCKER_REGISTRY }}\` |"
+            echo "| Build | 原生 runner（无 QEMU） |"
+            echo "| Platforms | linux/amd64 + linux/arm64 |"
+            echo "| Commit | \`${{ github.sha }}\` |"
+            echo ""
+            echo "### Pull (multi-arch)"
+            echo "\`\`\`"
+            echo "docker pull ${{ env.DOCKER_REGISTRY }}/airbyte/server:${{ env.DOCKER_TAG }}"
+            echo "\`\`\`"
+            echo ""
+            echo "### Per-arch tags"
+            echo "\`\`\`"
+            echo "docker pull ${{ env.DOCKER_REGISTRY }}/airbyte/server:${{ env.DOCKER_TAG }}-amd64"
+            echo "docker pull ${{ env.DOCKER_REGISTRY }}/airbyte/server:${{ env.DOCKER_TAG }}-arm64"
+            echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -13492,6 +13492,13 @@ components:
           $ref: "#/components/schemas/WorkspaceId"
         actorId:
           $ref: "#/components/schemas/ActorId"
+        # JETEMS: UI locale for connector setup guide (e.g. "zh", "en").
+        # When "zh", server prefers static Chinese markdown under docs-zh/ before EN fallback.
+        locale:
+          type: string
+          description: >
+            Preferred documentation locale (e.g. en, zh). Optional. When zh, the server
+            returns jetems Chinese connector docs if available, otherwise falls back to English.
     ConnectorDocumentationRead:
       type: object
       required:

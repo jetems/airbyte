@@ -57,6 +57,7 @@ echo "=== [3/3] 修复 abctl ingress（/->server, /auth->keycloak）==="
 
 echo
 echo "================ 完成 ================"
-echo "UI:   http://localhost:$PORT"
-echo "登录: admin@jetems.com / jetems-local-admin   （simple auth，注意是 .com）"
-echo "状态: KUBECONFIG=~/.airbyte/abctl/abctl.kubeconfig kubectl get pods -n airbyte-abctl"
+echo "UI:            http://localhost:$PORT"
+echo "登录:          admin@jetems.com / jetems-local-admin   （simple auth，注意是 .com）"
+echo "Keycloak Admin: http://localhost:$PORT/auth/admin/     （airbyteAdmin / airbyte123）"
+echo "状态:          KUBECONFIG=~/.airbyte/abctl/abctl.kubeconfig kubectl get pods -n airbyte-abctl"

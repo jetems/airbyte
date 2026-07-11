@@ -56,6 +56,19 @@ keycloak:
   # chart 默认 keycloak.protocol=https，但集群内 keycloak 只服务 http，
   # 否则 keycloak-setup 连接报 NotSslRecordException。
   protocol: http
+  # abctl 把 host:8000 映射到 kind 内 nginx:80；企业版 KEYCLOAK_HOSTNAME_URL 默认为空，
+  # Keycloak Admin 用请求头拼 URL → Location: http://localhost/...（丢 :8000）。
+  #
+  # 运行中镜像 entrypoint（airbyte/keycloak:dev）读取：
+  #   KEYCLOAK_HOSTNAME_URL       → KC_HOSTNAME_URL
+  #   KEYCLOAK_HOSTNAME_ADMIN_URL → KC_HOSTNAME_ADMIN_URL   ← 注意不是 KEYCLOAK_ADMIN_HOSTNAME_URL
+  #
+  # KEYCLOAK_HOSTNAME_URL 已由 chart 从 configmap valueFrom 注入；勿在 extraEnv 重复定义
+  #（helm strategic merge 会 value+valueFrom 合成非法 env）。
+  # 这里只加 chart 未定义的 ADMIN URL；HOSTNAME_URL 靠下面 post-install 或 kubectl set env。
+  extraEnv:
+    - name: KEYCLOAK_HOSTNAME_ADMIN_URL
+      value: "http://localhost:8000/auth"
 
 keycloakSetup:
   enabled: true

@@ -1,0 +1,4233 @@
+{
+  "version": 1,
+  "docs": {
+    "sources/asana": {
+      "en_sha": "f3c2da8e16f6c3c6",
+      "zh_bytes": 1835,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/kafka": {
+      "en_sha": "e8f70d098cea0fd3",
+      "zh_bytes": 2176,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/kafka": {
+      "en_sha": "ae2af1c02b3e2bb7",
+      "zh_bytes": 910,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/airtable": {
+      "en_sha": "7b331ac1961f7a8d",
+      "zh_bytes": 2434,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/postgres": {
+      "en_sha": "fa52ad6058413e27",
+      "zh_bytes": 1361,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/mysql": {
+      "en_sha": "ca9c32265155237d",
+      "zh_bytes": 1326,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/stripe": {
+      "en_sha": "4015d727c8bd6aba",
+      "zh_bytes": 1261,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/salesforce": {
+      "en_sha": "85930efc37c2b23d",
+      "zh_bytes": 1360,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/hubspot": {
+      "en_sha": "348de8bef0c81368",
+      "zh_bytes": 1249,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/google-sheets": {
+      "en_sha": "dc6bead17c5f7e63",
+      "zh_bytes": 1300,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/facebook-marketing": {
+      "en_sha": "6498c3b448f72b69",
+      "zh_bytes": 1289,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/mongodb-v2": {
+      "en_sha": "bb73e04a54bc0dd1",
+      "zh_bytes": 1310,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/shopify": {
+      "en_sha": "613c9b606952d003",
+      "zh_bytes": 1248,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/github": {
+      "en_sha": "45239466343c3936",
+      "zh_bytes": 1280,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/jira": {
+      "en_sha": "6a9f64fb995fca3a",
+      "zh_bytes": 1244,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/slack": {
+      "en_sha": "d4d5be5189a70bca",
+      "zh_bytes": 2553,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/zendesk-support": {
+      "en_sha": "fcc00a46b86c3c94",
+      "zh_bytes": 1254,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/s3": {
+      "en_sha": "2132cbbd1be4185d",
+      "zh_bytes": 1285,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/mssql": {
+      "en_sha": "f3724943754af0f6",
+      "zh_bytes": 1293,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/oracle": {
+      "en_sha": "7521baaf7318b3ca",
+      "zh_bytes": 1231,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/elasticsearch": {
+      "en_sha": "6f364113457a4a73",
+      "zh_bytes": 1234,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/google-ads": {
+      "en_sha": "f19786282a3f1009",
+      "zh_bytes": 1229,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/amazon-ads": {
+      "en_sha": "f6fef87c016bfc9f",
+      "zh_bytes": 1242,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/mailchimp": {
+      "en_sha": "2a2545fe696dc702",
+      "zh_bytes": 1226,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/intercom": {
+      "en_sha": "aebb831050e99a11",
+      "zh_bytes": 1227,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/notion": {
+      "en_sha": "2c3590072b5c9d06",
+      "zh_bytes": 1261,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/twilio": {
+      "en_sha": "b5537093b467b970",
+      "zh_bytes": 1225,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/file": {
+      "en_sha": "b6b51bac2b94f60c",
+      "zh_bytes": 1271,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/snowflake": {
+      "en_sha": "166620a4fc4b5fc0",
+      "zh_bytes": 1272,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/linkedin-ads": {
+      "en_sha": "1fede3865ff878d9",
+      "zh_bytes": 1237,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/bigquery": {
+      "en_sha": "deb140a514c974e9",
+      "zh_bytes": 1248,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/google-analytics-data-api": {
+      "en_sha": "",
+      "zh_bytes": 1281,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/harvest": {
+      "en_sha": "8da3f072d546cb15",
+      "zh_bytes": 1241,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/typeform": {
+      "en_sha": "3ead7008a371fa58",
+      "zh_bytes": 2316,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/mixpanel": {
+      "en_sha": "7e056dedfb656c7f",
+      "zh_bytes": 1227,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/chargebee": {
+      "en_sha": "9b239fe47a92892f",
+      "zh_bytes": 1211,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/postgres": {
+      "en_sha": "ad2f89ef44e09b48",
+      "zh_bytes": 2092,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/mysql": {
+      "en_sha": "29344260f9d98d34",
+      "zh_bytes": 911,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/snowflake": {
+      "en_sha": "9a2483c6e7bdce1c",
+      "zh_bytes": 1029,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/bigquery": {
+      "en_sha": "04ab60eaada511c3",
+      "zh_bytes": 922,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/redshift": {
+      "en_sha": "cd5365c5956e89a1",
+      "zh_bytes": 932,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/s3": {
+      "en_sha": "8387ae7c20af8384",
+      "zh_bytes": 935,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/gcs": {
+      "en_sha": "18dce681088d0b5e",
+      "zh_bytes": 887,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/mongodb": {
+      "en_sha": "9300ead1cd16c146",
+      "zh_bytes": 892,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/elasticsearch": {
+      "en_sha": "0a20474403d5e8a1",
+      "zh_bytes": 913,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/clickhouse": {
+      "en_sha": "675e5796bd28940e",
+      "zh_bytes": 907,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/databricks": {
+      "en_sha": "2aa348e5e9356ede",
+      "zh_bytes": 948,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/duckdb": {
+      "en_sha": "5d43662f0bfec641",
+      "zh_bytes": 913,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/weaviate": {
+      "en_sha": "cacce3f90ab2ab1b",
+      "zh_bytes": 920,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/pinecone": {
+      "en_sha": "6a0d7691ab5fc1ed",
+      "zh_bytes": 907,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/mssql": {
+      "en_sha": "b42410a452d04f99",
+      "zh_bytes": 915,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/oracle": {
+      "en_sha": "e499b6de14ffa48b",
+      "zh_bytes": 891,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/motherduck": {
+      "en_sha": "746f6ba52aa6d675",
+      "zh_bytes": 918,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/firebolt": {
+      "en_sha": "313e0d4e50bf3bbe",
+      "zh_bytes": 898,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "destinations/s3-data-lake": {
+      "en_sha": "641f03fb1ce867d5",
+      "zh_bytes": 950,
+      "translated_at": "2026-07-11T06:39:36Z",
+      "engine": "model"
+    },
+    "sources/100ms": {
+      "en_sha": "78e3d08e121c2f92",
+      "zh_bytes": 1486,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/7shifts": {
+      "en_sha": "19fe8a4287c5ed4a",
+      "zh_bytes": 1634,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/activecampaign": {
+      "en_sha": "84f654750a1ea1a5",
+      "zh_bytes": 656,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/acuity-scheduling": {
+      "en_sha": "9d99873523b93cbd",
+      "zh_bytes": 891,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/adjust": {
+      "en_sha": "47c1e9567f12250c",
+      "zh_bytes": 630,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/adobe-commerce-magento": {
+      "en_sha": "0cb71ea6625c325d",
+      "zh_bytes": 1001,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/agilecrm": {
+      "en_sha": "e5ffed4ca0469b92",
+      "zh_bytes": 1103,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/aha": {
+      "en_sha": "7c1657036a3bc142",
+      "zh_bytes": 794,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/airbyte": {
+      "en_sha": "7a70952be8cdd8be",
+      "zh_bytes": 921,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/aircall": {
+      "en_sha": "459371051e1ea99d",
+      "zh_bytes": 627,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/akeneo": {
+      "en_sha": "16a9d4efc19a8999",
+      "zh_bytes": 948,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/algolia": {
+      "en_sha": "5f2b66d611ad00ff",
+      "zh_bytes": 1300,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/alpaca-broker-api": {
+      "en_sha": "c482a66603918bc2",
+      "zh_bytes": 1327,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/alpha-vantage": {
+      "en_sha": "96f07feb3c40cc3c",
+      "zh_bytes": 651,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/amazon-seller-partner": {
+      "en_sha": "c7c344e46ac99e9a",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/amazon-sqs": {
+      "en_sha": "cefcf5b4fcf5efd2",
+      "zh_bytes": 1929,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/amplitude": {
+      "en_sha": "e3bd256df8e32839",
+      "zh_bytes": 2474,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/apify-dataset": {
+      "en_sha": "5ee7a9a5fe1d27a6",
+      "zh_bytes": 643,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/appcues": {
+      "en_sha": "55d3ad243ce0fdf9",
+      "zh_bytes": 1026,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/appfigures": {
+      "en_sha": "c75b1ec861fccdac",
+      "zh_bytes": 1027,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/apple-search-ads": {
+      "en_sha": "fdc3aeb0acbe782f",
+      "zh_bytes": 2409,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/appsflyer": {
+      "en_sha": "14246dea4b1a966f",
+      "zh_bytes": 645,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/appstore": {
+      "en_sha": "417c83bbd10f84f9",
+      "zh_bytes": 797,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/apptivo": {
+      "en_sha": "1859596f1c86238d",
+      "zh_bytes": 908,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/ashby": {
+      "en_sha": "45b23c4cec21f04f",
+      "zh_bytes": 778,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/assemblyai": {
+      "en_sha": "57520dab8d85cc67",
+      "zh_bytes": 1162,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/auth0": {
+      "en_sha": "906c027f0b0a96d3",
+      "zh_bytes": 1189,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/aviationstack": {
+      "en_sha": "d1860d3e6e8ba291",
+      "zh_bytes": 1100,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/avni": {
+      "en_sha": "f329568dd854927a",
+      "zh_bytes": 788,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/awin-advertiser": {
+      "en_sha": "88828d73a5ccfe57",
+      "zh_bytes": 1692,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/aws-cloudtrail": {
+      "en_sha": "8a6466749f17a3d5",
+      "zh_bytes": 645,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/beamer": {
+      "en_sha": "8dde702161dc63e7",
+      "zh_bytes": 763,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/braze": {
+      "en_sha": "058624159c46d3ae",
+      "zh_bytes": 1244,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/blogger": {
+      "en_sha": "ba75ea7d22b2e297",
+      "zh_bytes": 1183,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/brex": {
+      "en_sha": "514fdd339a28f645",
+      "zh_bytes": 1200,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/bitly": {
+      "en_sha": "3b68f3598b4bceef",
+      "zh_bytes": 1653,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/bunny-inc": {
+      "en_sha": "9353874057c665d3",
+      "zh_bytes": 1741,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/buzzsprout": {
+      "en_sha": "872c4f7a01f4e230",
+      "zh_bytes": 1134,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/babelforce": {
+      "en_sha": "155d25618e250c3f",
+      "zh_bytes": 676,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/buildkite": {
+      "en_sha": "418acccdb2467bc7",
+      "zh_bytes": 1781,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/bugsnag": {
+      "en_sha": "586361c07a54146b",
+      "zh_bytes": 1696,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/cal-com": {
+      "en_sha": "a83de8f457ce69f2",
+      "zh_bytes": 1227,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/bigmailer": {
+      "en_sha": "a47c46b0f4e4f43a",
+      "zh_bytes": 1451,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/campaign-monitor": {
+      "en_sha": "9d2c3220422588cb",
+      "zh_bytes": 2328,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/box-data-extract": {
+      "en_sha": "c2f4b67c069ff040",
+      "zh_bytes": 2097,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/breezy-hr": {
+      "en_sha": "118bddfaa5e68c7b",
+      "zh_bytes": 925,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/braintree": {
+      "en_sha": "8b96963d395bb67a",
+      "zh_bytes": 1129,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/azure-table": {
+      "en_sha": "784d40e23b8a9536",
+      "zh_bytes": 627,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/appfollow": {
+      "en_sha": "478d8117ec2fdd0e",
+      "zh_bytes": 641,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/bigcommerce": {
+      "en_sha": "e36aca7055e572c8",
+      "zh_bytes": 631,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/bamboo-hr": {
+      "en_sha": "5b62d145ff45b9c9",
+      "zh_bytes": 523,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/basecamp": {
+      "en_sha": "772af146f8390e40",
+      "zh_bytes": 3720,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/brevo": {
+      "en_sha": "6532dc9920bb4475",
+      "zh_bytes": 1031,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/calendly": {
+      "en_sha": "b52005012559bd36",
+      "zh_bytes": 994,
+      "translated_at": "2026-07-11T06:28:46Z",
+      "engine": "model"
+    },
+    "sources/campayn": {
+      "en_sha": "678cce883ba3f528",
+      "zh_bytes": 724,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/canny": {
+      "en_sha": "507de6fde6642e8c",
+      "zh_bytes": 651,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/capsule-crm": {
+      "en_sha": "5b82d19db5b4d9a1",
+      "zh_bytes": 827,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/captain-data": {
+      "en_sha": "0c4b213b351c9c83",
+      "zh_bytes": 1077,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/care-quality-commission": {
+      "en_sha": "d681ff188197319b",
+      "zh_bytes": 721,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/cart": {
+      "en_sha": "82881dfc0d90c59a",
+      "zh_bytes": 758,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/castor-edc": {
+      "en_sha": "deddd939fd8111c5",
+      "zh_bytes": 898,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/chameleon": {
+      "en_sha": "54720be6c48726cc",
+      "zh_bytes": 1161,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/chargedesk": {
+      "en_sha": "85381ca443805b0b",
+      "zh_bytes": 731,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/chargify": {
+      "en_sha": "13502bfdd4217c45",
+      "zh_bytes": 749,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/chartmogul": {
+      "en_sha": "1d36ff397327586e",
+      "zh_bytes": 990,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/chift": {
+      "en_sha": "293814927251b9a7",
+      "zh_bytes": 659,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/churnkey": {
+      "en_sha": "b79ce5172f87bd87",
+      "zh_bytes": 615,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/cin7": {
+      "en_sha": "35247a21baed5bec",
+      "zh_bytes": 682,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/circa": {
+      "en_sha": "056e594522c87aae",
+      "zh_bytes": 677,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/circleci": {
+      "en_sha": "73eda4003f8e76b5",
+      "zh_bytes": 1267,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/cisco-meraki": {
+      "en_sha": "3b282b5815e3c2b7",
+      "zh_bytes": 896,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/clarif-ai": {
+      "en_sha": "b185bd552dd0169d",
+      "zh_bytes": 747,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/clazar": {
+      "en_sha": "2330321af152dbe2",
+      "zh_bytes": 987,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/clickhouse": {
+      "en_sha": "359973eddb554bd4",
+      "zh_bytes": 749,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/clickup-api": {
+      "en_sha": "07a5b9ea21bc7bde",
+      "zh_bytes": 737,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/clockify": {
+      "en_sha": "aba9a3ce90fe7982",
+      "zh_bytes": 418,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/clockodo": {
+      "en_sha": "04a26b28ed58f4ec",
+      "zh_bytes": 1103,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/close-com": {
+      "en_sha": "762ea247448b2ce3",
+      "zh_bytes": 1201,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/cloudbeds": {
+      "en_sha": "8158c3067297e241",
+      "zh_bytes": 568,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/coassemble": {
+      "en_sha": "141b8052d17863ba",
+      "zh_bytes": 614,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/cockroachdb": {
+      "en_sha": "fa75682e20a66684",
+      "zh_bytes": 756,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/coda": {
+      "en_sha": "eb4cfa95cd4a1b13",
+      "zh_bytes": 990,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/codefresh": {
+      "en_sha": "43c9e0640615b654",
+      "zh_bytes": 779,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/coin-api": {
+      "en_sha": "40728229ac77d582",
+      "zh_bytes": 758,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/coingecko-coins": {
+      "en_sha": "c2c8d21ab29b60e7",
+      "zh_bytes": 753,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/coinmarketcap": {
+      "en_sha": "8d436e1a9981ddaa",
+      "zh_bytes": 755,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/commcare": {
+      "en_sha": "b3609149b41a5b35",
+      "zh_bytes": 1012,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/commercetools": {
+      "en_sha": "d325860cc8772824",
+      "zh_bytes": 749,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/concord": {
+      "en_sha": "202ed9abc8040a3d",
+      "zh_bytes": 719,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/configcat": {
+      "en_sha": "e6c7dd14241b5beb",
+      "zh_bytes": 759,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/confluence": {
+      "en_sha": "a7b172ef5a016537",
+      "zh_bytes": 1079,
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/azure-blob-storage": {
+      "en_sha": "",
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/bing-ads": {
+      "en_sha": "",
+      "translated_at": "2026-07-11T06:29:59Z",
+      "engine": "model"
+    },
+    "sources/bluetally": {
+      "en_sha": "",
+      "zh_bytes": 952,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/boldsign": {
+      "en_sha": "",
+      "zh_bytes": 1376,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/box": {
+      "en_sha": "",
+      "zh_bytes": 1814,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/breezometer": {
+      "en_sha": "",
+      "zh_bytes": 1844,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/callrail": {
+      "en_sha": "",
+      "zh_bytes": 1015,
+      "translated_at": "2026-07-11T06:43:10Z",
+      "engine": "model"
+    },
+    "sources/cimis": {
+      "en_sha": "28d9211ce68480d7",
+      "zh_bytes": 1605,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/convertkit": {
+      "en_sha": "b39e9d9806cee6fb",
+      "zh_bytes": 1124,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/convex": {
+      "en_sha": "d390581116ec6af1",
+      "zh_bytes": 1108,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/copper": {
+      "en_sha": "69ea90245da73384",
+      "zh_bytes": 1331,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/couchbase": {
+      "en_sha": "ca15d1c46cc771b7",
+      "zh_bytes": 1408,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/countercyclical": {
+      "en_sha": "86c0bfd863b43c17",
+      "zh_bytes": 1286,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/courier": {
+      "en_sha": "710af8f0fa8ff9d4",
+      "zh_bytes": 1394,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/criteo-marketing": {
+      "en_sha": "3e2d6c5334967c2d",
+      "zh_bytes": 1567,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/customer-io": {
+      "en_sha": "700ece3f195b94ce",
+      "zh_bytes": 1128,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/customerly": {
+      "en_sha": "76902aea911171a1",
+      "zh_bytes": 1266,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/datadog": {
+      "en_sha": "1701607650eb3766",
+      "zh_bytes": 1454,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/datagen": {
+      "en_sha": "cd19ee24fda30e4d",
+      "zh_bytes": 2022,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/datascope": {
+      "en_sha": "af479fe387e4437b",
+      "zh_bytes": 1390,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/db2": {
+      "en_sha": "61b2d60e62b99fac",
+      "zh_bytes": 1096,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/dbt": {
+      "en_sha": "754f21215c30611a",
+      "zh_bytes": 1299,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/defillama": {
+      "en_sha": "1a874653e23021de",
+      "zh_bytes": 1204,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/delighted": {
+      "en_sha": "451cc9eca48e4b84",
+      "zh_bytes": 1386,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/deputy": {
+      "en_sha": "256a67f2eca3d589",
+      "zh_bytes": 1389,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/devin-ai": {
+      "en_sha": "9f7df117ed1bf446",
+      "zh_bytes": 2288,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ding-connect": {
+      "en_sha": "bdc462cb3765fa88",
+      "zh_bytes": 1728,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/discord": {
+      "en_sha": "213b9996d006482b",
+      "zh_bytes": 1569,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/dixa": {
+      "en_sha": "f374e3f45184c257",
+      "zh_bytes": 1100,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/dockerhub": {
+      "en_sha": "e70496d9392f3f9b",
+      "zh_bytes": 1120,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/docuseal": {
+      "en_sha": "6722f365e20c687a",
+      "zh_bytes": 1575,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/dolibarr": {
+      "en_sha": "9a481950ee90d3ba",
+      "zh_bytes": 1615,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/dremio": {
+      "en_sha": "64fc31953f418d24",
+      "zh_bytes": 1108,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/drift": {
+      "en_sha": "a287adcc82b90a1c",
+      "zh_bytes": 1104,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/drip": {
+      "en_sha": "117c7365aae268c4",
+      "zh_bytes": 1302,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/dropbox-sign": {
+      "en_sha": "b45604550b208283",
+      "zh_bytes": 1395,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/drupal": {
+      "en_sha": "21516e331d1b5e63",
+      "zh_bytes": 1108,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/dv-360": {
+      "en_sha": "9393c1c72ffbb127",
+      "zh_bytes": 1160,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/dwolla": {
+      "en_sha": "77af76e6143d9f72",
+      "zh_bytes": 1579,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/dynamodb": {
+      "en_sha": "8b714a2566676625",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/e-conomic": {
+      "en_sha": "2dc1f07167183ba7",
+      "zh_bytes": 1571,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/e2e-test": {
+      "en_sha": "84b850802cb55cf0",
+      "zh_bytes": 1184,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/e2e-test-cloud": {
+      "en_sha": "ded7e45a83cdef2b",
+      "zh_bytes": 1224,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/easypost": {
+      "en_sha": "a141d214c6354419",
+      "zh_bytes": 1348,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/easypromos": {
+      "en_sha": "88a99d0494a7c10a",
+      "zh_bytes": 1274,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ebay-finance": {
+      "en_sha": "13a5a1069f59b72c",
+      "zh_bytes": 1870,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ebay-fulfillment": {
+      "en_sha": "2e52559dcbaf2612",
+      "zh_bytes": 1696,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/elasticemail": {
+      "en_sha": "8ca2c3dcea51e5ca",
+      "zh_bytes": 1404,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/emailoctopus": {
+      "en_sha": "af3013d898899571",
+      "zh_bytes": 1264,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/employment-hero": {
+      "en_sha": "e6fec2155fe67c8d",
+      "zh_bytes": 1601,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/encharge": {
+      "en_sha": "268e79b452448a8c",
+      "zh_bytes": 1295,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/eventbrite": {
+      "en_sha": "c242aa833a9ddb86",
+      "zh_bytes": 1383,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/eventee": {
+      "en_sha": "958b1e801bc63d0a",
+      "zh_bytes": 1352,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/eventzilla": {
+      "en_sha": "454f5ff65ee5eb31",
+      "zh_bytes": 1401,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/everhour": {
+      "en_sha": "f19d85ec062d3f77",
+      "zh_bytes": 1373,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/exchange-rates": {
+      "en_sha": "26fcafc8d3a4e9b1",
+      "zh_bytes": 1453,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ezofficeinventory": {
+      "en_sha": "8febb8f02579c488",
+      "zh_bytes": 1769,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/facebook-pages": {
+      "en_sha": "e83d25fbe2bd630b",
+      "zh_bytes": 1564,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/factorial": {
+      "en_sha": "fe4f21596e4aff6c",
+      "zh_bytes": 1377,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/faker": {
+      "en_sha": "668d349d9c97f5a5",
+      "zh_bytes": 1263,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/fastbill": {
+      "en_sha": "14edd721b8e0bab2",
+      "zh_bytes": 1425,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/fastly": {
+      "en_sha": "b20b7a80cc53cd36",
+      "zh_bytes": 1604,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/fauna": {
+      "en_sha": "250193d6b0dab1fd",
+      "zh_bytes": 1236,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/feishu": {
+      "en_sha": "6be2c3d38bcbfff2",
+      "zh_bytes": 1705,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/fillout": {
+      "en_sha": "836e3c93005523ab",
+      "zh_bytes": 2053,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/finage": {
+      "en_sha": "b164ffdc26440cf4",
+      "zh_bytes": 1746,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/financial-modelling": {
+      "en_sha": "1dddddb502d34c93",
+      "zh_bytes": 2175,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/finnhub": {
+      "en_sha": "f20e379a58153909",
+      "zh_bytes": 1632,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/finnworlds": {
+      "en_sha": "1fe82a98dee1416a",
+      "zh_bytes": 1604,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/firebase-realtime-database": {
+      "en_sha": "f5bf2ee1d8e0c491",
+      "zh_bytes": 1188,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/firebolt": {
+      "en_sha": "54bfa819f27d9176",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/firehydrant": {
+      "en_sha": "e7d450d35e1f2789",
+      "zh_bytes": 3875,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/fleetio": {
+      "en_sha": "9e1fac8662dfa7c2",
+      "zh_bytes": 1128,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/flexmail": {
+      "en_sha": "a04470f471acb279",
+      "zh_bytes": 1539,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/flexport": {
+      "en_sha": "cf64b82ccb16ef1f",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/float": {
+      "en_sha": "45756bfdd59ee16b",
+      "zh_bytes": 1364,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/flowlu": {
+      "en_sha": "20a8d61535fe8887",
+      "zh_bytes": 1358,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/formbricks": {
+      "en_sha": "f45652fe9339a659",
+      "zh_bytes": 1344,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/free-agent-connector": {
+      "en_sha": "6b74c6a93cbe7e52",
+      "zh_bytes": 1525,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/freightview": {
+      "en_sha": "17dc2a78f316d1dc",
+      "zh_bytes": 1328,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/freshbooks": {
+      "en_sha": "63844141b0b07ea5",
+      "zh_bytes": 1915,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/freshcaller": {
+      "en_sha": "87aeeec5cae6a9fd",
+      "zh_bytes": 1260,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/freshchat": {
+      "en_sha": "0ed0678520afce38",
+      "zh_bytes": 1413,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/freshdesk": {
+      "en_sha": "5eac1816672e4076",
+      "zh_bytes": 1676,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/freshsales": {
+      "en_sha": "47dbbc6148305d4c",
+      "zh_bytes": 1480,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/freshservice": {
+      "en_sha": "787495f53240fad4",
+      "zh_bytes": 1132,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/front": {
+      "en_sha": "435e442f77c7e8b8",
+      "zh_bytes": 1372,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/fulcrum": {
+      "en_sha": "65f6ecdbe526e8d6",
+      "zh_bytes": 1320,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/fullstory": {
+      "en_sha": "af15416bd8469560",
+      "zh_bytes": 1443,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gainsight-px": {
+      "en_sha": "afe62e99af48896f",
+      "zh_bytes": 1436,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gcs": {
+      "en_sha": "1e5767199941d82f",
+      "zh_bytes": 1569,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/genesys": {
+      "en_sha": "467122c58a234d59",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/getgist": {
+      "en_sha": "13fbb136e68c2aeb",
+      "zh_bytes": 1384,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/getlago": {
+      "en_sha": "38aed133a65fecb1",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gitbook": {
+      "en_sha": "5babb8719dcbcd4a",
+      "zh_bytes": 1467,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gitlab": {
+      "en_sha": "61e44a0d439f2eca",
+      "zh_bytes": 1743,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/glassfrog": {
+      "en_sha": "03fa07e14aa6cd8f",
+      "zh_bytes": 1120,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gmail": {
+      "en_sha": "271f7ddb4cba8bf0",
+      "zh_bytes": 4763,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gnews": {
+      "en_sha": "48ea735a24e9ea13",
+      "zh_bytes": 1104,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gocardless": {
+      "en_sha": "c9dcf53839e44443",
+      "zh_bytes": 1124,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/goldcast": {
+      "en_sha": "41b2356faa904c4c",
+      "zh_bytes": 1507,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gologin": {
+      "en_sha": "e58fdcd8faa49807",
+      "zh_bytes": 1403,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gong": {
+      "en_sha": "4490f84d475dd916",
+      "zh_bytes": 1786,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-analytics-v4": {
+      "en_sha": "1fb36b7e4b0f1f53",
+      "zh_bytes": 1236,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-analytics-v4-service-account-only": {
+      "en_sha": "0fd938adaeecdcba",
+      "zh_bytes": 1236,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-calendar": {
+      "en_sha": "0883a08548252297",
+      "zh_bytes": 1454,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-classroom": {
+      "en_sha": "feaf1624b0d14203",
+      "zh_bytes": 1421,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-drive": {
+      "en_sha": "95a41becf82e015b",
+      "zh_bytes": 1761,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-forms": {
+      "en_sha": "b03245ba3515cb9f",
+      "zh_bytes": 1434,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-pagespeed-insights": {
+      "en_sha": "0b131f1f4c434f40",
+      "zh_bytes": 1443,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-search-console": {
+      "en_sha": "3ec0795f02ff59e0",
+      "zh_bytes": 1661,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-tasks": {
+      "en_sha": "95959e57f2e94193",
+      "zh_bytes": 1434,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-webfonts": {
+      "en_sha": "24bbd089fa5d01c8",
+      "zh_bytes": 1544,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-workspace-admin-reports": {
+      "en_sha": "bd97090a8ef2fb05",
+      "zh_bytes": 1204,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gorgias": {
+      "en_sha": "33678ed4dd11a06f",
+      "zh_bytes": 1479,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/grafana": {
+      "en_sha": "a428fc945e680fc6",
+      "zh_bytes": 1407,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/granola": {
+      "en_sha": "d7b7fbff2f593ac0",
+      "zh_bytes": 1917,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/greenhouse": {
+      "en_sha": "c54acbd9352aef12",
+      "zh_bytes": 1469,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/greythr": {
+      "en_sha": "a75e37b0ef0eb80a",
+      "zh_bytes": 1425,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gridly": {
+      "en_sha": "bd90c616e799d99c",
+      "zh_bytes": 1346,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/gutendex": {
+      "en_sha": "bc7254c53a9274be",
+      "zh_bytes": 1248,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/hardcoded-records": {
+      "en_sha": "56a922197c254619",
+      "zh_bytes": 1152,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/harness": {
+      "en_sha": "267309213b854e61",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/height": {
+      "en_sha": "5eb2cdf51fcb63ee",
+      "zh_bytes": 2386,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/hellobaton": {
+      "en_sha": "0f13c2f16a3d4e84",
+      "zh_bytes": 1124,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/help-scout": {
+      "en_sha": "2c1d5746c062a7f3",
+      "zh_bytes": 1380,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/hibob": {
+      "en_sha": "2c5312c76920184b",
+      "zh_bytes": 1457,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/high-level": {
+      "en_sha": "9e49a10a96cc871a",
+      "zh_bytes": 1364,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/hoorayhr": {
+      "en_sha": "b02c59a45240e8da",
+      "zh_bytes": 1664,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/http-request": {
+      "en_sha": "38359c7dedbdf06f",
+      "zh_bytes": 1132,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/hubplanner": {
+      "en_sha": "aff9c23206f64dd6",
+      "zh_bytes": 1330,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/hugging-face-datasets": {
+      "en_sha": "ebdb9f24850357f8",
+      "zh_bytes": 1747,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/humanitix": {
+      "en_sha": "b87b9d186ba5fb68",
+      "zh_bytes": 1262,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/huntr": {
+      "en_sha": "1e1699df1ba05f9b",
+      "zh_bytes": 1246,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/illumina-basespace": {
+      "en_sha": "a0f0e56b2b5292c1",
+      "zh_bytes": 1782,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/imagga": {
+      "en_sha": "03f1ee833a0b6edc",
+      "zh_bytes": 1782,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/incident-io": {
+      "en_sha": "c4aeab4f0aa8ca20",
+      "zh_bytes": 2999,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/inflowinventory": {
+      "en_sha": "f522915c7161665f",
+      "zh_bytes": 1330,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/insightful": {
+      "en_sha": "903472ebce68b390",
+      "zh_bytes": 1646,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/insightly": {
+      "en_sha": "6531ce17e6a64b16",
+      "zh_bytes": 1252,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/instagram": {
+      "en_sha": "99d86b2d7eb5d407",
+      "zh_bytes": 1839,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/instatus": {
+      "en_sha": "f420d6bc8c0bd4c6",
+      "zh_bytes": 1360,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/interzoid": {
+      "en_sha": "d028bea7402067bd",
+      "zh_bytes": 1262,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/intruder": {
+      "en_sha": "0c53d2dd936cfd57",
+      "zh_bytes": 1144,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/invoiced": {
+      "en_sha": "9e749fbe705a63d0",
+      "zh_bytes": 1313,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/invoiceninja": {
+      "en_sha": "fa4762c3aac6c3e0",
+      "zh_bytes": 1274,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ip2whois": {
+      "en_sha": "9d9f98fd619f8e5e",
+      "zh_bytes": 1132,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/iterable": {
+      "en_sha": "20958fa313d49fee",
+      "zh_bytes": 1931,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/jamf-pro": {
+      "en_sha": "39d0d0ba14926c32",
+      "zh_bytes": 1395,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/jenkins": {
+      "en_sha": "8dba5fbef2ab9a35",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/jina-ai-reader": {
+      "en_sha": "39f2df83a8ec813f",
+      "zh_bytes": 1140,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/jobnimbus": {
+      "en_sha": "c0f16e632aa8b75e",
+      "zh_bytes": 1399,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/jotform": {
+      "en_sha": "740646d6e611c601",
+      "zh_bytes": 1536,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/judge-me-reviews": {
+      "en_sha": "f6cab5d8558acb3a",
+      "zh_bytes": 1409,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/justcall": {
+      "en_sha": "3ca54f6405b086cd",
+      "zh_bytes": 1310,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/k6-cloud": {
+      "en_sha": "b7383268051c5b29",
+      "zh_bytes": 1132,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/katana": {
+      "en_sha": "a100dddbf351e6bb",
+      "zh_bytes": 1355,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/keka": {
+      "en_sha": "4af44776c2ce97a5",
+      "zh_bytes": 1511,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/kisi": {
+      "en_sha": "288a0d38ed172512",
+      "zh_bytes": 1259,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/kissmetrics": {
+      "en_sha": "6e0009bf08618497",
+      "zh_bytes": 1315,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/klaus-api": {
+      "en_sha": "2c9e85ea3bed88b7",
+      "zh_bytes": 1120,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/klaviyo": {
+      "en_sha": "d615c305d5e46621",
+      "zh_bytes": 1543,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/kustomer-singer": {
+      "en_sha": "b8d774f2bba696f8",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/kyriba": {
+      "en_sha": "c3cc7cd3de079ddd",
+      "zh_bytes": 1385,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/kyve": {
+      "en_sha": "359f2935ea5dc9e1",
+      "zh_bytes": 1100,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/launchdarkly": {
+      "en_sha": "4e92c43bc3b71422",
+      "zh_bytes": 1148,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/leadfeeder": {
+      "en_sha": "695dd8fe4cc4e46c",
+      "zh_bytes": 1410,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/lemlist": {
+      "en_sha": "f06bffdc31c68dc3",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/less-annoying-crm": {
+      "en_sha": "bba4bc1c517b7953",
+      "zh_bytes": 1484,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/lever-hiring": {
+      "en_sha": "09a14a1605be96e9",
+      "zh_bytes": 1132,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/lightspeed-retail": {
+      "en_sha": "b07859aa260e98ef",
+      "zh_bytes": 1460,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/linear": {
+      "en_sha": "c4bf3cd3fdd3f2c9",
+      "zh_bytes": 1547,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/linkedin-pages": {
+      "en_sha": "aebd6601d5b25fc9",
+      "zh_bytes": 1140,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/linkrunner": {
+      "en_sha": "9bcf15ba74d24ff2",
+      "zh_bytes": 1948,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/linnworks": {
+      "en_sha": "0ca928ffc77431d9",
+      "zh_bytes": 1292,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/lob": {
+      "en_sha": "babc7c33d30b2f40",
+      "zh_bytes": 1502,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/lokalise": {
+      "en_sha": "815c5f62db4be006",
+      "zh_bytes": 1402,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/looker": {
+      "en_sha": "c5f8d55b50e1389e",
+      "zh_bytes": 1108,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/low-code": {
+      "en_sha": "a66eb68e02b4bdeb",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/luma": {
+      "en_sha": "5ffd35e6da4bdc81",
+      "zh_bytes": 1305,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/magento": {
+      "en_sha": "153f017be355bf5f",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mailerlite": {
+      "en_sha": "4a513facf036eda1",
+      "zh_bytes": 1124,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mailersend": {
+      "en_sha": "44700f3e49f19c1c",
+      "zh_bytes": 1124,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mailgun": {
+      "en_sha": "11bf6cd2d519e924",
+      "zh_bytes": 1603,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mailjet-mail": {
+      "en_sha": "79a638410d9bb86c",
+      "zh_bytes": 1156,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mailjet-sms": {
+      "en_sha": "28fca6253e5962c7",
+      "zh_bytes": 1152,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mailosaur": {
+      "en_sha": "f15bf82a148a8473",
+      "zh_bytes": 1344,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mailtrap": {
+      "en_sha": "f8aac757640d5c28",
+      "zh_bytes": 1316,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mantle": {
+      "en_sha": "6df1f5037b5686e4",
+      "zh_bytes": 1300,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/marketo": {
+      "en_sha": "f545f0c6bab452f7",
+      "zh_bytes": 1471,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/marketstack": {
+      "en_sha": "8b3df2552947ac52",
+      "zh_bytes": 1316,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mendeley": {
+      "en_sha": "2ea8947e10b8868a",
+      "zh_bytes": 2059,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mention": {
+      "en_sha": "af280ce5cd3d3977",
+      "zh_bytes": 1524,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mercado-ads": {
+      "en_sha": "75be564035f413d2",
+      "zh_bytes": 1702,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/merge": {
+      "en_sha": "eb029128599c64eb",
+      "zh_bytes": 1488,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/metabase": {
+      "en_sha": "8ca8d97911c721b1",
+      "zh_bytes": 1756,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-dataverse": {
+      "en_sha": "99f0c2f1f7525207",
+      "zh_bytes": 1846,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-dynamics-ax": {
+      "en_sha": "b5d4dd9ef1324647",
+      "zh_bytes": 1168,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-dynamics-customer-engagement": {
+      "en_sha": "52d9ba171e2b4f18",
+      "zh_bytes": 1236,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-dynamics-gp": {
+      "en_sha": "f84f99f9e22b0894",
+      "zh_bytes": 1168,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-dynamics-nav": {
+      "en_sha": "5295250915b80387",
+      "zh_bytes": 1172,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-entra-id": {
+      "en_sha": "6cdb4213d735e0c9",
+      "zh_bytes": 2830,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-lists": {
+      "en_sha": "1e76d336f5f73b46",
+      "zh_bytes": 1528,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-onedrive": {
+      "en_sha": "ea5af54f9382637f",
+      "zh_bytes": 1156,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-sharepoint": {
+      "en_sha": "a8379dfa9cbd08c4",
+      "zh_bytes": 1515,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/microsoft-teams": {
+      "en_sha": "474cf7a266fd4da9",
+      "zh_bytes": 1144,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/miro": {
+      "en_sha": "7b4f76efe165c7e2",
+      "zh_bytes": 1242,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/missive": {
+      "en_sha": "1d6c74f3168a13e2",
+      "zh_bytes": 1449,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mixmax": {
+      "en_sha": "eb6e8a6ed4ddfaad",
+      "zh_bytes": 1300,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mode": {
+      "en_sha": "8f0e8e89e3652166",
+      "zh_bytes": 1451,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/monday": {
+      "en_sha": "3be7d149b911eff8",
+      "zh_bytes": 1735,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/mux": {
+      "en_sha": "7d34aa06d5d183e6",
+      "zh_bytes": 1442,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/my-hours": {
+      "en_sha": "ab2a262e067f411f",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/n8n": {
+      "en_sha": "51df10acc6bc92e0",
+      "zh_bytes": 1096,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/nasa": {
+      "en_sha": "6bfeddb47b1e14bf",
+      "zh_bytes": 1100,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/navan": {
+      "en_sha": "4d3c3337ef2ddce2",
+      "zh_bytes": 1984,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/nebius-ai": {
+      "en_sha": "0e5469ba155cd0b3",
+      "zh_bytes": 1499,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/netsuite": {
+      "en_sha": "812a6ec44c773bd4",
+      "zh_bytes": 1438,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/news-api": {
+      "en_sha": "19b6b38fcec609ee",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/newsdata": {
+      "en_sha": "32af0f1a12d278db",
+      "zh_bytes": 1132,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/newsdata-io": {
+      "en_sha": "c1cd1b959db09ff1",
+      "zh_bytes": 1599,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/nexiopay": {
+      "en_sha": "11b87cda0ad197b4",
+      "zh_bytes": 1908,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/nexus-datasets": {
+      "en_sha": "18f70aa7bde727ea",
+      "zh_bytes": 1764,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ninjaone-rmm": {
+      "en_sha": "53ebad982ea8b0c7",
+      "zh_bytes": 1576,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/nocrm": {
+      "en_sha": "4dcd2966290b762f",
+      "zh_bytes": 1477,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/nutshell": {
+      "en_sha": "9d06566845cb723c",
+      "zh_bytes": 1304,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/nylas": {
+      "en_sha": "71a88d5b63779f50",
+      "zh_bytes": 1390,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/nytimes": {
+      "en_sha": "3f5e242bf1182884",
+      "zh_bytes": 1140,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/omnisend": {
+      "en_sha": "7bed8bf92524b8c4",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/oncehub": {
+      "en_sha": "26137452a3e03333",
+      "zh_bytes": 1398,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/onepagecrm": {
+      "en_sha": "7f209af619dd2c6a",
+      "zh_bytes": 1378,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/onesignal": {
+      "en_sha": "a3a52bb822af796a",
+      "zh_bytes": 1477,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/onfleet": {
+      "en_sha": "bd148f967bbb44db",
+      "zh_bytes": 1509,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/open-data-dc": {
+      "en_sha": "2975005a1ee35ed6",
+      "zh_bytes": 1816,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/open-exchange-rates": {
+      "en_sha": "bdee7859aa4a5eb5",
+      "zh_bytes": 1160,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/openaq": {
+      "en_sha": "66ad8ae515011b33",
+      "zh_bytes": 1420,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/openfda": {
+      "en_sha": "d6908c1be5ed5845",
+      "zh_bytes": 1212,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/openweather": {
+      "en_sha": "3270acf799ec3781",
+      "zh_bytes": 1128,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/opinion-stage": {
+      "en_sha": "8c8ab83893b5fed6",
+      "zh_bytes": 1278,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/opsgenie": {
+      "en_sha": "5c07034882c1d47b",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/opuswatch": {
+      "en_sha": "617c9e8d1adf29be",
+      "zh_bytes": 1339,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/oracle-peoplesoft": {
+      "en_sha": "d5dde3f3687c24bf",
+      "zh_bytes": 1152,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/oracle-siebel-crm": {
+      "en_sha": "25165cd0d2583c0d",
+      "zh_bytes": 1152,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/orb": {
+      "en_sha": "9f7f17f19cdaadc4",
+      "zh_bytes": 1096,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/orbit": {
+      "en_sha": "4c4f98398c870339",
+      "zh_bytes": 1104,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/oura": {
+      "en_sha": "47db17347a3287ed",
+      "zh_bytes": 1100,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/outbrain-amplify": {
+      "en_sha": "c0afb4891af13ace",
+      "zh_bytes": 1148,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/outlook": {
+      "en_sha": "13c3f024610e2679",
+      "zh_bytes": 2348,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/outreach": {
+      "en_sha": "a28b37ef8d4baffa",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/oveit": {
+      "en_sha": "397ad8fa8d211755",
+      "zh_bytes": 1331,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pabbly-subscriptions-billing": {
+      "en_sha": "63b7463879f079b1",
+      "zh_bytes": 1383,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/paddle": {
+      "en_sha": "dbf5e4a82234df6d",
+      "zh_bytes": 1712,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pagerduty": {
+      "en_sha": "59f8f355f835caf7",
+      "zh_bytes": 1120,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pandadoc": {
+      "en_sha": "353ec0d20f538525",
+      "zh_bytes": 1400,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/paperform": {
+      "en_sha": "f77171791f29544a",
+      "zh_bytes": 1353,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/papersign": {
+      "en_sha": "a9e2f229f99b6511",
+      "zh_bytes": 1353,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pardot": {
+      "en_sha": "38d6cd3ed583f7ae",
+      "zh_bytes": 1572,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/partnerize": {
+      "en_sha": "e18218630c45a011",
+      "zh_bytes": 1727,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/partnerstack": {
+      "en_sha": "53b6a14b9fc53038",
+      "zh_bytes": 1491,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/payfit": {
+      "en_sha": "3f38047469039e1b",
+      "zh_bytes": 1296,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/paypal-transaction": {
+      "en_sha": "1e4946f4ff8c75dd",
+      "zh_bytes": 1512,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/paystack": {
+      "en_sha": "9e73faffac5e000b",
+      "zh_bytes": 1309,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pendo": {
+      "en_sha": "91dbf43d73a9c7b7",
+      "zh_bytes": 1375,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pennylane": {
+      "en_sha": "a9d2483ecd43d972",
+      "zh_bytes": 1398,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/perigon": {
+      "en_sha": "8049b7386fa383cc",
+      "zh_bytes": 1595,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/perk": {
+      "en_sha": "40c45295da39816a",
+      "zh_bytes": 1333,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/persistiq": {
+      "en_sha": "c38e270d7aa563ac",
+      "zh_bytes": 1120,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/persona": {
+      "en_sha": "b829aabaef5072a1",
+      "zh_bytes": 1277,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pexels-api": {
+      "en_sha": "d839839681ef93bf",
+      "zh_bytes": 1496,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/phyllo": {
+      "en_sha": "709861e8c0ca154c",
+      "zh_bytes": 1854,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/picqer": {
+      "en_sha": "ad13d5ee073ddd06",
+      "zh_bytes": 1701,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pingdom": {
+      "en_sha": "aa8ffa7029096817",
+      "zh_bytes": 1392,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pinterest": {
+      "en_sha": "723fc6046b2db774",
+      "zh_bytes": 3080,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pipedrive": {
+      "en_sha": "2eff36e92d864d18",
+      "zh_bytes": 1366,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pipeliner": {
+      "en_sha": "3e17b63b49547b1f",
+      "zh_bytes": 1392,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/piwik": {
+      "en_sha": "57494eb5a5d30574",
+      "zh_bytes": 1418,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/plaid": {
+      "en_sha": "c78167ffb8f232a3",
+      "zh_bytes": 1104,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/planhat": {
+      "en_sha": "774c67f746925f0e",
+      "zh_bytes": 3295,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pocket": {
+      "en_sha": "e65ef23057b30608",
+      "zh_bytes": 1108,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pokeapi": {
+      "en_sha": "f488376a4039edc9",
+      "zh_bytes": 1418,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/polygon-stock-api": {
+      "en_sha": "86c9d6001adb31ec",
+      "zh_bytes": 1152,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/poplar": {
+      "en_sha": "7b9ae962b71a29e9",
+      "zh_bytes": 1503,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/posthog": {
+      "en_sha": "5e597ab78f081716",
+      "zh_bytes": 1526,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/prestashop": {
+      "en_sha": "76231fcb311b8825",
+      "zh_bytes": 1311,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pretix": {
+      "en_sha": "088fff6ada251b7d",
+      "zh_bytes": 1359,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/primetric": {
+      "en_sha": "0c564e5521b3d15b",
+      "zh_bytes": 1120,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/printify": {
+      "en_sha": "a16c662906307332",
+      "zh_bytes": 1417,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/productboard": {
+      "en_sha": "5b8158fb869d98e9",
+      "zh_bytes": 1456,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/productive": {
+      "en_sha": "2d108a4d02c0e376",
+      "zh_bytes": 1435,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/public-apis": {
+      "en_sha": "da0be3d16796a0c8",
+      "zh_bytes": 1128,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pylon": {
+      "en_sha": "f82f7a49b1c4c10b",
+      "zh_bytes": 1620,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/pypi": {
+      "en_sha": "f36b619bda51dd59",
+      "zh_bytes": 1232,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/qonto": {
+      "en_sha": "a9b61a75c6adfc6b",
+      "zh_bytes": 1104,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/qualaroo": {
+      "en_sha": "ed99f43ed560f8fc",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/quickbooks": {
+      "en_sha": "13caf68a2ee2a1f4",
+      "zh_bytes": 1615,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/railz": {
+      "en_sha": "fed8e089a7dd59aa",
+      "zh_bytes": 1368,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/rd-station-marketing": {
+      "en_sha": "084fbee79cae9940",
+      "zh_bytes": 1601,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/recharge": {
+      "en_sha": "4c20d4a0dd170c26",
+      "zh_bytes": 6405,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/recreation": {
+      "en_sha": "7687cd61793c80b0",
+      "zh_bytes": 1156,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/recruitee": {
+      "en_sha": "855157cc68974e81",
+      "zh_bytes": 1403,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/recurly": {
+      "en_sha": "f16b92b5b07ae0c2",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/reddit": {
+      "en_sha": "078ebf7d90dc17b5",
+      "zh_bytes": 1736,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/redshift": {
+      "en_sha": "9e3fc2ce7eb2539b",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/referralhero": {
+      "en_sha": "8c4d0b59f6fb4219",
+      "zh_bytes": 1274,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/rentcast": {
+      "en_sha": "10b11d74e36fa09e",
+      "zh_bytes": 3709,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/repairshopr": {
+      "en_sha": "53c614d0f0758b55",
+      "zh_bytes": 1315,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/reply-io": {
+      "en_sha": "560dc047a596d29a",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/retailexpress-by-maropost": {
+      "en_sha": "fe31f775eb826ac8",
+      "zh_bytes": 1358,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/retently": {
+      "en_sha": "ffebf36d4467d3b0",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/revenuecat": {
+      "en_sha": "4e6b83ccfd8b84a3",
+      "zh_bytes": 1339,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/revolut-merchant": {
+      "en_sha": "26bec8bfba0736d9",
+      "zh_bytes": 1603,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ringcentral": {
+      "en_sha": "902aad4db01034b2",
+      "zh_bytes": 1722,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/rki-covid": {
+      "en_sha": "ea38f0c8b496ad87",
+      "zh_bytes": 1188,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/rocket-chat": {
+      "en_sha": "8bd481938c39b77c",
+      "zh_bytes": 1144,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/rocketlane": {
+      "en_sha": "fd40894014c8a3dc",
+      "zh_bytes": 1354,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/rollbar": {
+      "en_sha": "8af5310e9f98241e",
+      "zh_bytes": 1398,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/rootly": {
+      "en_sha": "3d5af493a9175eda",
+      "zh_bytes": 1300,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/rss": {
+      "en_sha": "7a9c7668319b5a3c",
+      "zh_bytes": 1096,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ruddr": {
+      "en_sha": "2fe3919107ae1d0d",
+      "zh_bytes": 1335,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/safetyculture": {
+      "en_sha": "4765f4c64f8b4bdb",
+      "zh_bytes": 1918,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sage-hr": {
+      "en_sha": "1254e9c0f3fa2602",
+      "zh_bytes": 1298,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/salesflare": {
+      "en_sha": "cc9f32860d2d5139",
+      "zh_bytes": 1315,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/salesloft": {
+      "en_sha": "0d84513e2261e9f9",
+      "zh_bytes": 1479,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sap-business-one": {
+      "en_sha": "a0b83422d0b10f3a",
+      "zh_bytes": 1148,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sap-fieldglass": {
+      "en_sha": "3045f2be91de3c42",
+      "zh_bytes": 1390,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/savvycal": {
+      "en_sha": "927eba1d9dfbef7e",
+      "zh_bytes": 1401,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/scryfall": {
+      "en_sha": "fc004dfeeb4e0c67",
+      "zh_bytes": 1216,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/search-metrics": {
+      "en_sha": "0cd6a72a54042636",
+      "zh_bytes": 1136,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/secoda": {
+      "en_sha": "153b7ad079208b91",
+      "zh_bytes": 1124,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/segment": {
+      "en_sha": "306879dac307c8b8",
+      "zh_bytes": 1489,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sendgrid": {
+      "en_sha": "32e5bb77d91e80a1",
+      "zh_bytes": 1511,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sendinblue": {
+      "en_sha": "edc5b83aca532958",
+      "zh_bytes": 1140,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sendowl": {
+      "en_sha": "c895febb01568c3c",
+      "zh_bytes": 1387,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sendpulse": {
+      "en_sha": "71b4c30f20e7a097",
+      "zh_bytes": 1332,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/senseforce": {
+      "en_sha": "e3172f7bf28a0d26",
+      "zh_bytes": 1730,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sentry": {
+      "en_sha": "5789a52a480e7653",
+      "zh_bytes": 1509,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/serpstat": {
+      "en_sha": "da27308dd308fd9e",
+      "zh_bytes": 1248,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/service-now": {
+      "en_sha": "126f1c5934766f87",
+      "zh_bytes": 1152,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sftp": {
+      "en_sha": "e7362556bfebfb77",
+      "zh_bytes": 1390,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sftp-bulk": {
+      "en_sha": "424cb83efd5dd144",
+      "zh_bytes": 1502,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sharetribe": {
+      "en_sha": "a4983c27579c858e",
+      "zh_bytes": 2272,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/shippo": {
+      "en_sha": "ee74e24e05b5cea1",
+      "zh_bytes": 1349,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/shipstation": {
+      "en_sha": "ac6896215fc99fcc",
+      "zh_bytes": 1315,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/shopwired": {
+      "en_sha": "f6d3ca377f6e9356",
+      "zh_bytes": 1699,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/shortcut": {
+      "en_sha": "7d65319e50734f72",
+      "zh_bytes": 1503,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/shortio": {
+      "en_sha": "228ccba1df9afb2a",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/shutterstock": {
+      "en_sha": "9d16ccd647bbce09",
+      "zh_bytes": 1976,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sigma-computing": {
+      "en_sha": "9d6eb2dfdcd9f6c1",
+      "zh_bytes": 1868,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/signnow": {
+      "en_sha": "c5e2c6f0a7c200b4",
+      "zh_bytes": 1652,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/simfin": {
+      "en_sha": "78a9816e26503bc7",
+      "zh_bytes": 1250,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/simplecast": {
+      "en_sha": "29944fd4990e09f8",
+      "zh_bytes": 1348,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/simplesat": {
+      "en_sha": "fb4d6865fa78adde",
+      "zh_bytes": 1864,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/singlestore": {
+      "en_sha": "aa14a3cf8c645cdd",
+      "zh_bytes": 1128,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/smaily": {
+      "en_sha": "40095d4d7b91cc3e",
+      "zh_bytes": 1108,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/smartengage": {
+      "en_sha": "4a713e61423f3678",
+      "zh_bytes": 1128,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/smartreach": {
+      "en_sha": "b8982dd908392ff7",
+      "zh_bytes": 1304,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/smartsheets": {
+      "en_sha": "e580ea673fb4c8ec",
+      "zh_bytes": 1491,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/smartwaiver": {
+      "en_sha": "8556e0f655da6658",
+      "zh_bytes": 1438,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/snapchat-marketing": {
+      "en_sha": "c8be14d6d5197997",
+      "zh_bytes": 1775,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/solarwinds-service-desk": {
+      "en_sha": "58d85543035a7ad6",
+      "zh_bytes": 1519,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sonar-cloud": {
+      "en_sha": "8ac976606c425bf3",
+      "zh_bytes": 1144,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/sparkpost": {
+      "en_sha": "897ec004b45fcf44",
+      "zh_bytes": 1385,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/split-io": {
+      "en_sha": "6c3e0e0ad054c30d",
+      "zh_bytes": 1308,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/spotify-ads": {
+      "en_sha": "3864fd9a27a7ac1d",
+      "zh_bytes": 1981,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/spotlercrm": {
+      "en_sha": "fa3a63d2eb5579d4",
+      "zh_bytes": 1452,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/spree-commerce": {
+      "en_sha": "a722445343aa8233",
+      "zh_bytes": 1140,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/square": {
+      "en_sha": "4b2cb5d2f6645420",
+      "zh_bytes": 1553,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/squarespace": {
+      "en_sha": "f1ab0ddedd9c91c9",
+      "zh_bytes": 1475,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/statsig": {
+      "en_sha": "f9ee37138f57a872",
+      "zh_bytes": 1352,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/stigg": {
+      "en_sha": "a3f4ccfd17098501",
+      "zh_bytes": 1297,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/stockdata": {
+      "en_sha": "e1685d076853aafe",
+      "zh_bytes": 1800,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/strava": {
+      "en_sha": "dce01a4400aa614e",
+      "zh_bytes": 1289,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/survey-sparrow": {
+      "en_sha": "8bcaba741d7b02d7",
+      "zh_bytes": 1331,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/surveycto": {
+      "en_sha": "d552ed1388c14538",
+      "zh_bytes": 1461,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/surveymonkey": {
+      "en_sha": "41396a12094f3d9d",
+      "zh_bytes": 2055,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/survicate": {
+      "en_sha": "735506e1d6c035b4",
+      "zh_bytes": 1312,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/svix": {
+      "en_sha": "d70a160fee02e6a5",
+      "zh_bytes": 1413,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/systeme": {
+      "en_sha": "9796916155f4561c",
+      "zh_bytes": 1254,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/taboola": {
+      "en_sha": "2b5b9672d1a3e188",
+      "zh_bytes": 1401,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/talkdesk-explore": {
+      "en_sha": "c93f62c351556656",
+      "zh_bytes": 1148,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tavus": {
+      "en_sha": "2b0ae954494eb756",
+      "zh_bytes": 1505,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/teamtailor": {
+      "en_sha": "65a0eaee2faaa577",
+      "zh_bytes": 1330,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/teamwork": {
+      "en_sha": "4835ca725eae8cde",
+      "zh_bytes": 1518,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tempo": {
+      "en_sha": "ec68721e4911cdbf",
+      "zh_bytes": 1266,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/teradata": {
+      "en_sha": "ae9e7e6969d0daec",
+      "zh_bytes": 2526,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/testrail": {
+      "en_sha": "2966a7ffbf28ff7b",
+      "zh_bytes": 1435,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/the-guardian-api": {
+      "en_sha": "42cd30c6b04cec49",
+      "zh_bytes": 1280,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/thinkific": {
+      "en_sha": "25e36aa8a6f146b9",
+      "zh_bytes": 1457,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/thinkific-courses": {
+      "en_sha": "5038fb47da7c7329",
+      "zh_bytes": 1345,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/thrive-learning": {
+      "en_sha": "c3173218dfcc38bb",
+      "zh_bytes": 1457,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ticketmaster": {
+      "en_sha": "9a58176efc8196a9",
+      "zh_bytes": 1274,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tickettailor": {
+      "en_sha": "5792598b3b71b5e1",
+      "zh_bytes": 1334,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ticktick": {
+      "en_sha": "04fe5f82fa834454",
+      "zh_bytes": 1837,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tidb": {
+      "en_sha": "9693deba6b5c11cf",
+      "zh_bytes": 1100,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tiktok-marketing": {
+      "en_sha": "cba1b5859019365e",
+      "zh_bytes": 7259,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/timely": {
+      "en_sha": "a030b90c26b7d789",
+      "zh_bytes": 1625,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tinyemail": {
+      "en_sha": "382997520c798a83",
+      "zh_bytes": 1262,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tmdb": {
+      "en_sha": "87f81dbf5c054264",
+      "zh_bytes": 1487,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/todoist": {
+      "en_sha": "f4c3bd598d521091",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/toggl": {
+      "en_sha": "d066524a8889d88d",
+      "zh_bytes": 1120,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tplcentral": {
+      "en_sha": "d540fdca4d7bfd7c",
+      "zh_bytes": 1144,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/track-pms": {
+      "en_sha": "174feb4328b16fce",
+      "zh_bytes": 11884,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/trello": {
+      "en_sha": "70579d98f9e5e563",
+      "zh_bytes": 1721,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tremendous": {
+      "en_sha": "361812d76ed45171",
+      "zh_bytes": 1468,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/trustpilot": {
+      "en_sha": "95d7e66a542bb89f",
+      "zh_bytes": 1361,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tvmaze-schedule": {
+      "en_sha": "3751f2bbb06aabe7",
+      "zh_bytes": 1144,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/twelve-data": {
+      "en_sha": "b88a3a2f4207b2c5",
+      "zh_bytes": 1626,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/twitter": {
+      "en_sha": "54bcede97ea130e0",
+      "zh_bytes": 1409,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/tyntec-sms": {
+      "en_sha": "92fa67ba267b3388",
+      "zh_bytes": 2454,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/ubidots": {
+      "en_sha": "148febdd171d6651",
+      "zh_bytes": 1329,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/unleash": {
+      "en_sha": "148b2dad7755abd1",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/uppromote": {
+      "en_sha": "41e7da8def966085",
+      "zh_bytes": 1455,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/uptick": {
+      "en_sha": "4565df0123734484",
+      "zh_bytes": 2199,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/us-census": {
+      "en_sha": "71f933d783c1a2bc",
+      "zh_bytes": 1136,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/uservoice": {
+      "en_sha": "14618baed57259db",
+      "zh_bytes": 1356,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/vantage": {
+      "en_sha": "ee19f36a04ce0e50",
+      "zh_bytes": 1128,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/veeqo": {
+      "en_sha": "8fe5519e874bb63e",
+      "zh_bytes": 1296,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/vercel": {
+      "en_sha": "31c9942e16f510e2",
+      "zh_bytes": 1417,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/victorops": {
+      "en_sha": "03d00e522022ca74",
+      "zh_bytes": 1120,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/visma-economic": {
+      "en_sha": "ff4e947f396b5ef4",
+      "zh_bytes": 2262,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/vitally": {
+      "en_sha": "21926e00c462956c",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/vwo": {
+      "en_sha": "c15c42f991eca9a7",
+      "zh_bytes": 1288,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/waiteraid": {
+      "en_sha": "abe67a3705bedd31",
+      "zh_bytes": 1392,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/wasabi-stats-api": {
+      "en_sha": "c2827c5a3085866b",
+      "zh_bytes": 1343,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/watchmode": {
+      "en_sha": "b4c3ba141fc9997e",
+      "zh_bytes": 1610,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/weatherstack": {
+      "en_sha": "fe457bff9ea41b25",
+      "zh_bytes": 1132,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/web-scrapper": {
+      "en_sha": "0cdbd38581cc70bd",
+      "zh_bytes": 1336,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/webflow": {
+      "en_sha": "c8c3ff81a5dc63f8",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/when-i-work": {
+      "en_sha": "7df90ec047ab0de7",
+      "zh_bytes": 1270,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/whisky-hunter": {
+      "en_sha": "cec3b67a8400be6e",
+      "zh_bytes": 1136,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/wikipedia-pageviews": {
+      "en_sha": "c11e1bd582ce2ac4",
+      "zh_bytes": 1315,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/woocommerce": {
+      "en_sha": "5c62e916969d7c1b",
+      "zh_bytes": 1692,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/wordpress": {
+      "en_sha": "9432b297e0999fcc",
+      "zh_bytes": 2774,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/workable": {
+      "en_sha": "7d2498c9bb0ae718",
+      "zh_bytes": 1561,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/workday": {
+      "en_sha": "cb77b4bd32269bcc",
+      "zh_bytes": 2499,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/workflowmax": {
+      "en_sha": "511d9b71f4884f58",
+      "zh_bytes": 1398,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/workramp": {
+      "en_sha": "f85e66cb6490f22c",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/wrike": {
+      "en_sha": "572b0305c106032f",
+      "zh_bytes": 1382,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/wufoo": {
+      "en_sha": "3472ec530dba214a",
+      "zh_bytes": 1519,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/xero": {
+      "en_sha": "a4c5f40252a6ad09",
+      "zh_bytes": 1969,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/xkcd": {
+      "en_sha": "451a5fe13e21a65c",
+      "zh_bytes": 1333,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/xsolla": {
+      "en_sha": "7bd28c70f710cb81",
+      "zh_bytes": 1461,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/yahoo-finance-price": {
+      "en_sha": "cb5c5048b1d1d037",
+      "zh_bytes": 1160,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/yandex-metrica": {
+      "en_sha": "48b4d877ae4cc2fb",
+      "zh_bytes": 1318,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/yotpo": {
+      "en_sha": "3ef0fd88a43488bf",
+      "zh_bytes": 2589,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/you-need-a-budget-ynab": {
+      "en_sha": "c545dd783beb5d3a",
+      "zh_bytes": 1322,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/younium": {
+      "en_sha": "2f0a0d39f3cd093d",
+      "zh_bytes": 1338,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/yousign": {
+      "en_sha": "cc1b2e6e7665e995",
+      "zh_bytes": 1636,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/youtube-analytics": {
+      "en_sha": "d9ae724d436b3bcc",
+      "zh_bytes": 2095,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/youtube-data": {
+      "en_sha": "728e74b596ae05d0",
+      "zh_bytes": 1696,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zapier-supported-storage": {
+      "en_sha": "0c410455c7c63e4a",
+      "zh_bytes": 1180,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zapsign": {
+      "en_sha": "4843de0234b781d8",
+      "zh_bytes": 1730,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zencart": {
+      "en_sha": "acc6996c811f0a4f",
+      "zh_bytes": 1112,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zendesk-chat": {
+      "en_sha": "32b43e48eb0af953",
+      "zh_bytes": 1771,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zendesk-sell": {
+      "en_sha": "b5fc494854de65fa",
+      "zh_bytes": 1132,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zendesk-sunshine": {
+      "en_sha": "629d5da90c19c9c0",
+      "zh_bytes": 2103,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zendesk-talk": {
+      "en_sha": "430e3b9a4d9c5b54",
+      "zh_bytes": 1744,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zenefits": {
+      "en_sha": "25226b8b4be3e884",
+      "zh_bytes": 1335,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zenloop": {
+      "en_sha": "8bf0988a7b1ce4d4",
+      "zh_bytes": 2977,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-analytics-metadata-api": {
+      "en_sha": "c6f93633c043824d",
+      "zh_bytes": 1553,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-bigin": {
+      "en_sha": "a7e5faa26aeb31f7",
+      "zh_bytes": 1510,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-billing": {
+      "en_sha": "6b15fade188030ff",
+      "zh_bytes": 1442,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-books": {
+      "en_sha": "ddffa6012efff21c",
+      "zh_bytes": 1555,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-campaign": {
+      "en_sha": "ce4c45fa740c0cf6",
+      "zh_bytes": 1439,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-crm": {
+      "en_sha": "69a988378935afe5",
+      "zh_bytes": 1116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-desk": {
+      "en_sha": "86e50d8674333fa0",
+      "zh_bytes": 1517,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-expense": {
+      "en_sha": "a4bb344600fbb79d",
+      "zh_bytes": 1563,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-inventory": {
+      "en_sha": "57e190c420d1bf47",
+      "zh_bytes": 1612,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoho-invoice": {
+      "en_sha": "50f5b33ad4175506",
+      "zh_bytes": 1547,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zonka-feedback": {
+      "en_sha": "a3f2fe1625a5c88a",
+      "zh_bytes": 1534,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zoom": {
+      "en_sha": "279adeb7e4025edb",
+      "zh_bytes": 1100,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/zuora": {
+      "en_sha": "d1608cea52a10c5e",
+      "zh_bytes": 1104,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/amazon-sqs": {
+      "en_sha": "c485949e0018f6a7",
+      "zh_bytes": 1261,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/astra": {
+      "en_sha": "dfad973500c51d0f",
+      "zh_bytes": 1301,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/aws-datalake": {
+      "en_sha": "80b531645ae9d3af",
+      "zh_bytes": 1756,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/azure-blob-storage": {
+      "en_sha": "5a0292761097118a",
+      "zh_bytes": 4496,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/cassandra": {
+      "en_sha": "eae14e41074b7230",
+      "zh_bytes": 1464,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/chargify": {
+      "en_sha": "310569db64582114",
+      "zh_bytes": 1121,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/chroma": {
+      "en_sha": "c463ae06f762c64e",
+      "zh_bytes": 1245,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/clickhouse-deprecated": {
+      "en_sha": "d6f87adfec940507",
+      "zh_bytes": 1129,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/convex": {
+      "en_sha": "4ba487c1f49b6f20",
+      "zh_bytes": 1245,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/couchbase": {
+      "en_sha": "78be41e7b0fa5855",
+      "zh_bytes": 1257,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/csv": {
+      "en_sha": "5416a7aa6f5b5f8c",
+      "zh_bytes": 1257,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/cumulio": {
+      "en_sha": "a6227dade1f8750e",
+      "zh_bytes": 1253,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/customer-io": {
+      "en_sha": "1b8d078fbb667faf",
+      "zh_bytes": 2374,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/databend": {
+      "en_sha": "d225b156122ab933",
+      "zh_bytes": 1253,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/deepset": {
+      "en_sha": "45a7fc7508d9abd8",
+      "zh_bytes": 1297,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/dev-null": {
+      "en_sha": "f8a66b32be99af0d",
+      "zh_bytes": 1305,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/doris": {
+      "en_sha": "3ae5715084b01cd4",
+      "zh_bytes": 1109,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/dynamodb": {
+      "en_sha": "18ac7600f0eaf684",
+      "zh_bytes": 1597,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/exasol": {
+      "en_sha": "bc874f037dd3d1ef",
+      "zh_bytes": 1113,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/firestore": {
+      "en_sha": "01e97e9ad9132e8f",
+      "zh_bytes": 1257,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/gcs-data-lake": {
+      "en_sha": "73403423109e7182",
+      "zh_bytes": 1655,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/glassflow": {
+      "en_sha": "b37a9ef66275e6f9",
+      "zh_bytes": 1257,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/google-sheets": {
+      "en_sha": "87088f2d20f67a3b",
+      "zh_bytes": 1375,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/hubspot": {
+      "en_sha": "41b1189d8ea239c5",
+      "zh_bytes": 2278,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/keen": {
+      "en_sha": "33b2d26e0242da32",
+      "zh_bytes": 2339,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/kinesis": {
+      "en_sha": "eedf7e5afda4d85f",
+      "zh_bytes": 1454,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/kvdb": {
+      "en_sha": "44171f0f0222f3ee",
+      "zh_bytes": 1261,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/langchain": {
+      "en_sha": "a0d41524d2cd6c8a",
+      "zh_bytes": 1241,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/local-json": {
+      "en_sha": "4901ca246cd95d8b",
+      "zh_bytes": 1261,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/mariadb-columnstore": {
+      "en_sha": "3625ea95fdfce155",
+      "zh_bytes": 1165,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/meilisearch": {
+      "en_sha": "039d679b0fa305a9",
+      "zh_bytes": 1133,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/milvus": {
+      "en_sha": "976df3e0b691bd62",
+      "zh_bytes": 1859,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/mqtt": {
+      "en_sha": "201af972d3983e9d",
+      "zh_bytes": 2345,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/pgvector": {
+      "en_sha": "662cb0107ecbeeaa",
+      "zh_bytes": 2409,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/pulsar": {
+      "en_sha": "497aba7a7e911e69",
+      "zh_bytes": 2496,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/qdrant": {
+      "en_sha": "aeadb594242e936b",
+      "zh_bytes": 1245,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/r2": {
+      "en_sha": "e889e2fc25ad8a4d",
+      "zh_bytes": 1447,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/rabbitmq": {
+      "en_sha": "47c6e40fc90a18a6",
+      "zh_bytes": 1253,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/ragie": {
+      "en_sha": "6333a2d536256e95",
+      "zh_bytes": 1436,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/redis": {
+      "en_sha": "607533d53506f24c",
+      "zh_bytes": 1241,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/redpanda": {
+      "en_sha": "8b09e83ac75a1cdb",
+      "zh_bytes": 1121,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/rockset": {
+      "en_sha": "1f2abd1e009ec3f4",
+      "zh_bytes": 1871,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/scylla": {
+      "en_sha": "a1f643c58c063616",
+      "zh_bytes": 1449,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/selectdb": {
+      "en_sha": "f10ede3951c0ea44",
+      "zh_bytes": 1121,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/sftp-json": {
+      "en_sha": "f2a9003ee46d76be",
+      "zh_bytes": 1257,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/singlestore": {
+      "en_sha": "8dcc484fc26635b3",
+      "zh_bytes": 1265,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/snowflake-cortex": {
+      "en_sha": "47c43e12bd5051f4",
+      "zh_bytes": 2116,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/sqlite": {
+      "en_sha": "4649a138cfa30674",
+      "zh_bytes": 1245,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/starburst-galaxy": {
+      "en_sha": "1e9b6f1a5dc03180",
+      "zh_bytes": 5252,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/streamr": {
+      "en_sha": "a43aea6a82ef88f4",
+      "zh_bytes": 1329,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/surrealdb": {
+      "en_sha": "87210d91defb13a9",
+      "zh_bytes": 1257,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/teradata": {
+      "en_sha": "9271e5c80ad9b14a",
+      "zh_bytes": 3883,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/tidb": {
+      "en_sha": "10acfa37efda9d8e",
+      "zh_bytes": 1105,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/timeplus": {
+      "en_sha": "a172b87020862667",
+      "zh_bytes": 1253,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/typesense": {
+      "en_sha": "2164101dbbe05b6e",
+      "zh_bytes": 1257,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/vectara": {
+      "en_sha": "ae6e3a90d05f2978",
+      "zh_bytes": 1249,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/vertica": {
+      "en_sha": "8ed5f4f7c9ca3c18",
+      "zh_bytes": 2540,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/xata": {
+      "en_sha": "40d4f020191dbadc",
+      "zh_bytes": 1237,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/yellowbrick": {
+      "en_sha": "6bd69a77add20693",
+      "zh_bytes": 2448,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "destinations/yugabytedb": {
+      "en_sha": "2959404739285f62",
+      "zh_bytes": 1129,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/destination-salesforce": {
+      "en_sha": "737e4f32bac3b990",
+      "zh_bytes": 2696,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/source-netsuite-enterprise": {
+      "en_sha": "e42aecec83ef064b",
+      "zh_bytes": 1481,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/source-oracle-enterprise": {
+      "en_sha": "bb2c6678596082a6",
+      "zh_bytes": 1299,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/source-sap-hana": {
+      "en_sha": "2b99d3d784b1a960",
+      "zh_bytes": 2713,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/source-service-now": {
+      "en_sha": "9f6ffdde708b6918",
+      "zh_bytes": 1279,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/source-sharepoint-enterprise": {
+      "en_sha": "204a6cf77335462a",
+      "zh_bytes": 1437,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/source-sharepoint-lists-enterprise": {
+      "en_sha": "fd5920699fed32d8",
+      "zh_bytes": 2569,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/source-workday": {
+      "en_sha": "88ff2809ac2fa394",
+      "zh_bytes": 2067,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/source-workday-rest": {
+      "en_sha": "43447d543de7842f",
+      "zh_bytes": 2388,
+      "translated_at": "2026-07-11T06:47:25Z",
+      "engine": "model"
+    },
+    "sources/google-directory": {
+      "en_sha": "b09816946c3ec270",
+      "zh_bytes": 1148,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/guru": {
+      "en_sha": "50c34fa8d363ac5e",
+      "zh_bytes": 1751,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/just-sift": {
+      "en_sha": "6f2c1df256db3972",
+      "zh_bytes": 1360,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/klarna": {
+      "en_sha": "b15604cf13f0ead4",
+      "zh_bytes": 1405,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/metricool": {
+      "en_sha": "3395c973aa61ee8e",
+      "zh_bytes": 1726,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/okta": {
+      "en_sha": "37b703c740159b90",
+      "zh_bytes": 1447,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/pivotal-tracker": {
+      "en_sha": "3fd2c154e3f8ccdd",
+      "zh_bytes": 1144,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/plausible": {
+      "en_sha": "2a765f54669777bf",
+      "zh_bytes": 1252,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/postmarkapp": {
+      "en_sha": "5ed58699bcda12c5",
+      "zh_bytes": 1260,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/smoke-test": {
+      "en_sha": "05bfb149bffa9884",
+      "zh_bytes": 1236,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/spacex-api": {
+      "en_sha": "c795356f15c568d0",
+      "zh_bytes": 1478,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/statuspage": {
+      "en_sha": "cc9d2062ffb153c1",
+      "zh_bytes": 1152,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/sugar-crm": {
+      "en_sha": "780ff54dfb6ace95",
+      "zh_bytes": 1120,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/twilio-taskrouter": {
+      "en_sha": "168f20e177b16a07",
+      "zh_bytes": 2201,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "destinations/pubsub": {
+      "en_sha": "e506bbc32687c50f",
+      "zh_bytes": 2155,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "enterprise-connectors/source-db2-enterprise": {
+      "en_sha": "a8fd693baa7e616b",
+      "zh_bytes": 1251,
+      "translated_at": "2026-07-11T06:57:33Z",
+      "engine": "model"
+    },
+    "sources/giphy": {
+      "en_sha": "fad696614d4fa21b",
+      "zh_bytes": 1938,
+      "translated_at": "2026-07-11T06:58:11Z",
+      "engine": "model"
+    },
+    "sources/northpass-lms": {
+      "en_sha": "272bc0c22a3c1a36",
+      "zh_bytes": 1486,
+      "translated_at": "2026-07-11T06:58:11Z",
+      "engine": "model"
+    }
+  }
+}

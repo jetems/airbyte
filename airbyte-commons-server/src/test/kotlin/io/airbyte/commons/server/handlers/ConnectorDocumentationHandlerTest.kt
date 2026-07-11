@@ -15,6 +15,7 @@ import io.airbyte.config.persistence.ActorDefinitionVersionHelper
 import io.airbyte.config.specs.RemoteDefinitionsProvider
 import io.airbyte.data.services.DestinationService
 import io.airbyte.data.services.SourceService
+import io.airbyte.jetems.docs.JetemsConnectorDocumentationStore
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,6 +32,7 @@ internal class ConnectorDocumentationHandlerTest {
 
   private lateinit var sourceService: SourceService
   private lateinit var destinationService: DestinationService
+  private lateinit var jetemsConnectorDocumentationStore: JetemsConnectorDocumentationStore
 
   @BeforeEach
   fun setup() {
@@ -38,9 +40,44 @@ internal class ConnectorDocumentationHandlerTest {
     remoteDefinitionsProvider = mock()
     sourceService = mock()
     destinationService = mock()
+    jetemsConnectorDocumentationStore = mock()
+    whenever(jetemsConnectorDocumentationStore.isChineseLocale(org.mockito.kotlin.anyOrNull())).thenReturn(false)
+    whenever(jetemsConnectorDocumentationStore.findChineseDoc(org.mockito.kotlin.anyOrNull())).thenReturn(Optional.empty())
 
     connectorDocumentationHandler =
-      ConnectorDocumentationHandler(actorDefinitionVersionHelper, remoteDefinitionsProvider, sourceService, destinationService)
+      ConnectorDocumentationHandler(
+        actorDefinitionVersionHelper,
+        remoteDefinitionsProvider,
+        sourceService,
+        destinationService,
+        jetemsConnectorDocumentationStore,
+      )
+  }
+
+  @Test
+  fun testGetChineseSourceDocumentationPrefersJetemsStore() {
+    val sourceDefinitionId = UUID.randomUUID()
+    val sourceId = UUID.randomUUID()
+    val workspaceId = UUID.randomUUID()
+
+    whenever(sourceService.getStandardSourceDefinition(sourceDefinitionId)).thenReturn(SOURCE_DEFINITION)
+    whenever(actorDefinitionVersionHelper.getSourceVersion(SOURCE_DEFINITION, workspaceId, sourceId)).thenReturn(SOURCE_DEFINITION_VERSION_OLD)
+    whenever(jetemsConnectorDocumentationStore.isChineseLocale("zh")).thenReturn(true)
+    whenever(jetemsConnectorDocumentationStore.findChineseDoc(SOURCE_DOCUMENTATION_URL))
+      .thenReturn(Optional.of(DOC_CONTENTS_ZH))
+
+    val request =
+      ConnectorDocumentationRequestBody()
+        .actorType(ActorType.SOURCE)
+        .actorDefinitionId(sourceDefinitionId)
+        .workspaceId(workspaceId)
+        .actorId(sourceId)
+        .locale("zh")
+
+    val expectedResult = ConnectorDocumentationRead().doc(DOC_CONTENTS_ZH)
+    val actualResult = connectorDocumentationHandler.getConnectorDocumentation(request)
+
+    Assertions.assertEquals(expectedResult, actualResult)
   }
 
   // SOURCE - LIVE DOCS TESTS
@@ -435,5 +472,6 @@ internal class ConnectorDocumentationHandlerTest {
     private const val DOC_CONTENTS_OLD = "The doc contents for the old version"
     private const val DOC_CONTENTS_LATEST = "The doc contents for the latest version"
     private const val DOC_CONTENTS_LIVE = "The live doc contents from GitHub"
+    private const val DOC_CONTENTS_ZH = "中文设置指南示例"
   }
 }

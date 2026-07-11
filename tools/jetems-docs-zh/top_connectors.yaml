@@ -1,0 +1,61 @@
+# Top connectors for Phase 2a Chinese setup guides.
+# Paths are relative to docs/integrations/ (without .md).
+
+sources:
+  - airtable
+  - postgres
+  - mysql
+  - mongodb-v2
+  - stripe
+  - salesforce
+  - hubspot
+  - google-sheets
+  - facebook-marketing
+  - shopify
+  - github
+  - jira
+  - slack
+  - zendesk-support
+  - s3
+  - kafka
+  - mssql
+  - oracle
+  - elasticsearch
+  - google-ads
+  - amazon-ads
+  - mailchimp
+  - intercom
+  - asana
+  - notion
+  - twilio
+  - file
+  - snowflake
+  - linkedin-ads
+  - bigquery
+  - google-analytics-data-api
+  - harvest
+  - typeform
+  - mixpanel
+  - chargebee
+
+destinations:
+  - postgres
+  - mysql
+  - snowflake
+  - bigquery
+  - redshift
+  - s3
+  - gcs
+  - mongodb
+  - elasticsearch
+  - kafka
+  - clickhouse
+  - databricks
+  - duckdb
+  - weaviate
+  - pinecone
+  - mssql
+  - oracle
+  - motherduck
+  - firebolt
+  - s3-data-lake

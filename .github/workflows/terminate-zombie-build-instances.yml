@@ -5,9 +5,8 @@
 name: Terminate Zombie Build Instances
 
 on:
+  # JETEMS: 已移除 schedule 定时（原 cron 每小时执行）。需要时仅手动触发。
   workflow_dispatch:
-  schedule:
-    - cron: "0 */1 * * *"
 
 jobs:
   terminate:

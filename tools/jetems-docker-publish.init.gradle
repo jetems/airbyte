@@ -1,0 +1,29 @@
+/**
+ * Init script for jetems native (per-arch) image build.
+ *
+ * Airbyte DockerBuildxTask reads ExtraProperties (ext):
+ *   docker.tag / docker.registry / docker.platform
+ *
+ * IMPORTANT: 不要设置 docker.registry 做 multi-arch 一次推送——
+ * 插件在 registry 非空时会强制 platform=linux/amd64,linux/arm64（依赖 QEMU）。
+ * 本流程改为：
+ *   1) 各架构 native runner 只设 docker.platform=linux/<arch>
+ *   2) 构建到本地 daemon（不设 registry）
+ *   3) 脚本 docker tag + push 到 SWR，再 imagetools 合并 manifest
+ *
+ * Env:
+ *   DOCKER_TAG       e.g. 20260711-a1b2c3-amd64  or  20260711-a1b2c3
+ *   DOCKER_PLATFORM  e.g. linux/amd64  or  linux/arm64
+ */
+gradle.beforeProject { project ->
+  def tag = System.getenv("DOCKER_TAG")
+  def platform = System.getenv("DOCKER_PLATFORM")
+
+  if (tag) {
+    project.ext.set("docker.tag", tag)
+  }
+  if (platform) {
+    project.ext.set("docker.platform", platform)
+  }
+  // 明确不设置 docker.registry，避免插件切到 multi-arch + type=registry
+}
