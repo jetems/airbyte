@@ -135,12 +135,13 @@ export PATH=~/.nvm/versions/node/v20.19.0/bin:$PATH
 
 Tag 示例：`20260711-a1b2c3`  
 
+流程：`build`（双架构）→ `manifest`（multi-arch）→ **`release`**（自动创建 GitHub Release，正文列出全部镜像链接与中文介绍）。
+
 镜像示例：
 
 ```text
 swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/server:20260711-a1b2c3
 ```
-
 ---
 
 ## 仓库与协作

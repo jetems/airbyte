@@ -3,9 +3,10 @@
 # unit test. No additional acceptance test, etc.
 #
 # JETEMS notes:
-# - ensure-images-exist is advisory only (we build/publish our own images to SWR; Docker Hub
-#   airbyte/*:dev tags are not guaranteed to exist).
-# - Actions use checkout@v4 / paths-filter@v3 / setup-node@v4 (Node 20 runtime deprecated on GHA).
+# - Auto triggers (push main / pull_request) DISABLED — only manual workflow_dispatch.
+#   Full platform image publish is jetems-publish-images.yml (tag / manual).
+# - Docker Hub airbyte/*:dev check is skipped (images go to Huawei SWR via jetems-publish-images).
+# - Actions pin Node 24 runtimes: checkout@v5, paths-filter@v4, setup-node@v5, setup-java@v5.
 name: Airbyte Platform OSS Developer Build
 
 env:
@@ -13,7 +14,7 @@ env:
   S3_BUILD_CACHE_SECRET_KEY: ${{ secrets.PLATFORM_BUILD_CACHE_SECRET_KEY }}
 
 on:
-  #ability to start task manually in Web UI
+  # JETEMS: 不再在 push/PR 时自动跑；需要时在 Actions UI 手动 Run workflow。
   workflow_dispatch:
     inputs:
       debug_mode:
@@ -24,34 +25,29 @@ on:
           - "true"
           - "false"
         required: false
-  push:
-    branches:
-      - main
-  pull_request:
 
 permissions: write-all
 
 jobs:
+  # Upstream OSS checked Docker Hub for airbyte/*:dev. Jetems builds/publishes to SWR instead,
+  # so those tags are often missing and the probe only produced noise / yellow checks.
   ensure-images-exist:
     name: "Ensure all required Docker images exist on Dockerhub"
-    timeout-minutes: 10
+    timeout-minutes: 5
     runs-on: ubuntu-latest
-    # JETEMS: do not fail the workflow when Docker Hub is missing airbyte/*:dev tags.
-    # Official check assumes published platform images; jetems builds them in-repo / SWR.
-    continue-on-error: true
     steps:
-      - name: Checkout Airbyte
-        uses: actions/checkout@v4
-
-      - name: Check images exist (advisory)
+      - name: Skip Docker Hub image probe (Jetems)
         run: |
-          set +e
-          ./tools/bin/check_images_exist.sh all
-          code=$?
-          if [ "$code" -ne 0 ]; then
-            echo "::warning::Docker Hub image check failed (exit $code). Ignoring for jetems CI."
-          fi
-          exit 0
+          {
+            echo "## Docker Hub image check — skipped"
+            echo ""
+            echo "Jetems publishes platform images to **Huawei Cloud SWR**"
+            echo "(\`swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/*\`),"
+            echo "not Docker Hub \`airbyte/*:dev\`."
+            echo ""
+            echo "See \`tools/JETEMS_IMAGE_PUBLISH.md\` and workflow **Jetems Publish Platform Images**."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Skipped Docker Hub airbyte/*:dev check for jetems (SWR is source of truth)."
 
   # The output of this job is used to trigger the following builds.
   changes:
@@ -71,8 +67,8 @@ jobs:
       frontendServers: ${{ steps.filter.outputs.frontendServers }}
     steps:
       - name: Checkout Airbyte
-        uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+        uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           # Note, the following glob expression within a filters are ORs.
@@ -105,7 +101,7 @@ jobs:
   #    needs: changes
   #    runs-on: ubuntu-latest
   #    steps:
-  #      - uses: actions/checkout@v4
+  #      - uses: actions/checkout@v5
   #      - run: |
   #          echo '${{ toJSON(needs) }}'
 
@@ -123,21 +119,22 @@ jobs:
       || (always() && needs.changes.outputs.frontendServers == 'true')
     steps:
       - name: Checkout Airbyte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cache Build Artifacts
         uses: ./.github/actions/cache-build-artifacts
         with:
           cache-key: ${{ secrets.CACHE_VERSION }}
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: corretto
           java-version: 21
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - uses: actions/setup-node@v4
+      # Action runtime is Node 24; node-version below is the toolchain for airbyte-webapp build.
+      - uses: actions/setup-node@v5
         with:
           node-version: "20.19.0"
 
@@ -177,7 +174,7 @@ jobs:
     if: ${{ failure() && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout Airbyte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Match GitHub User to Slack User
         id: match-github-to-slack-user
         uses: ./.github/actions/match-github-to-slack-user

@@ -13,8 +13,27 @@
 | `build` (amd64) | `ubuntu-latest` | 原生构建并推送 `*-amd64` |
 | `build` (arm64) | `ubuntu-24.04-arm` | 原生构建并推送 `*-arm64` |
 | `manifest` | `ubuntu-latest` | `docker buildx imagetools create` 合并 multi-arch |
+| `release` | `ubuntu-latest` | 创建/更新 **GitHub Release**（全部镜像链接 + 中文介绍） |
 
 不在 x86 上用 QEMU 模拟 arm，避免慢且不稳定。
+
+## GitHub Release
+
+`manifest` 成功后自动创建 Release：
+
+- **标题**：`Jetems Platform <YYYYMMDD-sha6>`
+- **正文**：由 `tools/jetems-generate-release-notes.sh` 生成，包含：
+  - 版本 / 架构 / 仓库说明
+  - 全部平台镜像 multi-arch pull 命令与用途简介
+  - 单架构 `-amd64` / `-arm64` 调试 tag
+- **权限**：`contents: write`（`GITHUB_TOKEN`）
+- **重跑**：同 tag 再次发布会更新 Release 正文
+
+本地预览说明：
+
+```bash
+DOCKER_TAG=20260711-abc123 ./tools/jetems-generate-release-notes.sh
+```
 
 ## 触发方式
 
@@ -67,8 +86,37 @@ CREATE_MANIFEST=1 DOCKER_TAG=20260711-abc123 ./tools/jetems-publish-images.sh
 3. `docker tag` + `docker push` 到 SWR 的 `*-amd64` / `*-arm64`
 4. `imagetools create` 生成最终 multi-arch tag
 
+## 性能优化（已落地）
+
+| 项 | 之前 | 现在 | 收益 |
+|----|------|------|------|
+| Gradle 调用 | 每个镜像 `./gradlew` 一次（×13） | base 一次 + 其余 **一次批量** | **最大**：省掉重复配置/依赖解析 |
+| Gradle 缓存 | 几乎无跨 run 复用 | `setup-gradle` + `--build-cache` + `~/.gradle` 缓存 | 二次发布明显加快 |
+| 并行编译 | 默认偏保守 | `--parallel` + `--max-workers` | 吃满 runner 多核 |
+| docker push | 串行 | `xargs -P 4` 并行 | 缩短上传尾部 |
+| imagetools | 串行 | 并行 manifest | 节省数分钟 |
+| 清盘 | `free-disk-space` 全量 action | 轻量 `rm` + `docker prune` | 常省 5–15min |
+| checkout | 全量 / fetch-depth 0 | `fetch-depth: 1`；manifest/release sparse `tools` | 减克隆体积 |
+| Node/webapp | 每次冷装 | 仍会编译 webapp（server 依赖）；Gradle/依赖缓存可间接加速 |
+
+### 仍可继续挖的空间（未改代码）
+
+1. **只发变更镜像**：`workflow_dispatch` 已支持 `images=` 子集；文档/脚本变更不必全量 13 个
+2. **Docker layer cache**：把 buildx cache 推到 SWR 或 GH cache（需改插件/build 路径，收益视 Dockerfile 而定）
+3. **更大 runner**：GitHub larger runners / 自建机（CPU+磁盘），编译 wall-time 近似线性下降
+4. **S3 Gradle remote build cache**：若配置 `PLATFORM_BUILD_CACHE_*`（见 `gradle.yml`），可与 OSS 开发构建共享缓存
+5. **拆 matrix 按镜像并行**：每个镜像一个 job 可并行，但冷启动×N 与分钟计费上升，一般不如「单 job 批量 Gradle」划算
+
+### 局部发布（最快）
+
+```bash
+# 只重建 server + worker
+# Actions → Run workflow → images:
+#   server|:oss:airbyte-server:dockerBuildImage worker|:oss:airbyte-workers:dockerBuildImage
+```
+
 ## 注意
 
 1. 仓库需可用 **GitHub-hosted ARM runner**（`ubuntu-24.04-arm`）；私有仓请确认 plan 是否包含 ARM minutes
-2. 全量构建仍可能较久（各架构并行，timeout 6h）
+2. 全量构建仍可能较久（各架构并行，timeout 6h）；二次发布因 Gradle 缓存应明显快于首次
 3. 基础镜像 `FROM` 需在对应架构可用（Docker Hub 官方 base / mirrored-keycloak）

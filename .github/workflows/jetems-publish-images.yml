@@ -8,6 +8,11 @@
 #   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>-amd64
 #   swr.cn-south-1.myhuaweicloud.com/jetems/airbyte/<name>:<tag>-arm64
 #
+# Jobs: validate-tag → build(amd64|arm64) → manifest → release
+# release: 创建 GitHub Release，正文含全部镜像链接与中文介绍
+#
+# 加速策略见 tools/JETEMS_IMAGE_PUBLISH.md「性能优化」
+#
 # 创建 tag: ./tools/jetems-create-release-tag.sh
 #
 # Secrets:
@@ -42,6 +47,9 @@ env:
   DOCKER_REGISTRY: swr.cn-south-1.myhuaweicloud.com/jetems
   JAVA_VERSION: "21"
   NODE_VERSION: "20.19.0"
+  # 并行 push / imagetools
+  PUSH_JOBS: "4"
+  MANIFEST_JOBS: "4"
 
 jobs:
   validate-tag:
@@ -50,10 +58,12 @@ jobs:
     outputs:
       docker_tag: ${{ steps.tag.outputs.docker_tag }}
     steps:
+      # tag push 不需要完整历史；workflow_dispatch 才 checkout 取 HEAD
       - name: Checkout
-        uses: actions/checkout@v4
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v5
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Resolve DOCKER_TAG
         id: tag
@@ -76,7 +86,7 @@ jobs:
           fi
 
           if [[ "${{ github.event_name }}" == "push" ]]; then
-            EXPECTED="$(git rev-parse --short=6 "$TAG^{commit}")"
+            EXPECTED="$(echo '${{ github.sha }}' | cut -c1-6)"
             GOT="${TAG##*-}"
             if [[ "$GOT" != "$EXPECTED" ]]; then
               echo "::warning::Tag suffix '$GOT' != commit short sha '$EXPECTED' (continuing anyway)"
@@ -112,32 +122,42 @@ jobs:
       IMAGES: ${{ inputs.images }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Free disk space
-        if: matrix.arch == 'amd64'
-        uses: jlumbroso/free-disk-space@v1.3.1
+        uses: actions/checkout@v5
         with:
-          tool-cache: false
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
+          fetch-depth: 1
+
+      # 轻量清盘：避免 jlumbroso 全量 action 耗 5–15min
+      - name: Free disk space (lightweight)
+        if: matrix.arch == 'amd64'
+        run: |
+          set -euo pipefail
+          echo "Before:"; df -h /
+          sudo rm -rf \
+            /usr/share/dotnet \
+            /usr/local/lib/android \
+            /opt/ghc \
+            /usr/local/share/powershell \
+            /usr/share/swift \
+            /usr/local/.ghcup \
+            || true
+          sudo docker system prune -af || true
+          echo "After:"; df -h /
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
 
+      # server 镜像会编 webapp；全量发布需要 Node（pnpm 由 corepack / webapp 脚本启用）
       - name: Set up Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      # 单架构原生构建，使用默认 docker driver 即可（不要 multi-platform buildx+qemu）
+      - name: Enable corepack (pnpm)
+        run: corepack enable
+      # 单架构原生构建，使用默认 docker driver（不要 multi-platform buildx+qemu）
       - name: Set up Docker Buildx (docker driver)
         uses: docker/setup-buildx-action@v3
         with:
@@ -151,14 +171,31 @@ jobs:
           username: ${{ secrets.SWR_USERNAME }}
           password: ${{ secrets.SWR_PASSWORD }}
 
+      # Gradle User Home 缓存：依赖解析 / 编译产物跨 run 复用
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          # 发布构建产物大，保留依赖与 build-cache 即可
+          gradle-home-cache-cleanup: true
+
+      - name: Gradle CI properties
+        run: |
+          mkdir -p ~/.gradle
+          cat >> ~/.gradle/gradle.properties <<'EOF'
+          org.gradle.parallel=true
+          org.gradle.caching=true
+          org.gradle.configureondemand=false
+          org.gradle.vfs.watch=false
+          org.gradle.jvmargs=-Xmx6g -XX:+UseParallelGC -Xss4m
+          EOF
 
       - name: Native build & push (${{ matrix.arch }})
         run: |
           set -euo pipefail
           chmod +x tools/jetems-publish-images.sh
           uname -m
+          nproc || true
           ./tools/jetems-publish-images.sh
 
       - name: Arch summary
@@ -172,14 +209,17 @@ jobs:
     name: Create multi-arch manifests
     needs: [validate-tag, build]
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 30
     env:
       DOCKER_TAG: ${{ needs.validate-tag.outputs.docker_tag }}
       SWR_USERNAME: ${{ secrets.SWR_USERNAME }}
       SWR_PASSWORD: ${{ secrets.SWR_PASSWORD }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          sparse-checkout: tools
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -222,3 +262,50 @@ jobs:
             echo "docker pull ${{ env.DOCKER_REGISTRY }}/airbyte/server:${{ env.DOCKER_TAG }}-arm64"
             echo "\`\`\`"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # multi-arch 成功后发布 GitHub Release：镜像链接 + 中文介绍
+  release:
+    name: Create GitHub Release
+    needs: [validate-tag, manifest]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      DOCKER_TAG: ${{ needs.validate-tag.outputs.docker_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          sparse-checkout: tools
+
+      - name: Generate release notes
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          chmod +x tools/jetems-generate-release-notes.sh
+          DOCKER_TAG="${DOCKER_TAG}" \
+            DOCKER_REGISTRY="${DOCKER_REGISTRY}" \
+            COMMIT_SHA="${COMMIT_SHA}" \
+            OUTPUT="${RUNNER_TEMP}/release-notes.md" \
+            ./tools/jetems-generate-release-notes.sh
+          {
+            echo "## GitHub Release notes preview"
+            echo ""
+            cat "${RUNNER_TEMP}/release-notes.md"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.DOCKER_TAG }}
+          name: Jetems Platform ${{ env.DOCKER_TAG }}
+          body_path: ${{ runner.temp }}/release-notes.md
+          draft: false
+          prerelease: false
+          make_latest: true
+          target_commitish: ${{ github.sha }}
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
