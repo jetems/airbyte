@@ -54,7 +54,8 @@ PUBLISH_LATEST="${PUBLISH_LATEST:-1}"
 # Gradle 任务 → 本地镜像名 airbyte/<imageName>
 # imageName 来自各模块 build.gradle.kts 的 docker { imageName = "..." }
 DEFAULT_IMAGES=(
-  "airbyte-base-java-image|:oss:airbyte-base-java-image:dockerBuildImage"
+  # base 实际任务为 dockerJavaBaseImage；已提供 dockerBuildImage 别名
+  "airbyte-base-java-image|:oss:airbyte-base-java-image:dockerJavaBaseImage"
   "server|:oss:airbyte-server:dockerBuildImage"
   "worker|:oss:airbyte-workers:dockerBuildImage"
   "workload-api-server|:oss:airbyte-workload-api-server:dockerBuildImage"
@@ -278,16 +279,36 @@ if [[ ${#REST_TASKS[@]} -gt 0 ]]; then
   fi
 fi
 
+# 解析本地 docker 镜像（base 历史 tag 可能是 .version 而非 ARCH_TAG）
+resolve_local_image() {
+  local name="$1"
+  local candidate
+  local ver
+  ver="$(tr -d '[:space:]' <"$REPO_ROOT/airbyte-base-java-image/.version" 2>/dev/null || true)"
+  for candidate in \
+    "airbyte/${name}:${ARCH_TAG}" \
+    "airbyte/${name}:dev" \
+    "airbyte/${name}:${ver}"; do
+    # skip empty tag (ends with :)
+    [[ "$candidate" == *: ]] && continue
+    if docker image inspect "$candidate" >/dev/null 2>&1; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
 # tag + push（可并行）：版本 arch tag + latest-<arch>
 tag_and_push_one() {
   local name="$1"
-  local local_img="airbyte/${name}:${ARCH_TAG}"
-  local remote_img remote_latest
+  local local_img remote_img remote_latest
   remote_img="$(remote_ref "$name" "$ARCH_TAG")"
   remote_latest="$(remote_ref "$name" "latest-${DOCKER_ARCH}")"
 
-  if ! docker image inspect "$local_img" >/dev/null 2>&1; then
-    echo ">>> MISSING local image $local_img" >&2
+  if ! local_img="$(resolve_local_image "$name")"; then
+    echo ">>> MISSING local image for $name (tried airbyte/${name}:${ARCH_TAG} and fallbacks)" >&2
+    docker images "airbyte/${name}" 2>/dev/null | head -20 || true
     return 1
   fi
   echo ">>> docker tag $local_img → $remote_img"
@@ -307,8 +328,8 @@ tag_and_push_one() {
   echo ">>> OK $name"
   return 0
 }
-export -f tag_and_push_one remote_ref
-export ARCH_TAG DOCKER_ARCH DOCKER_REGISTRY SKIP_PUSH PUBLISH_LATEST
+export -f tag_and_push_one remote_ref resolve_local_image
+export ARCH_TAG DOCKER_ARCH DOCKER_REGISTRY SKIP_PUSH PUBLISH_LATEST REPO_ROOT
 
 FAILED_FILE="$(mktemp)"
 OK_FILE="$(mktemp)"

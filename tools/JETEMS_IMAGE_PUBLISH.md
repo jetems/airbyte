@@ -124,3 +124,4 @@ CREATE_MANIFEST=1 DOCKER_TAG=20260711-abc123 ./tools/jetems-publish-images.sh
 1. 仓库需可用 **GitHub-hosted ARM runner**（`ubuntu-24.04-arm`）；私有仓请确认 plan 是否包含 ARM minutes
 2. 全量构建仍可能较久（各架构并行，timeout 6h）；二次发布因 Gradle 缓存应明显快于首次
 3. 基础镜像 `FROM` 需在对应架构可用（Docker Hub 官方 base / mirrored-keycloak）
+4. **`airbyte-base-java-image`** 使用任务 `dockerJavaBaseImage`（不是默认 `dockerBuildImage`）；发版时 tag 取自 `DOCKER_TAG`，本地开发仍用 `.version`（如 `3.3.13`）。业务镜像 Dockerfile 里的 `FROM airbyte/airbyte-base-java-image:3.3*` 仍拉 Docker Hub 公共 base，与 SWR 上的 jetems base 发布相互独立。
