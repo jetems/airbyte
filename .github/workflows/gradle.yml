@@ -1,6 +1,11 @@
 # The goal of this build is to make sure that OSS contributors can build the project and run the tests
 # so that they can develop locally. It is NOT a release verification. As such, we just run build and
 # unit test. No additional acceptance test, etc.
+#
+# JETEMS notes:
+# - ensure-images-exist is advisory only (we build/publish our own images to SWR; Docker Hub
+#   airbyte/*:dev tags are not guaranteed to exist).
+# - Actions use checkout@v4 / paths-filter@v3 / setup-node@v4 (Node 20 runtime deprecated on GHA).
 name: Airbyte Platform OSS Developer Build
 
 env:
@@ -31,12 +36,23 @@ jobs:
     name: "Ensure all required Docker images exist on Dockerhub"
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    # JETEMS: do not fail the workflow when Docker Hub is missing airbyte/*:dev tags.
+    # Official check assumes published platform images; jetems builds them in-repo / SWR.
+    continue-on-error: true
     steps:
       - name: Checkout Airbyte
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Check images exist
-        run: ./tools/bin/check_images_exist.sh all
+      - name: Check images exist (advisory)
+        run: |
+          set +e
+          ./tools/bin/check_images_exist.sh all
+          code=$?
+          if [ "$code" -ne 0 ]; then
+            echo "::warning::Docker Hub image check failed (exit $code). Ignoring for jetems CI."
+          fi
+          exit 0
+
   # The output of this job is used to trigger the following builds.
   changes:
     name: "Detect Modified Files"
@@ -52,11 +68,11 @@ jobs:
       cli: ${{ steps.filter.outputs.cli }}
       db: ${{ steps.filter.outputs.db }}
       frontend: ${{ steps.filter.outputs.frontend }}
-      frontendServers: ${{ steps.changes.outputs.frontendServers }}
+      frontendServers: ${{ steps.filter.outputs.frontendServers }}
     steps:
       - name: Checkout Airbyte
-        uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
+        uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           # Note, the following glob expression within a filters are ORs.
@@ -89,7 +105,7 @@ jobs:
   #    needs: changes
   #    runs-on: ubuntu-latest
   #    steps:
-  #      - uses: actions/checkout@v3
+  #      - uses: actions/checkout@v4
   #      - run: |
   #          echo '${{ toJSON(needs) }}'
 
@@ -121,12 +137,12 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: "20.19.0"
 
       - name: Format
-        uses: Wandalen/wretry.action@v1.0.36
+        uses: Wandalen/wretry.action@v1.3.0
         with:
           command: ./gradlew format --scan --info --stacktrace
           attempt_limit: 3
@@ -136,7 +152,7 @@ jobs:
         run: git --no-pager diff && test -z "$(git --no-pager diff)"
 
       - name: Build
-        uses: Wandalen/wretry.action@v1.0.36
+        uses: Wandalen/wretry.action@v1.3.0
         with:
           # todo (cgardens): temporarily skipping airbyte-commons-worker because one of the tests uses too much memory. we are
           # adjusting the test to use a more reasonable amount of memory. https://github.com/airbytehq/oncall/issues/4415
@@ -161,7 +177,7 @@ jobs:
     if: ${{ failure() && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout Airbyte
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Match GitHub User to Slack User
         id: match-github-to-slack-user
         uses: ./.github/actions/match-github-to-slack-user

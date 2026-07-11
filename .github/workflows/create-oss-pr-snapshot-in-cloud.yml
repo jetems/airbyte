@@ -18,7 +18,7 @@ jobs:
             echo "repo_full_name=$(curl ${{ github.event.issue.pull_request.url }} | jq --raw-output .head.repo.full_name)" >> $GITHUB_OUTPUT
         - uses: xt0rted/pull-request-comment-branch@v1
           id: comment-branch
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
           with:
             repository: ${{ steps.get-branch-and-repo.outputs.repo_full_name }}
             ref: ${{ steps.comment-branch.outputs.head_ref }}

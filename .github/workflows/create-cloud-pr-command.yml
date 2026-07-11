@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Airbyte
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create branch snapshot
         id: create-branch-snapshot
