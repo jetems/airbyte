@@ -16,6 +16,7 @@ import io.airbyte.commons.entitlements.models.NumericEntitlementResult
 import io.airbyte.commons.entitlements.models.SourceOracleEnterpriseConnector
 import io.airbyte.commons.entitlements.models.SourceServicenowEnterpriseConnector
 import io.airbyte.commons.entitlements.models.SourceWorkdayEnterpriseConnector
+import io.airbyte.commons.entitlements.models.SourceWorkdayRestEnterpriseConnector
 import io.airbyte.config.ActorType
 import io.airbyte.domain.models.EntitlementPlan
 import io.airbyte.domain.models.OrganizationId
@@ -79,6 +80,35 @@ class EntitlementServiceTest {
     assertEquals(false, result.hasAccess)
     assertNull(result.value)
     assertEquals("Exception while getting numeric entitlement: Stigg API error", result.reason)
+  }
+
+  @Test
+  fun `hasEnterpriseConnectorEntitlements resolves workday rest after split from raas connector`() {
+    // Workday REST (8d22fb25-...) must be in EntitlementDefinitions; otherwise client path short-circuits to false.
+    val orgId = OrganizationId(UUID.randomUUID())
+    val actorType = ActorType.SOURCE
+    val workdayRestId = SourceWorkdayRestEnterpriseConnector.actorDefinitionId
+
+    every {
+      entitlementClient.checkEntitlement(
+        orgId,
+        match { it is ConnectorEntitlement && it.actorDefinitionId == workdayRestId },
+      )
+    } returns EntitlementResult("${ConnectorEntitlement.PREFIX}$workdayRestId", true, null)
+
+    every {
+      entitlementProvider.hasEnterpriseConnectorEntitlements(orgId, actorType, listOf(workdayRestId))
+    } returns mapOf(workdayRestId to false)
+
+    val result = entitlementService.hasEnterpriseConnectorEntitlements(orgId, actorType, listOf(workdayRestId))
+
+    assertEquals(mapOf(workdayRestId to true), result)
+    verify {
+      entitlementClient.checkEntitlement(
+        orgId,
+        match { it is ConnectorEntitlement && it.actorDefinitionId == workdayRestId },
+      )
+    }
   }
 
   @Test

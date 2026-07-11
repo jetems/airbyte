@@ -104,6 +104,13 @@ object SourceWorkdayEnterpriseConnector : ConnectorEntitlement(
   override val name: String = "source-workday"
 }
 
+// Workday 1.0.0 split REST streams into a separate enterprise connector; keep entitlement in sync.
+object SourceWorkdayRestEnterpriseConnector : ConnectorEntitlement(
+  actorDefinitionId = UUID.fromString("8d22fb25-a6e8-40e5-9a8b-0e057cc0bb86"),
+) {
+  override val name: String = "source-workday-rest"
+}
+
 object SourceDb2EnterpriseConnector : ConnectorEntitlement(
   actorDefinitionId = UUID.fromString("d2542966-8cc8-4899-9b74-413a7d9bb28e"),
 ) {
@@ -152,6 +159,7 @@ object Entitlements {
       SourceServicenowEnterpriseConnector,
       SourceSharepointEnterpriseConnector,
       SourceWorkdayEnterpriseConnector,
+      SourceWorkdayRestEnterpriseConnector,
       SourceDb2EnterpriseConnector,
       SourceSharepointEnterpriseListsConnector,
       GroupsEntitlement,
