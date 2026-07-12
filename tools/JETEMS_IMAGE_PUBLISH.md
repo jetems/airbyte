@@ -44,6 +44,9 @@ DOCKER_TAG=20260711-abc123 ./tools/jetems-generate-release-notes.sh
 
 或 GitHub Actions → **Jetems Publish Platform Images** → Run workflow。
 
+每次成功发版会覆盖 multi-arch **`latest`**（以及 `latest-amd64` / `latest-arm64`）。  
+**abctl / 部署侧 tag 一律用 `latest`**：见 `dev-values.jetems-swr.yaml`、`./tools/jetems-abctl-up-swr.sh`。
+
 ## Secrets
 
 | Secret | 说明 |

@@ -1,0 +1,142 @@
+# =============================================================================
+# JETEMS SWR values —— abctl / Helm 使用华为云 SWR 平台镜像
+#
+# 平台镜像 tag 一律 latest:
+#   swr.cn-south-1.myhuaweicloud.com/jetems/<name>:latest
+#
+# 注意:
+#   - 不设 global.image.registry（否则 temporal/minio/postgres 也会被错误加上 SWR 前缀）
+#   - 各服务 repository 写完整 SWR 路径（无 airbyte/ 段）
+#
+# 用法: ./tools/jetems-abctl-up-swr.sh
+# =============================================================================
+
+global:
+  edition: enterprise
+  airbyteUrl: http://localhost:8000
+
+  image:
+    # 留空：仅平台服务用完整 repository；基础设施镜像保持 Docker Hub
+    registry: ""
+    tag: latest
+
+  # abctl --docker-* 会创建名为 docker-auth 的 pull secret
+  imagePullSecrets:
+    - name: docker-auth
+
+  enterprise:
+    licenseKey: "jetems-local-eval-not-a-real-license"
+
+  auth:
+    enabled: true
+    instanceAdmin:
+      firstName: "Jetems"
+      lastName: "Admin"
+      password: "jetems-local-admin"
+
+  env_vars:
+    INITIAL_USER_EMAIL: admin@jetems.local
+
+webapp:
+  enabled: false
+
+# 完整路径 + global.image.tag=latest → …/jetems/<svc>:latest
+server:
+  enabled: true
+  image:
+    repository: swr.cn-south-1.myhuaweicloud.com/jetems/server
+    pullPolicy: Always
+  livenessProbe:
+    initialDelaySeconds: 180
+    periodSeconds: 15
+    timeoutSeconds: 15
+    failureThreshold: 10
+  readinessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 15
+    timeoutSeconds: 15
+    failureThreshold: 10
+
+worker:
+  enabled: true
+  image:
+    repository: swr.cn-south-1.myhuaweicloud.com/jetems/worker
+    pullPolicy: Always
+
+workloadApiServer:
+  enabled: true
+  image:
+    repository: swr.cn-south-1.myhuaweicloud.com/jetems/workload-api-server
+    pullPolicy: Always
+  livenessProbe:
+    enabled: false
+  readinessProbe:
+    enabled: false
+
+workloadLauncher:
+  enabled: true
+  image:
+    repository: swr.cn-south-1.myhuaweicloud.com/jetems/workload-launcher
+    pullPolicy: Always
+  # 字符串形式：须写完整路径（不会经过「短名+registry」）
+  containerOrchestrator:
+    image: "swr.cn-south-1.myhuaweicloud.com/jetems/container-orchestrator:{{ .Values.global.image.tag }}"
+  connectorSidecar:
+    image: "swr.cn-south-1.myhuaweicloud.com/jetems/connector-sidecar:{{ .Values.global.image.tag }}"
+  workloadInit:
+    image: "swr.cn-south-1.myhuaweicloud.com/jetems/workload-init-container:{{ .Values.global.image.tag }}"
+
+cron:
+  enabled: true
+  image:
+    repository: swr.cn-south-1.myhuaweicloud.com/jetems/cron
+    pullPolicy: Always
+
+airbyteBootloader:
+  enabled: true
+  image:
+    repository: swr.cn-south-1.myhuaweicloud.com/jetems/bootloader
+    pullPolicy: Always
+
+keycloak:
+  enabled: true
+  protocol: http
+  image:
+    repository: swr.cn-south-1.myhuaweicloud.com/jetems/keycloak
+    pullPolicy: Always
+  extraEnv:
+    - name: KEYCLOAK_HOSTNAME_ADMIN_URL
+      value: "http://localhost:8000/auth"
+
+keycloakSetup:
+  enabled: true
+  image:
+    repository: swr.cn-south-1.myhuaweicloud.com/jetems/keycloak-setup
+    pullPolicy: Always
+  extraEnv:
+    - name: INITIAL_USER_EMAIL
+      value: admin@jetems.local
+
+postgresql:
+  enabled: true
+  image:
+    repository: swr.cn-south-1.myhuaweicloud.com/jetems/db
+    tag: latest
+    pullPolicy: Always
+
+# 基础设施：仍走 Docker Hub（registry 为空，保持默认 repository）
+temporal:
+  enabled: true
+minio:
+  enabled: true
+
+manifestServer:
+  enabled: false
+metrics:
+  enabled: false
+connectorRolloutWorker:
+  enabled: false
+featureflagServer:
+  enabled: false
+temporalUi:
+  enabled: false

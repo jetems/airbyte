@@ -37,6 +37,14 @@ Airbyte 官方将连接器做成遵循 [Airbyte Protocol](https://docs.airbyte.c
 ### 3. 本地一键开发环境（abctl）
 
 - 使用 **abctl + kind + Helm charts/v2** 拉起完整栈
+- **SWR 自定义镜像**：一律使用 **`…/jetems/<svc>:latest`**
+
+```bash
+export SWR_USERNAME=... SWR_PASSWORD=...
+./tools/jetems-abctl-up-swr.sh          # values: dev-values.jetems-swr.yaml
+```
+
+- 本地 Gradle `:dev` 镜像仍用 `./tools/jetems-abctl-up.sh`
 - 前端打入 `server` 镜像，ingress 路由 `/` → server、`/auth` → keycloak
 - 脚本修复 abctl 默认 ingress 与 Keycloak hostname（避免 Admin 跳转丢端口）
 

@@ -2,8 +2,11 @@ import isBoolean from "lodash/isBoolean";
 import isEqual from "lodash/isEqual";
 import { useCallback, useMemo } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
+import { useIntl } from "react-intl";
 
 import { ListBox } from "components/ui/ListBox";
+
+import { localizeCdkSchemaTitle } from "area/connectorBuilder/components/Builder/localizeCdkSchema";
 
 import { AdditionalPropertiesControl } from "./AdditionalPropertiesControl";
 import { ControlGroup } from "./ControlGroup";
@@ -23,6 +26,7 @@ export const MultiOptionControl = ({
   hideBorder = false,
   nonAdvancedFields,
 }: BaseControlComponentProps) => {
+  const intl = useIntl();
   const value: unknown = useWatch({ name: baseProps.name });
   const { setValue, clearErrors, unregister } = useFormContext();
   const {
@@ -55,7 +59,8 @@ export const MultiOptionControl = ({
         return "";
       }
       if (option.title) {
-        return option.title;
+        // JETEMS: oneOf/anyOf 选项标题中文化
+        return localizeCdkSchemaTitle(intl, option.title) ?? option.title;
       }
       if (option.type === undefined) {
         if (option.anyOf) {
@@ -73,9 +78,9 @@ export const MultiOptionControl = ({
       if (Array.isArray(option.type)) {
         return option.type.join(", ");
       }
-      return option.type as string;
+      return localizeCdkSchemaTitle(intl, option.type as string) ?? (option.type as string);
     },
-    [verifyArrayItems]
+    [verifyArrayItems, intl]
   );
 
   if (displayOptions.length === 1) {

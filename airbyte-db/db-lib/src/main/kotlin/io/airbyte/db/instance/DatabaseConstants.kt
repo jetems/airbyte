@@ -11,7 +11,7 @@ object DatabaseConstants {
   /**
    * Default Postgres version Airbyte supports.
    */
-  const val DEFAULT_DATABASE_VERSION: String = "postgres:15-alpine"
+  const val DEFAULT_DATABASE_VERSION: String = "postgres:17-alpine"
 
   /**
    * Logical name of the Configurations database.

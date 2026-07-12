@@ -9,6 +9,11 @@ import { FlexContainer } from "components/ui/Flex";
 import { LabelInfo } from "components/ui/Label";
 import { Tooltip } from "components/ui/Tooltip";
 
+import {
+  localizeCdkSchemaDescription,
+  localizeCdkSchemaTitle,
+} from "area/connectorBuilder/components/Builder/localizeCdkSchema";
+
 import { ArrayOfObjectsControl } from "./ArrayOfObjectsControl";
 import { MultiOptionControl } from "./MultiOptionControl";
 import { ObjectControl } from "./ObjectControl";
@@ -75,7 +80,8 @@ export const SchemaFormControl = ({
   suggestionsOverride,
   tooltipDocsLink,
 }: SchemaFormControlProps) => {
-  const { formatMessage } = useIntl();
+  const intl = useIntl();
+  const { formatMessage } = intl;
   const {
     schema: rootSchema,
     getSchemaAtPath,
@@ -124,30 +130,33 @@ export const SchemaFormControl = ({
   }
 
   const multiOptionSchemas = targetSchema.oneOf || targetSchema.anyOf;
+  // JETEMS: CDK schema 选项标题/说明中文化（全局配置 Check / Concurrency / API Budget 等）
   const options = multiOptionSchemas
     ? multiOptionSchemas
         .map((optionSchema) => resolveTopLevelRef(rootSchema, optionSchema as AirbyteJsonSchema))
         .filter((optionSchema) => !!optionSchema.title)
         .map((optionSchema) => ({
-          title: optionSchema.title as string,
-          description: optionSchema.description,
+          title: localizeCdkSchemaTitle(intl, optionSchema.title as string) ?? (optionSchema.title as string),
+          description: localizeCdkSchemaDescription(intl, optionSchema.description) ?? optionSchema.description,
         }))
     : undefined;
 
-  const label = titleOverride
+  const rawLabel = titleOverride
     ? titleOverride
     : titleOverride === null
     ? undefined
     : displayName(path, targetSchema.title);
+  const label = localizeCdkSchemaTitle(intl, rawLabel) ?? rawLabel;
+  const localizedDescription = localizeCdkSchemaDescription(intl, targetSchema.description);
 
   const baseProps: BaseControlProps = {
     name: path,
     label,
     labelTooltip:
-      targetSchema.description || targetSchema.examples ? (
+      localizedDescription || targetSchema.examples ? (
         <LabelInfo
           label={label}
-          description={<ReactMarkdown className={styles.markdown}>{targetSchema.description ?? ""}</ReactMarkdown>}
+          description={<ReactMarkdown className={styles.markdown}>{localizedDescription ?? ""}</ReactMarkdown>}
           examples={targetSchema.examples}
           options={options}
           docsLink={tooltipDocsLink}
