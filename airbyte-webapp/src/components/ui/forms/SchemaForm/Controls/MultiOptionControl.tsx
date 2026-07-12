@@ -126,7 +126,11 @@ export const MultiOptionControl = ({
           hasError={!!displayError}
           isDisabled={baseProps.disabled}
           options={displayOptions.map((option) => ({
-            label: `${getOptionLabel(option)} ${option.deprecated ? " (Deprecated)" : ""}`,
+            label: `${getOptionLabel(option)}${
+              option.deprecated
+                ? ` (${intl.formatMessage({ id: "form.deprecated", defaultMessage: "Deprecated" })})`
+                : ""
+            }`,
             value: getOptionLabel(option),
           }))}
           onSelect={(selectedValue) => {

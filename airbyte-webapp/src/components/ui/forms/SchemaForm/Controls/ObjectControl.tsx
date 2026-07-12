@@ -29,6 +29,8 @@ export const ObjectControl = ({
   const value = useWatch({ name: baseProps.name });
   const toggleConfig = useToggleConfig(baseProps.name, fieldSchema);
   const error = useErrorAtPath(baseProps.name);
+  // JETEMS: Collapsible「高级」标题中文化（hooks 须在 early return 之前）
+  const { formatMessage } = useIntl();
 
   if (!fieldSchema.properties) {
     if (!fieldSchema.additionalProperties) {
@@ -112,7 +114,11 @@ export const ObjectControl = ({
     <>
       {nonAdvancedElements.length > 0 && nonAdvancedElements}
       {advancedElements.length > 0 && (
-        <Collapsible className={styles.advancedCollapsible} label="Advanced" initiallyOpen={hasAdvancedValue}>
+        <Collapsible
+          className={styles.advancedCollapsible}
+          label={formatMessage({ id: "form.advanced" })}
+          initiallyOpen={hasAdvancedValue}
+        >
           {advancedElements}
         </Collapsible>
       )}

@@ -7,6 +7,7 @@ import { Badge } from "components/ui/Badge";
 import { OptionSection } from "components/ui/ComboBox";
 import { FlexContainer } from "components/ui/Flex";
 import { LabelInfo } from "components/ui/Label";
+import { TextWithHTML } from "components/ui/TextWithHTML";
 import { Tooltip } from "components/ui/Tooltip";
 
 import {
@@ -156,7 +157,9 @@ export const SchemaFormControl = ({
       localizedDescription || targetSchema.examples ? (
         <LabelInfo
           label={label}
-          description={<ReactMarkdown className={styles.markdown}>{localizedDescription ?? ""}</ReactMarkdown>}
+          // JETEMS: schema 描述可能含 HTML 链接（含 formatMessage 解出后的 <a href>）。
+          // ReactMarkdown 默认不渲染 raw HTML；有 HTML 时走 TextWithHTML，否则走 Markdown。
+          description={<SchemaDescription text={localizedDescription} />}
           examples={targetSchema.examples}
           options={options}
           docsLink={tooltipDocsLink}
@@ -270,13 +273,25 @@ export const SchemaFormControl = ({
 const DeprecatedBadge = ({ message }: { message?: string }) => {
   return message ? (
     <Tooltip control={<Badge variant="grey">Deprecated</Badge>} placement="top">
-      <ReactMarkdown className={styles.markdown}>{message}</ReactMarkdown>
+      <SchemaDescription text={message} />
     </Tooltip>
   ) : (
     <Badge variant="grey">
       <FormattedMessage id="form.deprecated" />
     </Badge>
   );
+};
+
+/** JETEMS: render CDK/schema description — HTML anchors via TextWithHTML, else Markdown. */
+const SchemaDescription = ({ text }: { text?: string }) => {
+  if (!text) {
+    return null;
+  }
+  // Raw HTML (e.g. <a href="...">) is not rendered by ReactMarkdown without rehype-raw.
+  if (/<[a-z][\s\S]*>/i.test(text)) {
+    return <TextWithHTML className={styles.markdown} text={text} />;
+  }
+  return <ReactMarkdown className={styles.markdown}>{text}</ReactMarkdown>;
 };
 
 export const getMatchingOverrideForPath = (overrideByPath: OverrideByPath, path: string) => {

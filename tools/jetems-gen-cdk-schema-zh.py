@@ -52,6 +52,8 @@ TITLE_ZH: dict[str, str] = {
     "number": "数字",
     "boolean": "布尔值",
     "Advanced": "高级",
+    # Path-derived label (schema field has no title)
+    "Ignore Stream Slicer Parameters On Paginated Requests": "分页请求时忽略数据流切片器参数",
     "Extractor": "提取器",
     # --- Stream config (screenshot) ---
     "API Endpoint URL": "API 端点 URL",
@@ -85,7 +87,7 @@ TITLE_ZH: dict[str, str] = {
     "JSON Lines": "JSON Lines 格式",
     "Name": "名称",
     "OAuth2": "OAuth2 认证",
-    "Schema": "Schema 模式",
+    "Schema": "数据模式",
     "Streams": "数据流列表",
     "XML": "XML 格式",
     "No Authentication": "无认证",
@@ -119,7 +121,7 @@ TITLE_ZH: dict[str, str] = {
     "Use Cache": "使用缓存",
     "Partition Router": "分区路由器",
     "Record Filter": "记录过滤器",
-    "Schema Normalization": "Schema 规范化",
+    "Schema Normalization": "数据模式规范化",
     "Transform Before Filtering": "过滤前转换",
     "Pagination Strategy": "分页策略",
     "Default Paginator": "默认分页器",
@@ -146,11 +148,11 @@ TITLE_ZH: dict[str, str] = {
     "Remove Fields": "移除字段",
     "Composite Key": "复合主键",
     "Single Key": "单主键",
-    "Schema Loader": "Schema 加载器",
-    "Inline Schema Loader": "内联 Schema 加载器",
-    "Json File Schema Loader": "JSON 文件 Schema 加载器",
-    "Dynamic Schema Loader": "动态 Schema 加载器",
-    "Custom Schema Loader": "自定义 Schema 加载器",
+    "Schema Loader": "数据模式加载器",
+    "Inline Schema Loader": "内联数据模式加载器",
+    "Json File Schema Loader": "JSON 文件数据模式加载器",
+    "Dynamic Schema Loader": "动态数据模式加载器",
+    "Custom Schema Loader": "自定义数据模式加载器",
     "Declarative Stream": "声明式数据流",
     "Full Refresh Stream": "全量刷新数据流",
     "Incremental Stream": "增量数据流",
@@ -175,8 +177,8 @@ TITLE_ZH: dict[str, str] = {
     "Predicate": "谓词",
     "Action": "操作",
     "File Path": "文件路径",
-    "Schemas": "Schema 列表",
-    "Base JSON Schema": "基础 JSON Schema",
+    "Schemas": "数据模式列表",
+    "Base JSON Schema": "基础 JSON 数据模式",
     "Default Values": "默认值",
     "Error Message": "错误消息",
     "HTTP Codes": "HTTP 状态码",
@@ -224,7 +226,7 @@ TITLE_ZH: dict[str, str] = {
     "Custom Pagination Strategy": "自定义分页策略",
     "Custom Partition Router": "自定义分区路由器",
     "Custom Decoder": "自定义解码器",
-    "Custom Schema Normalization": "自定义 Schema 规范化",
+    "Custom Schema Normalization": "自定义数据模式规范化",
     "Custom State Migration": "自定义状态迁移",
     "Custom Validation Strategy": "自定义校验策略",
     "Custom Config Transformation": "自定义配置转换",
@@ -282,12 +284,12 @@ TITLE_ZH: dict[str, str] = {
     "Group by Key": "按键分组",
     "Group Size": "分组大小",
     "Grouping Partition Router": "分组分区路由器",
-    "Multiple Schema Loaders": "多 Schema 加载器",
-    "Schema Path": "Schema 路径",
-    "Schema Field Type": "Schema 字段类型",
-    "Schema Filter": "Schema 过滤器",
-    "Schema Transformations": "Schema 转换",
-    "Schema Type Identifier": "Schema 类型标识",
+    "Multiple Schema Loaders": "多数据模式加载器",
+    "Schema Path": "数据模式路径",
+    "Schema Field Type": "数据模式字段类型",
+    "Schema Filter": "数据模式过滤器",
+    "Schema Transformations": "数据模式转换",
+    "Schema Type Identifier": "数据模式类型标识",
     "Property List": "属性列表",
     "Property Selector": "属性选择器",
     "Property Chunking": "属性分块",
@@ -295,7 +297,7 @@ TITLE_ZH: dict[str, str] = {
     "Property Limit Type": "属性上限类型",
     "Properties from Endpoint": "来自端点的属性",
     "Always Include Properties": "始终包含的属性",
-    "Json Schema Property Selector": "JSON Schema 属性选择器",
+    "Json Schema Property Selector": "JSON 数据模式属性选择器",
     "Config Components Resolver": "配置组件解析器",
     "Http Components Resolver": "HTTP 组件解析器",
     "Components Resolver": "组件解析器",
@@ -342,7 +344,7 @@ TITLE_ZH: dict[str, str] = {
     "Response Token Response Key": "响应令牌键",
     "Validate Session Path": "校验会话路径",
     "Validation Strategy": "校验策略",
-    "Validate Adheres To Schema": "校验是否符合 Schema",
+    "Validate Adheres To Schema": "校验是否符合数据模式",
     "Dpath Validator": "Dpath 校验器",
     "Predicate Validator": "谓词校验器",
     "Predicate key": "谓词键",
@@ -410,6 +412,49 @@ DESC_ZH: dict[str, str] = {
     "The HTTP response header name that indicates when the rate limit resets.": "指示限流何时重置的 HTTP 响应头名称。",
     "The HTTP response header name that indicates the number of remaining allowed calls.": "指示剩余允许调用次数的 HTTP 响应头名称。",
     "List of HTTP status codes that indicate a rate limit has been hit.": "表示已触发限流的 HTTP 状态码列表。",
+    # --- Schema Loader（数据模式页）---
+    "One or many schema loaders can be used to retrieve the schema for the current stream. When multiple schema loaders are defined, schema properties will be merged together. Schema loaders defined first taking precedence in the event of a conflict.": "可使用一个或多个数据模式加载器获取当前数据流的数据模式。定义多个加载器时，模式属性会合并；发生冲突时，先定义的加载器优先。",
+    "Loads a schema that is defined directly in the manifest file.": "加载直接在 manifest 文件中定义的数据模式。",
+    "Loads the schema from a json file.": "从 JSON 文件加载数据模式。",
+    "(This component is experimental. Use at your own risk.) Loads a schema by extracting data from retrieved records.": "（实验性功能，请谨慎使用。）通过从已检索记录中提取数据来加载数据模式。",
+    "Schema Loader component whose behavior is derived from a custom code implementation of the connector.": "行为由连接器自定义代码实现决定的数据模式加载器组件。",
+    "Describes a streams' schema. Refer to the <a href=\"https://docs.airbyte.com/understanding-airbyte/supported-data-types/\">Data Types documentation</a> for more details on which types are valid.": "描述数据流的数据模式。有效类型详见 [数据类型文档](https://docs.airbyte.com/understanding-airbyte/supported-data-types/)。",
+    "Responsible for filtering fields to be added to json schema.": "负责过滤将写入 JSON 数据模式的字段。",
+    "A list of transformations to be applied to the schema.": "要应用到数据模式的转换列表。",
+    "(This component is experimental. Use at your own risk.) Identifies schema details for dynamic schema extraction and processing.": "（实验性功能，请谨慎使用。）标识动态数据模式提取与处理所需的细节。",
+    "List of nested fields defining the schema field path to extract. Defaults to [].": "定义要提取的数据模式字段路径的嵌套字段列表。默认值为 []。",
+    # --- Stream 配置页：分区路由器 / Advanced / 转换 等 tips ---
+    "Used to iteratively execute requests over a set of values, such as a parent stream's records or a list of constant values.": "用于在一组值上迭代发起请求，例如父数据流的记录或一组常量值。",
+    "Partition router that is used to retrieve records that have been partitioned according to records from the specified parent streams. An example of a parent stream is automobile brands and the substream would be the various car models associated with each branch.": "按指定父数据流的记录进行分区并检索子记录。例如父数据流为汽车品牌，子流为各品牌下的车型。",
+    "A Partition router that specifies a list of attributes where each attribute describes a portion of the complete data set for a stream. During a sync, each value is iterated over and can be used as input to outbound API requests.": "通过属性列表描述数据流完整数据集的各个分区。同步时会遍历每个值，并可作为出站 API 请求的输入。",
+    "A decorator on top of a partition router that groups partitions into batches of a specified size. This is useful for APIs that support filtering by multiple partition keys in a single request. Note that per-partition incremental syncs may not work as expected because the grouping of partitions might change between syncs, potentially leading to inconsistent state tracking.\n": "在分区路由器之上的装饰器，将分区按指定大小分批。适用于单次请求可按多个分区键过滤的 API。注意：按分区的增量同步可能不如预期，因为批次分组可能在同步之间变化，导致状态跟踪不一致。",
+    "A decorator on top of a partition router that groups partitions into batches of a specified size. This is useful for APIs that support filtering by multiple partition keys in a single request. Note that per-partition incremental syncs may not work as expected because the grouping of partitions might change between syncs, potentially leading to inconsistent state tracking.": "在分区路由器之上的装饰器，将分区按指定大小分批。适用于单次请求可按多个分区键过滤的 API。注意：按分区的增量同步可能不如预期，因为批次分组可能在同步之间变化，导致状态跟踪不一致。",
+    "Partition router component whose behavior is derived from a custom code implementation of the connector.": "行为由连接器自定义代码实现决定的分区路由器组件。",
+    "If true, the partition router and incremental request options will be ignored when paginating requests. Request options set directly on the requester will not be ignored.": "为 true 时，分页请求会忽略分区路由器与增量请求选项。直接设置在请求器上的请求选项不会被忽略。",
+    "Describes what triggers pagination reset and how to handle it.": "描述触发分页重置的条件以及如何处理。",
+    "Describes what triggers pagination reset and how to handle it. If SPLIT_USING_CURSOR, the connector developer is accountable for ensuring that the records are returned in ascending order.": "描述触发分页重置的条件以及如何处理。若为 SPLIT_USING_CURSOR，连接器开发者需确保记录按升序返回。",
+    "For APIs that require explicit specification of the properties to query for, this component will take a static or dynamic set of properties (which can be optionally split into chunks) and allow them to be injected into an outbound request by accessing stream_partition.extra_fields.": "适用于必须显式指定查询属性的 API。本组件接受静态或动态属性集（可分块），并通过 stream_partition.extra_fields 注入出站请求。",
+    "For APIs that require explicit specification of the properties to query for, this component specifies which property fields and how they are supplied to outbound requests.": "适用于必须显式指定查询属性的 API。本组件指定属性字段及其如何提供给出站请求。",
+    "Enables stream requests caching. When set to true, repeated requests to the same URL will return cached responses. Parent streams automatically have caching enabled. Only set this to false if you are certain that caching should be disabled, as it may negatively impact performance when the same data is needed multiple times (e.g., for scroll-based pagination APIs where caching causes duplicate records).": "启用数据流请求缓存。为 true 时，对同一 URL 的重复请求将返回缓存响应。父数据流默认启用缓存。仅在确定应禁用缓存时设为 false；若同一数据会被多次使用（例如滚动分页 API），禁用缓存可能影响性能并导致重复记录。",
+    "Error handler component that defines how to handle errors.": "定义如何处理错误的错误处理器组件。",
+    "A list of transformations to be applied to each output record.": "要应用到每条输出记录的转换列表。",
+    "Array of state migrations to be applied on the input state": "要对输入状态应用的状态迁移数组",
+    "(experimental) Describes how to fetch a file": "（实验性）描述如何获取文件",
+    "Filter applied on a list of records.": "对记录列表应用的过滤器。",
+    "Transformation which adds field to an output record. The path of the added field can be nested.": "向输出记录添加字段的转换。添加字段的路径可以嵌套。",
+    "A transformation which removes fields from a record. The fields removed are designated using FieldPointers. During transformation, if a field or any of its parents does not exist in the record, no error is thrown.": "从记录中移除字段的转换。被移除字段由 FieldPointers 指定。转换时若字段或其父级不存在，不会抛出错误。",
+    "Component defining how to handle errors. Default behavior includes only retrying server errors (HTTP 5XX) and too many requests (HTTP 429) with an exponential backoff.": "定义如何处理错误的组件。默认仅对服务器错误（HTTP 5XX）与请求过多（HTTP 429）使用指数退避重试。",
+    "Error handler that sequentially iterates over a list of error handlers.": "按顺序遍历错误处理器列表的错误处理器。",
+    "Error handler component whose behavior is derived from a custom code implementation of the connector.": "行为由连接器自定义代码实现决定的错误处理器组件。",
+    "List of error handlers to iterate on to determine how to handle a failed response.": "用于判断如何处理失败响应的错误处理器列表。",
+    "PartitionRouter component that describes how to partition the stream, enabling incremental syncs and checkpointing.": "描述如何对数据流分区的组件，以支持增量同步与检查点。",
+    "Requester component that describes how to prepare HTTP requests to send to the source API.": "描述如何准备发往源 API 的 HTTP 请求的请求器组件。",
+    "Component that describes how to extract records from a HTTP response.": "描述如何从 HTTP 响应中提取记录的组件。",
+    "Paginator component that describes how to navigate through the API's pages.": "描述如何遍历 API 分页的分页器组件。",
+    "Fields will be added if expression is evaluated to True.": "当表达式求值为 True 时添加字段。",
+    "The predicate to filter a property by a property value. Property will be removed if it is empty OR expression is evaluated to True.,": "按属性值过滤属性的谓词。若属性为空或表达式求值为 True，则移除该属性。",
+    "For APIs with restrictions on the amount of properties that can be requester per request, property chunking can be applied to make multiple requests with a subset of the properties.": "对于每次请求可查询属性数量有限制的 API，可使用属性分块，以属性子集发起多次请求。",
+    "Defines how query properties will be grouped into smaller sets for APIs with limitations on the number of properties fetched per API request.": "定义如何将查询属性分组为更小的集合，适用于每次 API 请求可获取属性数量受限的场景。",
 }
 
 
@@ -466,8 +511,16 @@ def collect_schema_strings(schema: dict) -> tuple[set[str], dict[str, str]]:
                         rd = defs.get(ref.split("/")[-1], {})
                         add(rd.get("title"), rd.get("description"))
 
-    # Labels derived from path names by displayName()
-    titles.update({"Dynamic Streams Check Configs", "Advanced", "Extractor"})
+    # Labels derived from path names by displayName() when schema has no title
+    titles.update(
+        {
+            "Dynamic Streams Check Configs",
+            "Advanced",
+            "Extractor",
+            # SimpleRetriever.ignore_stream_slicer_parameters_on_paginated_requests (no title in YAML)
+            "Ignore Stream Slicer Parameters On Paginated Requests",
+        }
+    )
     return titles, title_to_desc
 
 
@@ -484,7 +537,12 @@ def main() -> None:
     desc_zh: dict[str, str] = {}  # message_id -> zh
 
     for en, zh in DESC_ZH.items():
-        mid = f"connectorBuilder.cdkSchema.descExact.{slug(en[:50])}"
+        # Use enough of the English text to avoid collisions when many
+        # descriptions share the same experimental/warning prefix.
+        mid = f"connectorBuilder.cdkSchema.descExact.{slug(en[:120])}"
+        # Disambiguate if still colliding after slug truncation.
+        if mid in desc_zh and desc_zh[mid] != escape_icu_angles(zh):
+            mid = f"{mid}_{abs(hash(en)) % 100000}"
         desc_map[en] = mid
         if en.endswith("\n"):
             desc_map[en.rstrip("\n")] = mid

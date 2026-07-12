@@ -120,13 +120,17 @@ const OrganizationWorkspacesPage: React.FC = () => {
     }
   }, [hasNextPage, fetchNextPage]);
 
-  const statusFilterOptions = [
-    { label: "All sync statuses", value: "all" as StatusFilter },
-    { label: "Successful syncs", value: "healthy" as StatusFilter },
-    { label: "Running syncs", value: "running" as StatusFilter },
-    { label: "Incomplete syncs", value: "paused" as StatusFilter },
-    { label: "Failed syncs", value: "failed" as StatusFilter },
-  ];
+  // JETEMS: 同步状态筛选项走 i18n，仅文案，筛选 value 不变
+  const statusFilterOptions = useMemo(
+    () => [
+      { label: formatMessage({ id: "workspaces.status.allSyncStatuses" }), value: "all" as StatusFilter },
+      { label: formatMessage({ id: "workspaces.status.successfulSyncs" }), value: "healthy" as StatusFilter },
+      { label: formatMessage({ id: "workspaces.status.runningSyncs" }), value: "running" as StatusFilter },
+      { label: formatMessage({ id: "workspaces.status.incompleteSyncs" }), value: "paused" as StatusFilter },
+      { label: formatMessage({ id: "workspaces.status.failedSyncs" }), value: "failed" as StatusFilter },
+    ],
+    [formatMessage]
+  );
 
   useEffect(() => {
     setStatusFilter("all");

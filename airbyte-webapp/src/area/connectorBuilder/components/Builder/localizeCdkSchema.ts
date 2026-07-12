@@ -155,6 +155,8 @@ const CDK_TITLE_MESSAGE_IDS: Record<string, string> = {
   "Header Prefix": "connectorBuilder.cdkSchema.t.Header_Prefix",
   Headers: "connectorBuilder.cdkSchema.t.Headers",
   "Http Components Resolver": "connectorBuilder.cdkSchema.t.Http_Components_Resolver",
+  "Ignore Stream Slicer Parameters On Paginated Requests":
+    "connectorBuilder.cdkSchema.t.Ignore_Stream_Slicer_Parameters_On_Paginated_Requests",
   "Incremental Dependency": "connectorBuilder.cdkSchema.t.Incremental_Dependency",
   "Incremental Stream": "connectorBuilder.cdkSchema.t.Incremental_Stream",
   "Incremental Sync": "connectorBuilder.cdkSchema.t.Incremental_Sync",
@@ -377,15 +379,19 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "(This component is experimental. Use at your own risk.) Component resolve and populates stream templates with components fetched via an HTTP retriever.":
     "connectorBuilder.cdkSchema.d.Http_Components_Resolver",
   "(This component is experimental. Use at your own risk.) Defines the dynamic streams to try reading when running a check operation.":
-    "connectorBuilder.cdkSchema.descExact.This_component_is_experimental_Use_at_your_own_r",
+    "connectorBuilder.cdkSchema.descExact.This_component_is_experimental_Use_at_your_own_risk_Defines_the_dynamic_streams_to_try_reading_when_",
   "(This component is experimental. Use at your own risk.) Defines the dynamic streams to try reading when running a check operation.\n":
-    "connectorBuilder.cdkSchema.descExact.This_component_is_experimental_Use_at_your_own_r",
+    "connectorBuilder.cdkSchema.descExact.This_component_is_experimental_Use_at_your_own_risk_Defines_the_dynamic_streams_to_try_reading_when_",
   "(This component is experimental. Use at your own risk.) Describes how to get streams config from the source config.":
     "connectorBuilder.cdkSchema.d.Stream_Config",
   "(This component is experimental. Use at your own risk.) Identifies schema details for dynamic schema extraction and processing.":
-    "connectorBuilder.cdkSchema.d.Schema_Type_Identifier",
+    "connectorBuilder.cdkSchema.descExact.This_component_is_experimental_Use_at_your_own_risk_Identifies_schema_details_for_dynamic_schema_ext",
+  "(This component is experimental. Use at your own risk.) Identifies schema details for dynamic schema extraction and processing.\n":
+    "connectorBuilder.cdkSchema.descExact.This_component_is_experimental_Use_at_your_own_risk_Identifies_schema_details_for_dynamic_schema_ext",
   "(This component is experimental. Use at your own risk.) Loads a schema by extracting data from retrieved records.":
-    "connectorBuilder.cdkSchema.d.Dynamic_Schema_Loader",
+    "connectorBuilder.cdkSchema.descExact.This_component_is_experimental_Use_at_your_own_risk_Loads_a_schema_by_extracting_data_from_retrieved",
+  "(This component is experimental. Use at your own risk.) Loads a schema by extracting data from retrieved records.\n":
+    "connectorBuilder.cdkSchema.descExact.This_component_is_experimental_Use_at_your_own_risk_Loads_a_schema_by_extracting_data_from_retrieved",
   "(This component is experimental. Use at your own risk.) Orchestrate the retriever's usage based on the state value.":
     "connectorBuilder.cdkSchema.d.State_Delegating_Stream",
   "(This component is experimental. Use at your own risk.) Represents a complex field type.":
@@ -400,9 +406,14 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Config_Components_Resolver",
   "(This component is experimental. Use at your own risk.) Specifies a mapping definition to update or add fields in a record or configuration. This allows dynamic mapping of data by interpolating values into the template based on provided contexts.":
     "connectorBuilder.cdkSchema.d.Component_Mapping_Definition",
-  "(experimental) Describes how to fetch a file": "connectorBuilder.cdkSchema.d.File_Uploader",
+  "(experimental) Describes how to fetch a file":
+    "connectorBuilder.cdkSchema.descExact.experimental_Describes_how_to_fetch_a_file",
+  "(experimental) Describes how to fetch a file\n":
+    "connectorBuilder.cdkSchema.descExact.experimental_Describes_how_to_fetch_a_file",
   "A Partition router that specifies a list of attributes where each attribute describes a portion of the complete data set for a stream. During a sync, each value is iterated over and can be used as input to outbound API requests.":
-    "connectorBuilder.cdkSchema.d.List_Partition_Router",
+    "connectorBuilder.cdkSchema.descExact.A_Partition_router_that_specifies_a_list_of_attributes_where_each_attribute_describes_a_portion_of_t",
+  "A Partition router that specifies a list of attributes where each attribute describes a portion of the complete data set for a stream. During a sync, each value is iterated over and can be used as input to outbound API requests.\n":
+    "connectorBuilder.cdkSchema.descExact.A_Partition_router_that_specifies_a_list_of_attributes_where_each_attribute_describes_a_portion_of_t",
   "A config migration that will be applied on the incoming config at the start of a sync.":
     "connectorBuilder.cdkSchema.d.Config_Migration",
   "A connection specification describing how a the connector can be configured.":
@@ -411,8 +422,10 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Custom_Config_Transformation",
   "A data feed API is an API that does not allow filtering and paginates the content from the most recent to the least recent. Given this, the CDK needs to know when to stop paginating and this field will generate a stop condition for pagination.":
     "connectorBuilder.cdkSchema.d.Data_Feed_API",
+  "A decorator on top of a partition router that groups partitions into batches of a specified size. This is useful for APIs that support filtering by multiple partition keys in a single request. Note that per-partition incremental syncs may not work as expected because the grouping of partitions might change between syncs, potentially leading to inconsistent state tracking.":
+    "connectorBuilder.cdkSchema.descExact.A_decorator_on_top_of_a_partition_router_that_groups_partitions_into_batches_of_a_specified_size_Thi",
   "A decorator on top of a partition router that groups partitions into batches of a specified size. This is useful for APIs that support filtering by multiple partition keys in a single request. Note that per-partition incremental syncs may not work as expected because the grouping of partitions might change between syncs, potentially leading to inconsistent state tracking.\n":
-    "connectorBuilder.cdkSchema.d.Grouping_Partition_Router",
+    "connectorBuilder.cdkSchema.descExact.A_decorator_on_top_of_a_partition_router_that_groups_partitions_into_batches_of_a_specified_size_Thi",
   "A group of streams that share a common resource and should not be read simultaneously. Streams in the same group will be blocked from concurrent reads based on the specified action.\n":
     "connectorBuilder.cdkSchema.d.Stream_Group",
   "A list of default values, each matching the structure expected from the parsed component value.":
@@ -422,8 +435,14 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Stream_Parameters",
   "A list of potentially nested fields indicating the full path in source config file where streams configs located.":
     "connectorBuilder.cdkSchema.d.Configs_Pointer",
-  "A list of transformations to be applied to each output record.": "connectorBuilder.cdkSchema.d.Transformations",
-  "A list of transformations to be applied to the schema.": "connectorBuilder.cdkSchema.d.Schema_Transformations",
+  "A list of transformations to be applied to each output record.":
+    "connectorBuilder.cdkSchema.descExact.A_list_of_transformations_to_be_applied_to_each_output_record",
+  "A list of transformations to be applied to each output record.\n":
+    "connectorBuilder.cdkSchema.descExact.A_list_of_transformations_to_be_applied_to_each_output_record",
+  "A list of transformations to be applied to the schema.":
+    "connectorBuilder.cdkSchema.descExact.A_list_of_transformations_to_be_applied_to_the_schema",
+  "A list of transformations to be applied to the schema.\n":
+    "connectorBuilder.cdkSchema.descExact.A_list_of_transformations_to_be_applied_to_the_schema",
   "A mapping of original values to new values. When a field value matches a key in this map, it will be replaced with the corresponding value.":
     "connectorBuilder.cdkSchema.d.Value_Mapping",
   "A passphrase/password used to encrypt the private key. Only provide a passphrase if required by the API for JWT authentication. The API will typically provide the passphrase when generating the public/private key pair.":
@@ -454,7 +473,9 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "A transformation that renames all keys to snake case.": "connectorBuilder.cdkSchema.d.Key_to_Snake_Case",
   "A transformation that replaces symbols in keys.": "connectorBuilder.cdkSchema.d.Keys_Replace",
   "A transformation which removes fields from a record. The fields removed are designated using FieldPointers. During transformation, if a field or any of its parents does not exist in the record, no error is thrown.":
-    "connectorBuilder.cdkSchema.d.Remove_Fields",
+    "connectorBuilder.cdkSchema.descExact.A_transformation_which_removes_fields_from_a_record_The_fields_removed_are_designated_using_FieldPoi",
+  "A transformation which removes fields from a record. The fields removed are designated using FieldPointers. During transformation, if a field or any of its parents does not exist in the record, no error is thrown.\n":
+    "connectorBuilder.cdkSchema.descExact.A_transformation_which_removes_fields_from_a_record_The_fields_removed_are_designated_using_FieldPoi",
   "Action that prevents streams in the same group from being read concurrently. When applied to a stream group, streams with this action will be deferred if another stream in the same group is currently active. This is useful for APIs that don't allow concurrent access to the same endpoint or session. Only applies to ConcurrentDeclarativeSource.\n":
     "connectorBuilder.cdkSchema.d.Block_Simultaneous_Syncs_Action",
   "Action to execute if a response matches the filter.": "connectorBuilder.cdkSchema.d.Action",
@@ -476,7 +497,10 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Extra_Fields",
   "Array of paths defining the field to remove. Each item is an array whose field describe the path of a field to remove.":
     "connectorBuilder.cdkSchema.d.Field_Paths",
-  "Array of state migrations to be applied on the input state": "connectorBuilder.cdkSchema.d.State_Migrations",
+  "Array of state migrations to be applied on the input state":
+    "connectorBuilder.cdkSchema.descExact.Array_of_state_migrations_to_be_applied_on_the_input_state",
+  "Array of state migrations to be applied on the input state\n":
+    "connectorBuilder.cdkSchema.descExact.Array_of_state_migrations_to_be_applied_on_the_input_state",
   "Authentication method to use for requests sent to the API, specifying how to inject the session token.":
     "connectorBuilder.cdkSchema.d.Data_Request_Authentication",
   "Authentication method to use for requests sent to the API.": "connectorBuilder.cdkSchema.d.Authenticator",
@@ -515,9 +539,15 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Download_HTTP_Response_Format",
   "Component decoding the response so records can be extracted.": "connectorBuilder.cdkSchema.d.HTTP_Response_Format",
   "Component defining how to handle errors. Default behavior includes only retrying server errors (HTTP 5XX) and too many requests (HTTP 429) with an exponential backoff.":
-    "connectorBuilder.cdkSchema.d.Default_Error_Handler",
+    "connectorBuilder.cdkSchema.descExact.Component_defining_how_to_handle_errors_Default_behavior_includes_only_retrying_server_errors_HTTP_5",
+  "Component defining how to handle errors. Default behavior includes only retrying server errors (HTTP 5XX) and too many requests (HTTP 429) with an exponential backoff.\n":
+    "connectorBuilder.cdkSchema.descExact.Component_defining_how_to_handle_errors_Default_behavior_includes_only_retrying_server_errors_HTTP_5",
   "Component resolve and populates stream templates with components values.":
     "connectorBuilder.cdkSchema.d.Components_Resolver",
+  "Component that describes how to extract records from a HTTP response.":
+    "connectorBuilder.cdkSchema.descExact.Component_that_describes_how_to_extract_records_from_a_HTTP_response",
+  "Component that describes how to extract records from a HTTP response.\n":
+    "connectorBuilder.cdkSchema.descExact.Component_that_describes_how_to_extract_records_from_a_HTTP_response",
   "Component used to coordinate how records are extracted across stream slices and request pages when the state is empty or not provided.":
     "connectorBuilder.cdkSchema.d.Full_Refresh_Stream",
   "Component used to coordinate how records are extracted across stream slices and request pages when the state provided.":
@@ -547,20 +577,24 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "Defines a rate limit with a specific number of calls allowed within a time interval.":
     "connectorBuilder.cdkSchema.d.Rate",
   "Defines how many requests can be made to the API in a given time frame. `HTTPAPIBudget` extracts the remaining call count and the reset time from HTTP response headers using the header names provided by `ratelimit_remaining_header` and `ratelimit_reset_header`. Only requests using `HttpRequester` are rate-limited; custom components that bypass `HttpRequester` are not covered by this budget.":
-    "connectorBuilder.cdkSchema.descExact.Defines_how_many_requests_can_be_made_to_the_API_i",
+    "connectorBuilder.cdkSchema.descExact.Defines_how_many_requests_can_be_made_to_the_API_in_a_given_time_frame_HTTPAPIBudget_extracts_the_re",
   "Defines how many requests can be made to the API in a given time frame. `HTTPAPIBudget` extracts the remaining call count and the reset time from HTTP response headers using the header names provided by `ratelimit_remaining_header` and `ratelimit_reset_header`. Only requests using `HttpRequester` are rate-limited; custom components that bypass `HttpRequester` are not covered by this budget.\n":
-    "connectorBuilder.cdkSchema.descExact.Defines_how_many_requests_can_be_made_to_the_API_i",
+    "connectorBuilder.cdkSchema.descExact.Defines_how_many_requests_can_be_made_to_the_API_in_a_given_time_frame_HTTPAPIBudget_extracts_the_re",
+  "Defines how query properties will be grouped into smaller sets for APIs with limitations on the number of properties fetched per API request.":
+    "connectorBuilder.cdkSchema.descExact.Defines_how_query_properties_will_be_grouped_into_smaller_sets_for_APIs_with_limitations_on_the_numb",
+  "Defines how query properties will be grouped into smaller sets for APIs with limitations on the number of properties fetched per API request.\n":
+    "connectorBuilder.cdkSchema.descExact.Defines_how_query_properties_will_be_grouped_into_smaller_sets_for_APIs_with_limitations_on_the_numb",
   "Defines the amount of parallelization for the streams that are being synced. The factor of parallelization is how many partitions or streams are synced at the same time. For example, with a concurrency_level of 10, ten streams or partitions of data will processed at the same time. Note that a value of 1 could create deadlock if a stream has a very high number of partitions.":
-    "connectorBuilder.cdkSchema.descExact.Defines_the_amount_of_parallelization_for_the_stre",
+    "connectorBuilder.cdkSchema.descExact.Defines_the_amount_of_parallelization_for_the_streams_that_are_being_synced_The_factor_of_paralleliz",
   "Defines the amount of parallelization for the streams that are being synced. The factor of parallelization is how many partitions or streams are synced at the same time. For example, with a concurrency_level of 10, ten streams or partitions of data will processed at the same time. Note that a value of 1 could create deadlock if a stream has a very high number of partitions.\n":
-    "connectorBuilder.cdkSchema.descExact.Defines_the_amount_of_parallelization_for_the_stre",
+    "connectorBuilder.cdkSchema.descExact.Defines_the_amount_of_parallelization_for_the_streams_that_are_being_synced_The_factor_of_paralleliz",
   "Defines the behavior for fetching the list of properties from an API that will be loaded into the requests to extract records. Note that stream_slices can't be interpolated from this retriever.":
     "connectorBuilder.cdkSchema.d.Properties_from_Endpoint",
   "Defines the field to add on a record.": "connectorBuilder.cdkSchema.d.Definition_Of_Field_To_Add",
   "Defines the streams to try reading when running a check operation.":
-    "connectorBuilder.cdkSchema.descExact.Defines_the_streams_to_try_reading_when_running_a",
+    "connectorBuilder.cdkSchema.descExact.Defines_the_streams_to_try_reading_when_running_a_check_operation",
   "Defines the streams to try reading when running a check operation.\n":
-    "connectorBuilder.cdkSchema.descExact.Defines_the_streams_to_try_reading_when_running_a",
+    "connectorBuilder.cdkSchema.descExact.Defines_the_streams_to_try_reading_when_running_a_check_operation",
   "Defines where to look for and which query properties that should be sent in outbound API requests. For example, you can specify that only the selected columns of a stream should be in the request.":
     "connectorBuilder.cdkSchema.d.Property_Selector",
   "Deprecated, use the `url` instead. Base URL of the API source. Do not put sensitive information (e.g. API tokens) into this field - Use the Authenticator component for this.":
@@ -568,12 +602,20 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "Deprecated, use the `url` instead. Path the specific API endpoint that this stream represents. Do not put sensitive information (e.g. API tokens) into this field - Use the Authenticator component for this.":
     "connectorBuilder.cdkSchema.d.URL_Path",
   'Describes a streams\' schema. Refer to the <a href="https://docs.airbyte.com/understanding-airbyte/supported-data-types/">Data Types documentation</a> for more details on which types are valid.':
-    "connectorBuilder.cdkSchema.d.Schema",
+    "connectorBuilder.cdkSchema.descExact.Describes_a_streams_schema_Refer_to_the_a_href_https_docs_airbyte_com_understanding_airbyte_supporte",
+  'Describes a streams\' schema. Refer to the <a href="https://docs.airbyte.com/understanding-airbyte/supported-data-types/">Data Types documentation</a> for more details on which types are valid.\n':
+    "connectorBuilder.cdkSchema.descExact.Describes_a_streams_schema_Refer_to_the_a_href_https_docs_airbyte_com_understanding_airbyte_supporte",
   "Describes how to construct partitions from the records retrieved from the parent stream..":
     "connectorBuilder.cdkSchema.d.Parent_Stream_Config",
   "Describes the limits that trigger pagination reset": "connectorBuilder.cdkSchema.d.Pagination_Reset_Limits",
+  "Describes what triggers pagination reset and how to handle it.":
+    "connectorBuilder.cdkSchema.descExact.Describes_what_triggers_pagination_reset_and_how_to_handle_it",
+  "Describes what triggers pagination reset and how to handle it.\n":
+    "connectorBuilder.cdkSchema.descExact.Describes_what_triggers_pagination_reset_and_how_to_handle_it",
   "Describes what triggers pagination reset and how to handle it. If SPLIT_USING_CURSOR, the connector developer is accountable for ensuring that the records are returned in ascending order.":
-    "connectorBuilder.cdkSchema.d.Pagination_Reset",
+    "connectorBuilder.cdkSchema.descExact.Describes_what_triggers_pagination_reset_and_how_to_handle_it_If_SPLIT_USING_CURSOR_the_connector_de",
+  "Describes what triggers pagination reset and how to handle it. If SPLIT_USING_CURSOR, the connector developer is accountable for ensuring that the records are returned in ascending order.\n":
+    "connectorBuilder.cdkSchema.descExact.Describes_what_triggers_pagination_reset_and_how_to_handle_it_If_SPLIT_USING_CURSOR_the_connector_de",
   "Description of the request to perform to obtain a session token to perform data requests. The response body is expected to be a JSON object with a session token property.":
     "connectorBuilder.cdkSchema.d.Login_Requester",
   "Determines whether to create a new path if it doesn't exist (true) or only update existing paths (false). When set to true, the resolver will create new paths in the stream template if they don't exist. When false (default), it will only update existing paths.":
@@ -583,29 +625,51 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "Enable using profile assertion as a flow for OAuth authorization.":
     "connectorBuilder.cdkSchema.d.Use_Profile_Assertion",
   "Enables stream check availability. This field is automatically set by the CDK.":
-    "connectorBuilder.cdkSchema.descExact.Enables_stream_check_availability_This_field_is_a",
+    "connectorBuilder.cdkSchema.descExact.Enables_stream_check_availability_This_field_is_automatically_set_by_the_CDK",
   "Enables stream check availability. This field is automatically set by the CDK.\n":
-    "connectorBuilder.cdkSchema.descExact.Enables_stream_check_availability_This_field_is_a",
+    "connectorBuilder.cdkSchema.descExact.Enables_stream_check_availability_This_field_is_automatically_set_by_the_CDK",
   "Enables stream requests caching. When set to true, repeated requests to the same URL will return cached responses. Parent streams automatically have caching enabled. Only set this to false if you are certain that caching should be disabled, as it may negatively impact performance when the same data is needed multiple times (e.g., for scroll-based pagination APIs where caching causes duplicate records).":
-    "connectorBuilder.cdkSchema.d.Use_Cache",
+    "connectorBuilder.cdkSchema.descExact.Enables_stream_requests_caching_When_set_to_true_repeated_requests_to_the_same_URL_will_return_cache",
+  "Enables stream requests caching. When set to true, repeated requests to the same URL will return cached responses. Parent streams automatically have caching enabled. Only set this to false if you are certain that caching should be disabled, as it may negatively impact performance when the same data is needed multiple times (e.g., for scroll-based pagination APIs where caching causes duplicate records).\n":
+    "connectorBuilder.cdkSchema.descExact.Enables_stream_requests_caching_When_set_to_true_repeated_requests_to_the_same_URL_will_return_cache",
   "Error Message to display if the response matches the filter.": "connectorBuilder.cdkSchema.d.Error_Message",
-  "Error handler component that defines how to handle errors.": "connectorBuilder.cdkSchema.d.Error_Handler",
+  "Error handler component that defines how to handle errors.":
+    "connectorBuilder.cdkSchema.descExact.Error_handler_component_that_defines_how_to_handle_errors",
+  "Error handler component that defines how to handle errors.\n":
+    "connectorBuilder.cdkSchema.descExact.Error_handler_component_that_defines_how_to_handle_errors",
   "Error handler component whose behavior is derived from a custom code implementation of the connector.":
-    "connectorBuilder.cdkSchema.d.Custom_Error_Handler",
+    "connectorBuilder.cdkSchema.descExact.Error_handler_component_whose_behavior_is_derived_from_a_custom_code_implementation_of_the_connector",
+  "Error handler component whose behavior is derived from a custom code implementation of the connector.\n":
+    "connectorBuilder.cdkSchema.descExact.Error_handler_component_whose_behavior_is_derived_from_a_custom_code_implementation_of_the_connector",
   "Error handler that sequentially iterates over a list of error handlers.":
-    "connectorBuilder.cdkSchema.d.Composite_Error_Handler",
+    "connectorBuilder.cdkSchema.descExact.Error_handler_that_sequentially_iterates_over_a_list_of_error_handlers",
+  "Error handler that sequentially iterates over a list of error handlers.\n":
+    "connectorBuilder.cdkSchema.descExact.Error_handler_that_sequentially_iterates_over_a_list_of_error_handlers",
   "Extract time at which we can retry the request from response header and wait for the difference between now and that time.":
     "connectorBuilder.cdkSchema.d.Wait_Until_Time_Defined_In_Response_Header",
   "Extract wait time from a HTTP header in the response.":
     "connectorBuilder.cdkSchema.d.Wait_Time_Extracted_From_Response_Header",
   "Failure type of traced exception if a response matches the filter.": "connectorBuilder.cdkSchema.d.Failure_Type",
-  "Filter applied on a list of records.": "connectorBuilder.cdkSchema.d.Record_Filter",
+  "Fields will be added if expression is evaluated to True.":
+    "connectorBuilder.cdkSchema.descExact.Fields_will_be_added_if_expression_is_evaluated_to_True",
+  "Fields will be added if expression is evaluated to True.\n":
+    "connectorBuilder.cdkSchema.descExact.Fields_will_be_added_if_expression_is_evaluated_to_True",
+  "Filter applied on a list of records.": "connectorBuilder.cdkSchema.descExact.Filter_applied_on_a_list_of_records",
+  "Filter applied on a list of records.\n": "connectorBuilder.cdkSchema.descExact.Filter_applied_on_a_list_of_records",
   "Floor applied on the datetime value. Must be formatted with the datetime_format field.":
     "connectorBuilder.cdkSchema.d.Min_Datetime",
+  "For APIs that require explicit specification of the properties to query for, this component specifies which property fields and how they are supplied to outbound requests.":
+    "connectorBuilder.cdkSchema.descExact.For_APIs_that_require_explicit_specification_of_the_properties_to_query_for_this_component_specifies",
+  "For APIs that require explicit specification of the properties to query for, this component specifies which property fields and how they are supplied to outbound requests.\n":
+    "connectorBuilder.cdkSchema.descExact.For_APIs_that_require_explicit_specification_of_the_properties_to_query_for_this_component_specifies",
   "For APIs that require explicit specification of the properties to query for, this component will take a static or dynamic set of properties (which can be optionally split into chunks) and allow them to be injected into an outbound request by accessing stream_partition.extra_fields.":
-    "connectorBuilder.cdkSchema.d.Query_Properties",
+    "connectorBuilder.cdkSchema.descExact.For_APIs_that_require_explicit_specification_of_the_properties_to_query_for_this_component_will_take",
+  "For APIs that require explicit specification of the properties to query for, this component will take a static or dynamic set of properties (which can be optionally split into chunks) and allow them to be injected into an outbound request by accessing stream_partition.extra_fields.\n":
+    "connectorBuilder.cdkSchema.descExact.For_APIs_that_require_explicit_specification_of_the_properties_to_query_for_this_component_will_take",
   "For APIs with restrictions on the amount of properties that can be requester per request, property chunking can be applied to make multiple requests with a subset of the properties.":
-    "connectorBuilder.cdkSchema.d.Property_Chunking",
+    "connectorBuilder.cdkSchema.descExact.For_APIs_with_restrictions_on_the_amount_of_properties_that_can_be_requester_per_request_property_ch",
+  "For APIs with restrictions on the amount of properties that can be requester per request, property chunking can be applied to make multiple requests with a subset of the properties.\n":
+    "connectorBuilder.cdkSchema.descExact.For_APIs_with_restrictions_on_the_amount_of_properties_that_can_be_requester_per_request_property_ch",
   'Format of the datetime value. Defaults to "%Y-%m-%dT%H:%M:%S.%f%z" if left empty. Use placeholders starting with "%" to describe the format the API is using. The following placeholders are available:\n  * **%s**: Epoch unix timestamp - `1686218963`\n  * **%s_as_float**: Epoch unix timestamp in seconds as float with microsecond precision - `1686218963.123456`\n  * **%ms**: Epoch unix timestamp - `1686218963123`\n  * **%a**: Weekday (abbreviated) - `Sun`\n  * **%A**: Weekday (full) - `Sunday`\n  * **%w**: Weekday (decimal) - `0` (Sunday), `6` (Saturday)\n  * **%d**: Day of the month (zero-padded) - `01`, `02`, ..., `31`\n  * **%b**: Month (abbreviated) - `Jan`\n  * **%B**: Month (full) - `January`\n  * **%m**: Month (zero-padded) - `01`, `02`, ..., `12`\n  * **%y**: Year (without century, zero-padded) - `00`, `01`, ..., `99`\n  * **%Y**: Year (with century) - `0001`, `0002`, ..., `9999`\n  * **%H**: Hour (24-hour, zero-padded) - `00`, `01`, ..., `23`\n  * **%I**: Hour (12-hour, zero-padded) - `01`, `02`, ..., `12`\n  * **%p**: AM/PM indicator\n  * **%M**: Minute (zero-padded) - `00`, `01`, ..., `59`\n  * **%S**: Second (zero-padded) - `00`, `01`, ..., `59`\n  * **%f**: Microsecond (zero-padded to 6 digits) - `000000`, `000001`, ..., `999999`\n  * **%_ms**: Millisecond (zero-padded to 3 digits) - `000`, `001`, ..., `999`\n  * **%z**: UTC offset - `(empty)`, `+0000`, `-04:00`\n  * **%Z**: Time zone name - `(empty)`, `UTC`, `GMT`\n  * **%j**: Day of the year (zero-padded) - `001`, `002`, ..., `366`\n  * **%U**: Week number of the year (Sunday as first day) - `00`, `01`, ..., `53`\n  * **%W**: Week number of the year (Monday as first day) - `00`, `01`, ..., `53`\n  * **%c**: Date and time representation - `Tue Aug 16 21:30:00 1988`\n  * **%x**: Date representation - `08/16/1988`\n  * **%X**: Time representation - `21:30:00`\n  * **%%**: Literal \'%\' character\n\n  Some placeholders depend on the locale of the underlying system - in most cases this locale is configured as en/US. For more information see the [Python documentation](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes).\n':
     "connectorBuilder.cdkSchema.d.Datetime_Format",
   "Fully-qualified name of the class that will be implementing the custom authentication strategy. Has to be a sub class of DeclarativeAuthenticator. The format is `source_<name>.<package>.<class_name>`.":
@@ -619,6 +683,10 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Remain_Original_Record",
   "If true, ensures that partitions are unique within each group by removing duplicates based on the partition key.":
     "connectorBuilder.cdkSchema.d.Deduplicate_Partitions",
+  "If true, the partition router and incremental request options will be ignored when paginating requests. Request options set directly on the requester will not be ignored.":
+    "connectorBuilder.cdkSchema.descExact.If_true_the_partition_router_and_incremental_request_options_will_be_ignored_when_paginating_request",
+  "If true, the partition router and incremental request options will be ignored when paginating requests. Request options set directly on the requester will not be ignored.\n":
+    "connectorBuilder.cdkSchema.descExact.If_true_the_partition_router_and_incremental_request_options_will_be_ignored_when_paginating_request",
   "If true, transformation will be applied before record filtering.":
     "connectorBuilder.cdkSchema.d.Transform_Before_Filtering",
   "Index of the first page to request.": "connectorBuilder.cdkSchema.d.Start_From_Page",
@@ -633,20 +701,24 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "Key to Identify refresh token error in response (Refresh Token Error Status Codes and Refresh Token Error Values should be also specified).":
     "connectorBuilder.cdkSchema.d.Refresh_Token_Error_Key",
   "List of HTTP status codes that indicate a rate limit has been hit.":
-    "connectorBuilder.cdkSchema.descExact.List_of_HTTP_status_codes_that_indicate_a_rate_lim",
+    "connectorBuilder.cdkSchema.descExact.List_of_HTTP_status_codes_that_indicate_a_rate_limit_has_been_hit",
   "List of HTTP status codes that indicate a rate limit has been hit.\n":
-    "connectorBuilder.cdkSchema.descExact.List_of_HTTP_status_codes_that_indicate_a_rate_lim",
+    "connectorBuilder.cdkSchema.descExact.List_of_HTTP_status_codes_that_indicate_a_rate_limit_has_been_hit",
   "List of backoff strategies to use to determine how long to wait before retrying a retryable request.":
     "connectorBuilder.cdkSchema.d.Backoff_Strategies",
   "List of call rate policies that define how many calls are allowed.":
-    "connectorBuilder.cdkSchema.descExact.List_of_call_rate_policies_that_define_how_many_ca",
+    "connectorBuilder.cdkSchema.descExact.List_of_call_rate_policies_that_define_how_many_calls_are_allowed",
   "List of call rate policies that define how many calls are allowed.\n":
-    "connectorBuilder.cdkSchema.descExact.List_of_call_rate_policies_that_define_how_many_ca",
+    "connectorBuilder.cdkSchema.descExact.List_of_call_rate_policies_that_define_how_many_calls_are_allowed",
   "List of error handlers to iterate on to determine how to handle a failed response.":
-    "connectorBuilder.cdkSchema.d.Error_Handlers",
+    "connectorBuilder.cdkSchema.descExact.List_of_error_handlers_to_iterate_on_to_determine_how_to_handle_a_failed_response",
+  "List of error handlers to iterate on to determine how to handle a failed response.\n":
+    "connectorBuilder.cdkSchema.descExact.List_of_error_handlers_to_iterate_on_to_determine_how_to_handle_a_failed_response",
   "List of matchers that define which requests this policy applies to.": "connectorBuilder.cdkSchema.d.Matchers",
   "List of nested fields defining the schema field path to extract. Defaults to [].":
-    "connectorBuilder.cdkSchema.d.Schema_Path",
+    "connectorBuilder.cdkSchema.descExact.List_of_nested_fields_defining_the_schema_field_path_to_extract_Defaults_to",
+  "List of nested fields defining the schema field path to extract. Defaults to [].\n":
+    "connectorBuilder.cdkSchema.descExact.List_of_nested_fields_defining_the_schema_field_path_to_extract_Defaults_to",
   "List of potentially nested fields describing the full path of the field key to extract.":
     "connectorBuilder.cdkSchema.d.Key_Path",
   'List of potentially nested fields describing the full path of the field to extract. Use "*" to extract all values from an array. See more info in the [docs](https://docs.airbyte.com/connector-development/config-based/understanding-the-yaml-file/record-selector).':
@@ -662,8 +734,12 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Fields",
   'List of values to check for exception during token refresh process. Used to check if the error found in the response matches the key from the Refresh Token Error Key field (e.g. response={"error": "invalid_grant"}). Only responses with one of the error status code and containing an error value will be flagged as a config error':
     "connectorBuilder.cdkSchema.d.Refresh_Token_Error_Values",
-  "Loads a schema that is defined directly in the manifest file.": "connectorBuilder.cdkSchema.d.Inline_Schema_Loader",
-  "Loads the schema from a json file.": "connectorBuilder.cdkSchema.d.Json_File_Schema_Loader",
+  "Loads a schema that is defined directly in the manifest file.":
+    "connectorBuilder.cdkSchema.descExact.Loads_a_schema_that_is_defined_directly_in_the_manifest_file",
+  "Loads a schema that is defined directly in the manifest file.\n":
+    "connectorBuilder.cdkSchema.descExact.Loads_a_schema_that_is_defined_directly_in_the_manifest_file",
+  "Loads the schema from a json file.": "connectorBuilder.cdkSchema.descExact.Loads_the_schema_from_a_json_file",
+  "Loads the schema from a json file.\n": "connectorBuilder.cdkSchema.descExact.Loads_the_schema_from_a_json_file",
   "Match the response if its HTTP code is included in this list.": "connectorBuilder.cdkSchema.d.HTTP_Codes",
   "Match the response if its error message contains the substring.":
     "connectorBuilder.cdkSchema.d.Error_Message_Substring",
@@ -677,14 +753,14 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "Name of the partition end time field.": "connectorBuilder.cdkSchema.d.Partition_Field_Start",
   "Name of the partition start time field.": "connectorBuilder.cdkSchema.d.Partition_Field_End",
   "Names of the streams to try reading from when running a check operation.":
-    "connectorBuilder.cdkSchema.descExact.Names_of_the_streams_to_try_reading_from_when_runn",
+    "connectorBuilder.cdkSchema.descExact.Names_of_the_streams_to_try_reading_from_when_running_a_check_operation",
   "Names of the streams to try reading from when running a check operation.\n":
-    "connectorBuilder.cdkSchema.descExact.Names_of_the_streams_to_try_reading_from_when_runn",
+    "connectorBuilder.cdkSchema.descExact.Names_of_the_streams_to_try_reading_from_when_running_a_check_operation",
   "New value to set.": "connectorBuilder.cdkSchema.d.New_value",
   "Numbers of the streams to try reading from when running a check operation.":
-    "connectorBuilder.cdkSchema.descExact.Numbers_of_the_streams_to_try_reading_from_when_ru",
+    "connectorBuilder.cdkSchema.descExact.Numbers_of_the_streams_to_try_reading_from_when_running_a_check_operation",
   "Numbers of the streams to try reading from when running a check operation.\n":
-    "connectorBuilder.cdkSchema.descExact.Numbers_of_the_streams_to_try_reading_from_when_ru",
+    "connectorBuilder.cdkSchema.descExact.Numbers_of_the_streams_to_try_reading_from_when_running_a_check_operation",
   "OAuth specific blob. This is a Json Schema used to validate Json configurations persisted as Airbyte Server configurations that\nalso need to be merged back into the connector configuration at runtime.\nThis is a subset configuration of `complete_oauth_server_input_specification` that filters fields out to retain only the ones that\nare necessary for the connector to function with OAuth. (some fields could be used during oauth flows but not needed afterwards, therefore\nthey would be listed in the `complete_oauth_server_input_specification` but not `complete_oauth_server_output_specification`)\nMust be a valid non-nested JSON describing additional fields configured by the Airbyte Instance or Workspace Admins to be used by the\nconnector when using OAuth flow APIs.\nThese fields are to be merged back to `ConnectorSpecification.connectionSpecification`.\nFor each field, a special annotation `path_in_connector_config` can be specified to determine where to merge it,\nExamples:\n      complete_oauth_server_output_specification={\n        client_id: {\n          type: string,\n          path_in_connector_config: ['credentials', 'client_id']\n        },\n        client_secret: {\n          type: string,\n          path_in_connector_config: ['credentials', 'client_secret']\n        }\n      }":
     "connectorBuilder.cdkSchema.d.OAuth_server_output_specification",
   "OAuth specific blob. This is a Json Schema used to validate Json configurations persisted as Airbyte Server configurations.\nMust be a valid non-nested JSON describing additional fields configured by the Airbyte Instance or Workspace Admins to be used by the\nserver when completing an OAuth flow (typically exchanging an auth code for refresh token).\nExamples:\n    complete_oauth_server_input_specification={\n      client_id: {\n        type: string\n      },\n      client_secret: {\n        type: string\n      }\n    }":
@@ -695,7 +771,9 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.OAuth_user_input",
   "Old value to replace.": "connectorBuilder.cdkSchema.d.Old_value",
   "One or many schema loaders can be used to retrieve the schema for the current stream. When multiple schema loaders are defined, schema properties will be merged together. Schema loaders defined first taking precedence in the event of a conflict.":
-    "connectorBuilder.cdkSchema.d.Schema_Loader",
+    "connectorBuilder.cdkSchema.descExact.One_or_many_schema_loaders_can_be_used_to_retrieve_the_schema_for_the_current_stream_When_multiple_s",
+  "One or many schema loaders can be used to retrieve the schema for the current stream. When multiple schema loaders are defined, schema properties will be merged together. Schema loaders defined first taking precedence in the event of a conflict.\n":
+    "connectorBuilder.cdkSchema.descExact.One_or_many_schema_loaders_can_be_used_to_retrieve_the_schema_for_the_current_stream_When_multiple_s",
   "Optional component to expand records by extracting items from nested array fields.":
     "connectorBuilder.cdkSchema.d.Record_Expander",
   "Optional regex to apply on the header to extract its value. The regex should define a capture group defining the wait time.":
@@ -715,11 +793,23 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Page_Increment",
   "Pagination strategy that returns the number of records reads so far and returns it as the next page token.":
     "connectorBuilder.cdkSchema.d.Offset_Increment",
+  "Paginator component that describes how to navigate through the API's pages.":
+    "connectorBuilder.cdkSchema.descExact.Paginator_component_that_describes_how_to_navigate_through_the_API_s_pages",
+  "Paginator component that describes how to navigate through the API's pages.\n":
+    "connectorBuilder.cdkSchema.descExact.Paginator_component_that_describes_how_to_navigate_through_the_API_s_pages",
   "Parser to parse the decompressed data from the zipfile(s).": "connectorBuilder.cdkSchema.d.Parser",
   "Partition router component whose behavior is derived from a custom code implementation of the connector.":
-    "connectorBuilder.cdkSchema.d.Custom_Partition_Router",
+    "connectorBuilder.cdkSchema.descExact.Partition_router_component_whose_behavior_is_derived_from_a_custom_code_implementation_of_the_connec",
+  "Partition router component whose behavior is derived from a custom code implementation of the connector.\n":
+    "connectorBuilder.cdkSchema.descExact.Partition_router_component_whose_behavior_is_derived_from_a_custom_code_implementation_of_the_connec",
   "Partition router that is used to retrieve records that have been partitioned according to records from the specified parent streams. An example of a parent stream is automobile brands and the substream would be the various car models associated with each branch.":
-    "connectorBuilder.cdkSchema.d.Substream_Partition_Router",
+    "connectorBuilder.cdkSchema.descExact.Partition_router_that_is_used_to_retrieve_records_that_have_been_partitioned_according_to_records_fr",
+  "Partition router that is used to retrieve records that have been partitioned according to records from the specified parent streams. An example of a parent stream is automobile brands and the substream would be the various car models associated with each branch.\n":
+    "connectorBuilder.cdkSchema.descExact.Partition_router_that_is_used_to_retrieve_records_that_have_been_partitioned_according_to_records_fr",
+  "PartitionRouter component that describes how to partition the stream, enabling incremental syncs and checkpointing.":
+    "connectorBuilder.cdkSchema.descExact.PartitionRouter_component_that_describes_how_to_partition_the_stream_enabling_incremental_syncs_and_",
+  "PartitionRouter component that describes how to partition the stream, enabling incremental syncs and checkpointing.\n":
+    "connectorBuilder.cdkSchema.descExact.PartitionRouter_component_that_describes_how_to_partition_the_stream_enabling_incremental_syncs_and_",
   "Path of the URL to use to validate that the session token is valid (do not include the base URL)":
     "connectorBuilder.cdkSchema.d.Validate_Session_Path",
   "Path of the field in config with selected authenticator name":
@@ -746,11 +836,18 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "Request body value converted into a JSON object": "connectorBuilder.cdkSchema.d.Json_Object_Body",
   "Request body value is converted into a url-encoded form": "connectorBuilder.cdkSchema.d.URL_encoded_Body",
   "Request body value is sent as plain text": "connectorBuilder.cdkSchema.d.Plain_text_Body",
+  "Requester component that describes how to prepare HTTP requests to send to the source API.":
+    "connectorBuilder.cdkSchema.descExact.Requester_component_that_describes_how_to_prepare_HTTP_requests_to_send_to_the_source_API",
+  "Requester component that describes how to prepare HTTP requests to send to the source API.\n":
+    "connectorBuilder.cdkSchema.descExact.Requester_component_that_describes_how_to_prepare_HTTP_requests_to_send_to_the_source_API",
   "Requester component whose behavior is derived from a custom code implementation of the connector.":
     "connectorBuilder.cdkSchema.d.Custom_Requester",
   "Requester submitting HTTP requests and extracting records from the response.":
     "connectorBuilder.cdkSchema.d.HTTP_Requester",
-  "Responsible for filtering fields to be added to json schema.": "connectorBuilder.cdkSchema.d.Schema_Filter",
+  "Responsible for filtering fields to be added to json schema.":
+    "connectorBuilder.cdkSchema.descExact.Responsible_for_filtering_fields_to_be_added_to_json_schema",
+  "Responsible for filtering fields to be added to json schema.\n":
+    "connectorBuilder.cdkSchema.descExact.Responsible_for_filtering_fields_to_be_added_to_json_schema",
   "Responsible for normalization according to the schema.": "connectorBuilder.cdkSchema.d.Schema_Normalization",
   "Responsible for translating an HTTP response into a list of records by extracting records from the response and optionally filtering records based on a heuristic.":
     "connectorBuilder.cdkSchema.d.Record_Selector",
@@ -763,7 +860,9 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "Return any non-auth headers. Authentication headers will overwrite any overlapping headers returned from this method.":
     "connectorBuilder.cdkSchema.d.Request_Headers",
   "Schema Loader component whose behavior is derived from a custom code implementation of the connector.":
-    "connectorBuilder.cdkSchema.d.Custom_Schema_Loader",
+    "connectorBuilder.cdkSchema.descExact.Schema_Loader_component_whose_behavior_is_derived_from_a_custom_code_implementation_of_the_connector",
+  "Schema Loader component whose behavior is derived from a custom code implementation of the connector.\n":
+    "connectorBuilder.cdkSchema.descExact.Schema_Loader_component_whose_behavior_is_derived_from_a_custom_code_implementation_of_the_connector",
   "Schema normalization component whose behavior is derived from a custom code implementation of the connector.":
     "connectorBuilder.cdkSchema.d.Custom_Schema_Normalization",
   "Secret used to sign the JSON web token.": "connectorBuilder.cdkSchema.d.Secret_Key",
@@ -819,13 +918,13 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "The HTTP method used to fetch data from the source (can be GET or POST).":
     "connectorBuilder.cdkSchema.d.HTTP_Method",
   "The HTTP response header name that indicates the number of remaining allowed calls.":
-    "connectorBuilder.cdkSchema.descExact.The_HTTP_response_header_name_that_indicates_the_n",
+    "connectorBuilder.cdkSchema.descExact.The_HTTP_response_header_name_that_indicates_the_number_of_remaining_allowed_calls",
   "The HTTP response header name that indicates the number of remaining allowed calls.\n":
-    "connectorBuilder.cdkSchema.descExact.The_HTTP_response_header_name_that_indicates_the_n",
+    "connectorBuilder.cdkSchema.descExact.The_HTTP_response_header_name_that_indicates_the_number_of_remaining_allowed_calls",
   "The HTTP response header name that indicates when the rate limit resets.":
-    "connectorBuilder.cdkSchema.descExact.The_HTTP_response_header_name_that_indicates_when",
+    "connectorBuilder.cdkSchema.descExact.The_HTTP_response_header_name_that_indicates_when_the_rate_limit_resets",
   "The HTTP response header name that indicates when the rate limit resets.\n":
-    "connectorBuilder.cdkSchema.descExact.The_HTTP_response_header_name_that_indicates_when",
+    "connectorBuilder.cdkSchema.descExact.The_HTTP_response_header_name_that_indicates_when_the_rate_limit_resets",
   "The OAuth client ID. Fill it in the user inputs.": "connectorBuilder.cdkSchema.d.Client_ID",
   "The OAuth client secret. Fill it in the user inputs.": "connectorBuilder.cdkSchema.d.Client_Secret",
   "The URL of the source API endpoint. Do not put sensitive information (e.g. API tokens) into this field - Use the Authenticator component for this.":
@@ -833,9 +932,9 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "The URL path to be used for the HTTP request.": "connectorBuilder.cdkSchema.d.Request_Path",
   "The access token expiry date.": "connectorBuilder.cdkSchema.d.Token_Expiry_Date",
   "The amount of concurrency that will applied during a sync. This value can be hardcoded or user-defined in the config if different users have varying volume thresholds in the target API.":
-    "connectorBuilder.cdkSchema.descExact.The_amount_of_concurrency_that_will_applied_during",
+    "connectorBuilder.cdkSchema.descExact.The_amount_of_concurrency_that_will_applied_during_a_sync_This_value_can_be_hardcoded_or_user_define",
   "The amount of concurrency that will applied during a sync. This value can be hardcoded or user-defined in the config if different users have varying volume thresholds in the target API.\n":
-    "connectorBuilder.cdkSchema.descExact.The_amount_of_concurrency_that_will_applied_during",
+    "connectorBuilder.cdkSchema.descExact.The_amount_of_concurrency_that_will_applied_during_a_sync_This_value_can_be_hardcoded_or_user_define",
   "The amount of time in seconds a JWT token can be valid after being issued.":
     "connectorBuilder.cdkSchema.d.Token_Duration",
   "The authenticator being used to authenticate the client authenticator.":
@@ -870,9 +969,9 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "The maximum amount of properties that can be retrieved per request according to the limit type.":
     "connectorBuilder.cdkSchema.d.Property_Limit",
   "The maximum level of concurrency that will be used during a sync. This becomes a required field when the default_concurrency derives from the config, because it serves as a safeguard against a user-defined threshold that is too high.":
-    "connectorBuilder.cdkSchema.descExact.The_maximum_level_of_concurrency_that_will_be_used",
+    "connectorBuilder.cdkSchema.descExact.The_maximum_level_of_concurrency_that_will_be_used_during_a_sync_This_becomes_a_required_field_when_",
   "The maximum level of concurrency that will be used during a sync. This becomes a required field when the default_concurrency derives from the config, because it serves as a safeguard against a user-defined threshold that is too high.\n":
-    "connectorBuilder.cdkSchema.descExact.The_maximum_level_of_concurrency_that_will_be_used",
+    "connectorBuilder.cdkSchema.descExact.The_maximum_level_of_concurrency_that_will_be_used_during_a_sync_This_becomes_a_required_field_when_",
   "The maximum number of calls allowed within the interval.": "connectorBuilder.cdkSchema.d.Limit",
   "The maximum number of calls allowed within the period.": "connectorBuilder.cdkSchema.d.Call_Limit",
   "The maximum number of time to retry a retryable request before giving up and failing.":
@@ -904,6 +1003,10 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Session_Token_Path",
   "The possible formats for the cursor field, in order of preference. The first format that matches the cursor field value will be used to parse it. If not provided, the Outgoing Datetime Format will be used.\nUse placeholders starting with \"%\" to describe the format the API is using. The following placeholders are available:\n  * **%s**: Epoch unix timestamp - `1686218963`\n  * **%s_as_float**: Epoch unix timestamp in seconds as float with microsecond precision - `1686218963.123456`\n  * **%ms**: Epoch unix timestamp - `1686218963123`\n  * **%a**: Weekday (abbreviated) - `Sun`\n  * **%A**: Weekday (full) - `Sunday`\n  * **%w**: Weekday (decimal) - `0` (Sunday), `6` (Saturday)\n  * **%d**: Day of the month (zero-padded) - `01`, `02`, ..., `31`\n  * **%b**: Month (abbreviated) - `Jan`\n  * **%B**: Month (full) - `January`\n  * **%m**: Month (zero-padded) - `01`, `02`, ..., `12`\n  * **%y**: Year (without century, zero-padded) - `00`, `01`, ..., `99`\n  * **%Y**: Year (with century) - `0001`, `0002`, ..., `9999`\n  * **%H**: Hour (24-hour, zero-padded) - `00`, `01`, ..., `23`\n  * **%I**: Hour (12-hour, zero-padded) - `01`, `02`, ..., `12`\n  * **%p**: AM/PM indicator\n  * **%M**: Minute (zero-padded) - `00`, `01`, ..., `59`\n  * **%S**: Second (zero-padded) - `00`, `01`, ..., `59`\n  * **%f**: Microsecond (zero-padded to 6 digits) - `000000`, `000001`, ..., `999999`\n  * **%_ms**: Millisecond (zero-padded to 3 digits) - `000`, `001`, ..., `999`\n  * **%z**: UTC offset - `(empty)`, `+0000`, `-04:00`\n  * **%Z**: Time zone name - `(empty)`, `UTC`, `GMT`\n  * **%j**: Day of the year (zero-padded) - `001`, `002`, ..., `366`\n  * **%U**: Week number of the year (Sunday as first day) - `00`, `01`, ..., `53`\n  * **%W**: Week number of the year (Monday as first day) - `00`, `01`, ..., `53`\n  * **%c**: Date and time representation - `Tue Aug 16 21:30:00 1988`\n  * **%x**: Date representation - `08/16/1988`\n  * **%X**: Time representation - `21:30:00`\n  * **%%**: Literal '%' character\n\n  Some placeholders depend on the locale of the underlying system - in most cases this locale is configured as en/US. For more information see the [Python documentation](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes).\n":
     "connectorBuilder.cdkSchema.d.Cursor_Datetime_Formats",
+  "The predicate to filter a property by a property value. Property will be removed if it is empty OR expression is evaluated to True.,":
+    "connectorBuilder.cdkSchema.descExact.The_predicate_to_filter_a_property_by_a_property_value_Property_will_be_removed_if_it_is_empty_OR_ex",
+  "The predicate to filter a property by a property value. Property will be removed if it is empty OR expression is evaluated to True.,\n":
+    "connectorBuilder.cdkSchema.descExact.The_predicate_to_filter_a_property_by_a_property_value_Property_will_be_removed_if_it_is_empty_OR_ex",
   "The prefix to be used within the Authentication header.": "connectorBuilder.cdkSchema.d.Header_Prefix",
   "The primary key of records from the parent stream that will be used during the retrieval of records for the current substream. This parent identifier field is typically a characteristic of the child records being extracted from the source API.":
     "connectorBuilder.cdkSchema.d.Parent_Key",
@@ -945,7 +1048,9 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
     "connectorBuilder.cdkSchema.d.Remap_Field",
   "Transformation that removes a field from the config.": "connectorBuilder.cdkSchema.d.Config_Remove_Fields",
   "Transformation which adds field to an output record. The path of the added field can be nested.":
-    "connectorBuilder.cdkSchema.d.Add_Fields",
+    "connectorBuilder.cdkSchema.descExact.Transformation_which_adds_field_to_an_output_record_The_path_of_the_added_field_can_be_nested",
+  "Transformation which adds field to an output record. The path of the added field can be nested.\n":
+    "connectorBuilder.cdkSchema.descExact.Transformation_which_adds_field_to_an_output_record_The_path_of_the_added_field_can_be_nested",
   'Transforms the input state for per-partitioned streams from the legacy format to the low-code format. The cursor field and partition ID fields are automatically extracted from the stream\'s DatetimebasedCursor and SubstreamPartitionRouter.\nExample input state: { "13506132": { "last_changed": "2022-12-27T08:34:39+00:00" } Example output state: { "partition": {"id": "13506132"}, "cursor": {"last_changed": "2022-12-27T08:34:39+00:00"} } ':
     "connectorBuilder.cdkSchema.d.Legacy_To_Per_partition_state_Migration",
   "Type of the value. If not specified, the type will be inferred from the value.":
@@ -953,7 +1058,9 @@ const CDK_DESCRIPTION_MESSAGE_IDS: Record<string, string> = {
   "URL of the connector's documentation page.": "connectorBuilder.cdkSchema.d.Documentation_URL",
   "Use this to implement custom decoder logic.": "connectorBuilder.cdkSchema.d.Custom_Decoder",
   "Used to iteratively execute requests over a set of values, such as a parent stream's records or a list of constant values.":
-    "connectorBuilder.cdkSchema.d.Partition_Router",
+    "connectorBuilder.cdkSchema.descExact.Used_to_iteratively_execute_requests_over_a_set_of_values_such_as_a_parent_stream_s_records_or_a_lis",
+  "Used to iteratively execute requests over a set of values, such as a parent stream's records or a list of constant values.\n":
+    "connectorBuilder.cdkSchema.descExact.Used_to_iteratively_execute_requests_over_a_set_of_values_such_as_a_parent_stream_s_records_or_a_lis",
   "Using the `offset` with value `0` during the first request":
     "connectorBuilder.cdkSchema.d.Inject_Offset_on_First_Request",
   "Using the `page number` with value defined by `start_from_page` during the first request":

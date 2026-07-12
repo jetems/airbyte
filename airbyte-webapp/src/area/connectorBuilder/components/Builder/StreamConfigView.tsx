@@ -919,6 +919,8 @@ interface CollapsedControlsProps {
 }
 const CollapsedControls: React.FC<React.PropsWithChildren<CollapsedControlsProps>> = ({ streamId, children }) => {
   const { getErrorPaths } = useBuilderErrors();
+  // JETEMS: Advanced 区块标题中文化，仅文案，不影响折叠/错误指示逻辑
+  const { formatMessage } = useIntl();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const errorPaths = getErrorPaths(streamId);
@@ -937,7 +939,11 @@ const CollapsedControls: React.FC<React.PropsWithChildren<CollapsedControlsProps
 
   return (
     <div ref={containerRef}>
-      <Collapsible label="Advanced" initiallyOpen={hasChildError} showErrorIndicator={hasChildError}>
+      <Collapsible
+        label={formatMessage({ id: "form.advanced" })}
+        initiallyOpen={hasChildError}
+        showErrorIndicator={hasChildError}
+      >
         {children}
       </Collapsible>
     </div>
