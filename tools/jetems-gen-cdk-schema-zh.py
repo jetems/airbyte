@@ -413,6 +413,22 @@ DESC_ZH: dict[str, str] = {
 }
 
 
+
+def escape_icu_angles(s: str) -> str:
+    """Prevent formatjs from treating <word> in descriptions as ICU tags."""
+    import re
+    allowed = {"lnk", "b", "i", "code", "p", "br"}
+
+    def repl(m: re.Match) -> str:
+        full = m.group(0)
+        name = m.group(1)
+        cname = name[1:] if name.startswith("/") else name
+        if cname.lower() in allowed:
+            return full
+        return full.replace("<", "'<'").replace(">", "'>'")
+
+    return re.sub(r"</?([A-Za-z][A-Za-z0-9]*)(?:\s[^>]*)?/?>", repl, s)
+
 def slug(title: str) -> str:
     s = re.sub(r"[^a-zA-Z0-9]+", "_", title).strip("_")
     return re.sub(r"_+", "_", s)[:100] or "empty"
@@ -474,7 +490,7 @@ def main() -> None:
             desc_map[en.rstrip("\n")] = mid
         else:
             desc_map[en + "\n"] = mid
-        desc_zh[mid] = zh
+        desc_zh[mid] = escape_icu_angles(zh)
 
     for t, desc in sorted(title_to_desc.items()):
         if not desc:
@@ -491,7 +507,7 @@ def main() -> None:
         if len(first) > 200:
             first = first[:200] + "…"
         # Keep technical English first sentence under Chinese title for accuracy
-        desc_zh[mid] = f"【{title_zh}】{first}"
+        desc_zh[mid] = escape_icu_angles(f"【{title_zh}】{first}")
 
     # Write TypeScript
     lines = [
@@ -562,7 +578,7 @@ export function localizeCdkSchemaDescription(
         if k.startswith("connectorBuilder.cdkSchema."):
             del zh_data[k]
     for t, zh in title_map.items():
-        zh_data[f"connectorBuilder.cdkSchema.t.{slug(t)}"] = zh
+        zh_data[f"connectorBuilder.cdkSchema.t.{slug(t)}"] = escape_icu_angles(zh)
     for mid, zh in desc_zh.items():
         zh_data[mid] = zh
     ZH_JSON.write_text(json.dumps(zh_data, ensure_ascii=False, indent=2) + "\n")
