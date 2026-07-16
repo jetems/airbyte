@@ -162,13 +162,16 @@ upstream  → airbytehq/airbyte-platform   # 仅 fetch / merge，禁止 push
 
 开发规范（结构、i18n、扩展隔离、上游合并）：**[JETEMS_DEV.md](./JETEMS_DEV.md)**（Agent / 开发者必读）。
 
-同步上游：
+同步上游（**必须保护二开，勿盲目 ours/theirs**）：
 
 ```bash
 git fetch upstream
 git checkout main
 git merge upstream/main
+./tools/jetems-verify-customizations.sh   # 失败则修到通过再 push
 ```
+
+保护清单与冲突策略见 **[JETEMS_UPSTREAM_SYNC.md](./JETEMS_UPSTREAM_SYNC.md)**。
 
 ---
 
@@ -193,6 +196,7 @@ git merge upstream/main
 | 文档 | 内容 |
 |------|------|
 | [JETEMS_DEV.md](./JETEMS_DEV.md) | 二开规范、目录真相、i18n、合并规则 |
+| [JETEMS_UPSTREAM_SYNC.md](./JETEMS_UPSTREAM_SYNC.md) | **上游同步保护清单**（防覆盖二开） |
 | [LOCAL_RUN.md](./LOCAL_RUN.md) | 本地 abctl 完整运行手册 |
 | [tools/JETEMS_IMAGE_PUBLISH.md](./tools/JETEMS_IMAGE_PUBLISH.md) | SWR 多架构发布 |
 | [tools/jetems-docs-zh/README.md](./tools/jetems-docs-zh/README.md) | 中文连接器文档 |

@@ -46,14 +46,21 @@ upstream  https://github.com/airbytehq/airbyte-platform.git  # 上游官方（�
 
 ## 1. 上游同步与冲突处理【核心规则】
 
+> **完整保护清单 + 冲突策略 + 存活探针**：见 **[JETEMS_UPSTREAM_SYNC.md](./JETEMS_UPSTREAM_SYNC.md)**。  
+> **合并后强制校验**：`./tools/jetems-verify-customizations.sh`（失败禁止 push）。
+
 ### 1.1 同步流程
 
 定期从上游同步官方更新，**始终在干净的 `main` 上操作**：
 
 ```bash
+git status                       # 必须 clean
+git tag "pre-upstream-sync-$(date +%Y%m%d)"   # 可选保护点
 git fetch upstream
 git checkout main
 git merge upstream/main          # 优先用 merge，保留二开历史；不要用 rebase（会丢失 jetems 提交的可追溯性）
+# 解决冲突后：
+./tools/jetems-verify-customizations.sh       # 必须 PASS
 ```
 
 ### 1.2 冲突分类处理（强制）
@@ -84,9 +91,13 @@ git merge upstream/main          # 优先用 merge，保留二开历史；不要
 
 ### 1.3 同步后的强制验证
 
-合并完成后，提交前必须运行（见第 7 条质量门禁）：
-- 改到的每个后端模块：`./gradlew :oss:<module>:check`
-- 前端改动：`cd airbyte-webapp && corepack pnpm lint && corepack pnpm test`
+合并完成后，提交前必须运行：
+
+1. **`./tools/jetems-verify-customizations.sh`**（或 `--strict`）—— 确认二开文件/侵入标记/docs-zh/zh.json 未被删或盖掉  
+2. 改到的每个后端模块：`./gradlew :oss:<module>:check`（见第 7 条）  
+3. 前端改动：`cd airbyte-webapp && corepack pnpm lint && corepack pnpm test`
+
+**铁律：`jetems-verify-customizations.sh` 非 0 退出码，视为同步未完成，不得 push。**
 
 ---
 
@@ -298,8 +309,9 @@ corepack pnpm lint
 corepack pnpm test
 corepack pnpm start
 
-# 上游同步
+# 上游同步（详见 JETEMS_UPSTREAM_SYNC.md）
 git fetch upstream
 git merge upstream/main
+./tools/jetems-verify-customizations.sh
 # → 按「第 1 条」处理冲突，按「第 7.1 条」跑验证后提交
 ```
