@@ -230,8 +230,6 @@ object ReplicationDebugLogLevelEnabled : Permanent<Boolean>(key = "platform.repl
 
 object UseDeadlineInWorkloadMonitorQueries : Temporary<Boolean>(key = "platform.use-deadline-in-workload-monitor-queries", default = false)
 
-object EnableOrchestration : Permanent<Boolean>(key = "platform.enable-orchestration", default = false)
-
 object ForceDdRemoteConfigVar : Temporary<Boolean>(key = "platform.force-dd-remote-config-var", default = false)
 
 object ReplicationCommandFallsBackToWorkloadStatus : Temporary<Boolean>(
@@ -261,6 +259,14 @@ object BypassStiggEntitlementChecks : Permanent<Boolean>(key = "platform.bypass-
 object EnableDataWorkerUsage : Temporary<Boolean>(key = "platform.enable-data-worker-usage", default = false)
 
 object EnforceDataWorkerCapacity : Temporary<Boolean>(key = "platform.enforce-data-worker-capacity", default = false)
+
+// IMPORTANT: These defaults intentionally point in opposite directions. The code default is true so
+// a missing flag or failed LaunchDarkly evaluation fails open and preserves SSO access. The production
+// LaunchDarkly fallthrough must be false so organizations are enforced unless explicitly bypassed.
+object BypassSsoDomainValidationEnforcement : Temporary<Boolean>(
+  key = "platform.bypass-sso-domain-validation-enforcement",
+  default = true,
+)
 
 object UseVerifiedDomainsForSsoActivate : Temporary<Boolean>(key = "platform.use-verified-domains-for-sso-activate", default = false)
 
