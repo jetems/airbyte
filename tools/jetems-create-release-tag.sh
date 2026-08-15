@@ -36,7 +36,8 @@ if [[ -n "$(git status --porcelain)" ]]; then
 fi
 
 DATE_UTC="$(date -u +%Y%m%d)"
-SHA6="$(git rev-parse --short=6 HEAD)"
+# Force exactly 6 hex chars. `git rev-parse --short=N` may emit >N when needed for uniqueness.
+SHA6="$(git rev-parse HEAD | cut -c1-6)"
 TAG="${DATE_UTC}-${SHA6}"
 
 # 校验格式
