@@ -5933,6 +5933,289 @@ paths:
           $ref: "#/components/responses/NotFoundResponse"
         "422":
           $ref: "#/components/responses/InvalidInputResponse"
+
+  # GROUPS
+  /v1/groups/list:
+    post:
+      summary: List groups in an organization
+      tags:
+        - group
+      operationId: listGroups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationIdRequestBody"
+      responses:
+        "200":
+          description: Successfully retrieved groups.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupReadList"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/groups/get:
+    post:
+      summary: Get a group
+      tags:
+        - group
+      operationId: getGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupIdRequestBody"
+      responses:
+        "200":
+          description: Successfully retrieved group.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupRead"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/groups/create:
+    post:
+      summary: Create a group
+      tags:
+        - group
+      operationId: createGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupCreate"
+      responses:
+        "200":
+          description: Successfully created group.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupRead"
+        "400":
+          description: The group name or description failed validation.
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "409":
+          description: A group with the same name already exists in the organization.
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/groups/update:
+    post:
+      summary: Update a group
+      description: >-
+        Replaces the mutable fields of the group. Send the whole object: an omitted
+        description is treated as an explicit null and clears the stored description.
+      tags:
+        - group
+      operationId: updateGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupUpdate"
+      responses:
+        "200":
+          description: Successfully updated group.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupRead"
+        "400":
+          description: The group name or description failed validation.
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "409":
+          description: The name is already taken, or SCIM manages the group.
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/groups/delete:
+    post:
+      summary: Delete a group
+      tags:
+        - group
+      operationId: deleteGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupIdRequestBody"
+      responses:
+        "204":
+          description: Successfully deleted group.
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "409":
+          description: SCIM manages the group.
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/groups/list_members:
+    post:
+      summary: List group members
+      tags:
+        - group
+      operationId: listGroupMembers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupIdRequestBody"
+      responses:
+        "200":
+          description: Successfully retrieved group members.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupMemberReadList"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/groups/add_member:
+    post:
+      summary: Add a member to a group
+      tags:
+        - group
+      operationId: addGroupMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupMemberRequestBody"
+      responses:
+        "200":
+          description: Successfully added group member.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupMemberRead"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "409":
+          description: The user is already a member, is inactive, or SCIM manages the group.
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/groups/remove_member:
+    post:
+      summary: Remove a member from a group
+      tags:
+        - group
+      operationId: removeGroupMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupMemberRequestBody"
+      responses:
+        "204":
+          description: Successfully removed group member.
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "409":
+          description: SCIM manages the group.
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  # GROUP PERMISSIONS
+  /v1/group_permissions/list:
+    post:
+      summary: List group permissions
+      tags:
+        - group_permission
+      operationId: listGroupPermissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupIdRequestBody"
+      responses:
+        "200":
+          description: Successfully retrieved group permissions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupPermissionReadList"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/group_permissions/create:
+    post:
+      summary: Create a group permission
+      tags:
+        - group_permission
+      operationId: createGroupPermission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupPermissionCreate"
+      responses:
+        "200":
+          description: Successfully created group permission.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupPermissionRead"
+        "400":
+          description: The scope is invalid, cross-organization, or missing.
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "409":
+          description: An equivalent group permission already exists.
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/group_permissions/delete:
+    post:
+      summary: Delete a group permission
+      tags:
+        - group_permission
+      operationId: deleteGroupPermission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupPermissionIdRequestBody"
+      responses:
+        "204":
+          description: Successfully deleted group permission.
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
   /v1/domain_verifications/list_pending:
     post:
       tags:
@@ -6665,7 +6948,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/UserInvitationRead"
+                  $ref: "#/components/schemas/UserInvitationAdminRead"
 
   /v1/user_invitations/accept:
     post:
@@ -6715,14 +6998,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/InviteCodeRequestBody"
+              $ref: "#/components/schemas/UserInvitationCancelRequestBody"
       responses:
         "201":
           description: Successfully cancelled user invitation.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserInvitationRead"
+                $ref: "#/components/schemas/UserInvitationAdminRead"
 
   # Tags
   /v1/tags/list:
@@ -7764,6 +8047,115 @@ paths:
           description: Token is valid
         "401":
           description: Token is invalid or validation failed
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+
+  /v1/scim_config/get:
+    post:
+      summary: Retrieve the SCIM configuration for an organization
+      tags:
+        - scim_config
+      operationId: getScimConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationIdRequestBody"
+        required: true
+      responses:
+        "200":
+          description: SCIM configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimConfigResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/scim_config/enable:
+    post:
+      summary: Enable SCIM for an organization
+      description: The bearer token is returned only for the initial enable. Clients must not automatically retry this operation.
+      tags:
+        - scim_config
+      operationId: enableScim
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnableScimRequestBody"
+        required: true
+      responses:
+        "200":
+          description: SCIM enabled or already enabled with the requested provider
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimConfigResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "409":
+          description: SCIM configuration state conflicts with the requested enable operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnownExceptionInfo"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/scim_config/rotate_token:
+    post:
+      summary: Rotate the SCIM bearer token for an organization
+      description: The previous token is invalidated and the replacement token is returned only once. Clients must not automatically retry this operation.
+      tags:
+        - scim_config
+      operationId: rotateScimToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationIdRequestBody"
+        required: true
+      responses:
+        "200":
+          description: SCIM bearer token rotated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimConfigResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
+        "409":
+          description: SCIM must be enabled before its token can be rotated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnownExceptionInfo"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/scim_config/disable:
+    post:
+      summary: Disable SCIM for an organization
+      tags:
+        - scim_config
+      operationId: disableScim
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationIdRequestBody"
+        required: true
+      responses:
+        "204":
+          description: SCIM disabled or already absent or disabled
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundResponse"
         "422":
           $ref: "#/components/responses/InvalidInputResponse"
 
@@ -10407,7 +10799,7 @@ paths:
         "404":
           description: Not found
         "409":
-          description: Group name conflict
+          description: Group name conflict or group is managed by SCIM
       operationId: publicUpdateGroup
       x-sdk-alias: updateGroup
       x-sdk-group: Groups
@@ -10425,6 +10817,8 @@ paths:
           description: Not allowed
         "404":
           description: Not found
+        "409":
+          description: Group is managed by SCIM
       operationId: publicDeleteGroup
       x-sdk-alias: deleteGroup
       x-sdk-group: Groups
@@ -10504,7 +10898,7 @@ paths:
         "404":
           description: Not found
         "409":
-          description: User is already a member of this group
+          description: User is already a member of this group or group is managed by SCIM
       operationId: publicAddGroupMember
       x-sdk-alias: addGroupMember
       x-sdk-group: Groups
@@ -10539,6 +10933,8 @@ paths:
           description: Not allowed
         "404":
           description: Not found
+        "409":
+          description: Group is managed by SCIM
       operationId: publicRemoveGroupMember
       x-sdk-alias: removeGroupMember
       x-sdk-group: Groups
@@ -11065,6 +11461,27 @@ paths:
           $ref: "#/components/responses/NotFoundResponse"
         "409":
           description: Private link status cannot move backward
+  /v1/private_link/list_by_status:
+    post:
+      tags:
+        - private_link
+        - cloud-only
+        - internal
+      summary: List private links by status (internal — admin only)
+      operationId: listPrivateLinksByStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrivateLinkListByStatusRequestBody"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrivateLinkReadList"
 
 components:
   securitySchemes:
@@ -11112,6 +11529,13 @@ components:
       properties:
         workspaceId:
           $ref: "#/components/schemas/WorkspaceId"
+    PrivateLinkListByStatusRequestBody:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: "#/components/schemas/PrivateLinkStatus"
     PrivateLinkIdRequestBody:
       type: object
       required:
@@ -11175,6 +11599,9 @@ components:
         dataplaneGroupId:
           type: string
           format: uuid
+        dataplaneRegion:
+          type: string
+          description: Region where the private link's VPC endpoint is deployed.
         name:
           type: string
         status:
@@ -12017,7 +12444,6 @@ components:
             - STANDARD
             - STANDARD_TRIAL
             - PRO
-            - UNIFIED_TRIAL
             - PARTNER
             - POV
             - FLEX
@@ -16384,6 +16810,7 @@ components:
         - organizationId
         - organizationName
         - sso
+        - scim
       properties:
         organizationId:
           type: string
@@ -16392,6 +16819,9 @@ components:
           type: string
         sso:
           type: boolean
+        scim:
+          type: boolean
+          description: True when SCIM provisioning is currently enabled for the organization.
         billing:
           type: object
           required:
@@ -16743,6 +17173,8 @@ components:
         - workspace_admin # Permission to create, read, delete, and edit a specific workspace, and also can grant other users permissions to this workspace
         - workspace_runner # Permission to read everything and run/cancel jobs
         - workspace_editor # Permission to create and edit connections within the workspace, but cannot update workspace name or delete the workspace
+        - workspace_source_editor # Equivalent to `workspace_editor`, except it cannot create or edit destinations
+        - workspace_destination_editor # Equivalent to `workspace_editor`, except it cannot create or edit sources
         - workspace_reader # Permission to read connections, sync details, logs within the workspace, but cannot modify anything
       x-sdk-component: true
     SSOConfigDefaultRole:
@@ -16763,6 +17195,8 @@ components:
         - organization_member # Permission to read organization basic information, not having permissions to any workspaces within an organization
         - workspace_admin # Permission to create, read, delete, and edit a specific workspace, and also can grant other users permissions to this workspace
         - workspace_editor # Permission to create and edit connections within the workspace, but cannot update workspace name or delete the workspace
+        - workspace_source_editor # Equivalent to `workspace_editor`, except it cannot create or edit destinations
+        - workspace_destination_editor # Equivalent to `workspace_editor`, except it cannot create or edit sources
         - workspace_runner # Permission to read everything and run/cancel jobs
         - workspace_reader # Permission to read connections, sync details, logs within the workspace, but cannot modify anything
       x-sdk-component: true
@@ -19998,8 +20432,6 @@ components:
 
     NotFoundKnownExceptionInfo:
       type: object
-      required:
-        - message
       properties:
         id:
           type: string
@@ -20363,12 +20795,46 @@ components:
     UserInvitationCreateResponse:
       type: object
       properties:
-        inviteCode:
-          type: string
-          description: The created invite code, if the request resulted in a new invitation being created.
         directlyAdded:
           type: boolean
           description: True if the request resulted in the user being directly added, without a created invitation.
+    UserInvitationAdminRead:
+      type: object
+      required:
+        - id
+        - inviterUserId
+        - invitedEmail
+        - scopeId
+        - scopeType
+        - permissionType
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        inviterUserId:
+          type: string
+          format: uuid
+        invitedEmail:
+          type: string
+          format: email
+        scopeId:
+          type: string
+          format: uuid
+        scopeType:
+          $ref: "#/components/schemas/ScopeType"
+        permissionType:
+          $ref: "#/components/schemas/PermissionType"
+        status:
+          $ref: "#/components/schemas/UserInvitationStatus"
+        createdAt:
+          type: integer
+          format: int64
+        updatedAt:
+          type: integer
+          format: int64
     UserInvitationListRequestBody:
       type: object
       required:
@@ -20432,6 +20898,15 @@ components:
       required:
         - inviteCode
       properties:
+        inviteCode:
+          type: string
+    UserInvitationCancelRequestBody:
+      type: object
+      minProperties: 1
+      properties:
+        id:
+          type: string
+          format: uuid
         inviteCode:
           type: string
 
@@ -21389,6 +21864,123 @@ components:
             $ref: "#/components/schemas/PermissionResponseRead"
       x-sdk-component: true
 
+    GroupRead:
+      type: object
+      required:
+        - groupId
+        - name
+        - organizationId
+        - memberCount
+      properties:
+        groupId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        organizationId:
+          type: string
+          format: uuid
+        memberCount:
+          type: integer
+          format: int64
+    GroupReadList:
+      type: object
+      required:
+        - groups
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/GroupRead"
+    GroupCreate:
+      type: object
+      required:
+        - organizationId
+        - name
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 256
+        description:
+          type: string
+          maxLength: 1024
+    GroupUpdate:
+      type: object
+      required:
+        - groupId
+        - name
+      properties:
+        groupId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 256
+        description:
+          type: string
+          nullable: true
+          maxLength: 1024
+    GroupIdRequestBody:
+      type: object
+      required:
+        - groupId
+      properties:
+        groupId:
+          type: string
+          format: uuid
+    GroupMemberRead:
+      type: object
+      required:
+        - memberId
+        - groupId
+        - userId
+        - userEmail
+        - userName
+      properties:
+        memberId:
+          type: string
+          format: uuid
+        groupId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        userEmail:
+          type: string
+          format: email
+        userName:
+          type: string
+    GroupMemberReadList:
+      type: object
+      required:
+        - members
+      properties:
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/GroupMemberRead"
+    GroupMemberRequestBody:
+      type: object
+      required:
+        - groupId
+        - userId
+      properties:
+        groupId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+
     # Public APIs - Groups
     GroupResponse:
       title: Root Type for GroupResponse
@@ -21607,7 +22199,10 @@ components:
 
     GroupPermissionCreateRequest:
       title: Root Type for GroupPermissionCreateRequest
-      description: Request body for creating a group permission
+      description: >-
+        Request body for creating a group permission. Exactly one of workspaceId or organizationId
+        must be set, and the permissionType must match the chosen scope: workspace-scoped permission
+        types require workspaceId, and organization-scoped permission types require organizationId.
       required:
         - permissionType
       type: object
@@ -21627,6 +22222,75 @@ components:
       x-sdk-component: true
       x-sdk-entity: GroupPermission
       x-sdk-param-suppress-computed-diff: true
+
+    GroupPermissionRead:
+      type: object
+      required:
+        - permissionId
+        - groupId
+        - permissionType
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+        groupId:
+          type: string
+          format: uuid
+        permissionType:
+          $ref: "#/components/schemas/PermissionType"
+        workspaceId:
+          type: string
+          format: uuid
+          nullable: true
+        organizationId:
+          type: string
+          format: uuid
+          nullable: true
+    GroupPermissionReadList:
+      type: object
+      required:
+        - permissions
+      properties:
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/GroupPermissionRead"
+    GroupPermissionCreate:
+      description: >-
+        Exactly one of workspaceId or organizationId must be set, and the permissionType must match
+        the chosen scope: workspace-scoped permission types require workspaceId, and
+        organization-scoped permission types require organizationId.
+      type: object
+      required:
+        - groupId
+        - permissionType
+      properties:
+        groupId:
+          type: string
+          format: uuid
+        permissionType:
+          # PublicPermissionType, not PermissionType: groups must never be granted instance_admin.
+          $ref: "#/components/schemas/PublicPermissionType"
+        workspaceId:
+          type: string
+          format: uuid
+          nullable: true
+        organizationId:
+          type: string
+          format: uuid
+          nullable: true
+    GroupPermissionIdRequestBody:
+      type: object
+      required:
+        - groupId
+        - permissionId
+      properties:
+        groupId:
+          type: string
+          format: uuid
+        permissionId:
+          type: string
+          format: uuid
 
     # Public APIs - Organizations
     OrganizationResponse:
@@ -22705,6 +23369,58 @@ components:
           format: uuid
         emailDomain:
           type: string
+
+    ScimIdpProvider:
+      type: string
+      enum:
+        - okta
+        - microsoft_entra_id
+
+    ScimConfigStatus:
+      type: string
+      enum:
+        - not_configured
+        - enabled
+        - disabled
+
+    EnableScimRequestBody:
+      type: object
+      required:
+        - organizationId
+        - idpProvider
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        idpProvider:
+          $ref: "#/components/schemas/ScimIdpProvider"
+
+    ScimConfigResponse:
+      type: object
+      required:
+        - status
+        - scimBaseUrl
+        - available
+      properties:
+        status:
+          $ref: "#/components/schemas/ScimConfigStatus"
+        idpProvider:
+          $ref: "#/components/schemas/ScimIdpProvider"
+        scimBaseUrl:
+          type: string
+          description: Absolute Airbyte SCIM endpoint configured in the identity provider.
+        available:
+          type: boolean
+          description: Whether SCIM is available to this organization (entitlements and rollout gating).
+        createdAt:
+          type: integer
+          format: int64
+        updatedAt:
+          type: integer
+          format: int64
+        token:
+          type: string
+          description: One-time bearer token returned only after initial enable or rotation.
 
   responses:
     NotFoundResponse:

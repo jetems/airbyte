@@ -17,6 +17,7 @@ const mockOrgInfo = (organizationPlanId: string | undefined) => ({
   organizationName: "Test Organization",
   organizationPlanId,
   sso: false,
+  scim: false,
 });
 
 describe("useOrganizationPlan", () => {
@@ -40,7 +41,6 @@ describe("useOrganizationPlan", () => {
   });
 
   describe.each([
-    ["isUnifiedTrialPlan", "plan-airbyte-unified-trial"],
     ["isStandardTrialPlan", "plan-airbyte-standard-trial"],
     ["isStandardPlan", "plan-airbyte-standard"],
     ["isPlusPlan", "plan-airbyte-plus"],

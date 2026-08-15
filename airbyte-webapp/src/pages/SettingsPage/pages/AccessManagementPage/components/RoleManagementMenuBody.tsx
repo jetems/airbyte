@@ -1,30 +1,22 @@
 import { FormattedMessage } from "react-intl";
 
 import { Box } from "components/ui/Box";
-import { BrandingBadge } from "components/ui/BrandingBadge";
 import { Text } from "components/ui/Text";
 
-import { useOrganizationPlan } from "area/organization/utils";
+import { useCurrentOrganizationInfo } from "core/api";
 import { FeatureItem, useFeature } from "core/services/features";
 
 import { CancelInvitationMenuItem } from "./CancelInvitationMenuItem";
 import { ChangeRoleMenuItem } from "./ChangeRoleMenuItem";
 import { RemoveRoleMenuItem } from "./RemoveRoleMenuItem";
 import styles from "./RoleManagementMenuBody.module.scss";
-import {
-  ResourceType,
-  UnifiedUserModel,
-  isTeamsFeaturePermissionType,
-  permissionStringDictionary,
-  permissionsByResourceType,
-} from "./util";
+import { ResourceType, UnifiedUserModel, permissionStringDictionary, permissionsByResourceType } from "./util";
 interface RoleManagementMenuBodyProps {
   user: UnifiedUserModel;
   resourceType: ResourceType;
   close: () => void;
 }
 export const RoleManagementMenuBody: React.FC<RoleManagementMenuBodyProps> = ({ user, resourceType, close }) => {
-  const { isUnifiedTrialPlan } = useOrganizationPlan();
   const areAllRbacRolesEnabled = useFeature(FeatureItem.AllowAllRBACRoles);
   const rolesToAllow = !user.invitationStatus && areAllRbacRolesEnabled ? permissionsByResourceType[resourceType] : [];
 
@@ -33,10 +25,15 @@ export const RoleManagementMenuBody: React.FC<RoleManagementMenuBodyProps> = ({ 
     user?.organizationPermission?.permissionType &&
     user?.organizationPermission?.permissionType !== "organization_member";
 
+  const organizationInfo = useCurrentOrganizationInfo();
+  // The identity provider owns organization membership; Airbyte owns permissions.
+  // Role options stay; removing the member does not.
+  const membershipManagedByScim = resourceType === "organization" && Boolean(organizationInfo?.scim);
+
   // user is invited but not yet accepted
   const showCancelInvite = !!user.invitationStatus;
   // user is not invited (so has a relevant permission) and we're in a workspace OR organization
-  const showRemoveUser = !user.invitationStatus;
+  const showRemoveUser = !user.invitationStatus && !membershipManagedByScim;
 
   return (
     <ul className={styles.roleManagementMenu__rolesList}>
@@ -56,9 +53,6 @@ export const RoleManagementMenuBody: React.FC<RoleManagementMenuBodyProps> = ({ 
                 }}
               />
             </Text>
-            {isTeamsFeaturePermissionType(user?.organizationPermission?.permissionType) && isUnifiedTrialPlan && (
-              <BrandingBadge product="cloudForTeams" />
-            )}
           </Box>
         </li>
       )}

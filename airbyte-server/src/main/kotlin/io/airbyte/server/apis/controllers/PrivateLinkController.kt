@@ -8,6 +8,7 @@ import io.airbyte.api.generated.PrivateLinkApi
 import io.airbyte.api.model.generated.PrivateLinkCreateRequestBody
 import io.airbyte.api.model.generated.PrivateLinkIdRequestBody
 import io.airbyte.api.model.generated.PrivateLinkInternalIdRequestBody
+import io.airbyte.api.model.generated.PrivateLinkListByStatusRequestBody
 import io.airbyte.api.model.generated.PrivateLinkListRequestBody
 import io.airbyte.api.model.generated.PrivateLinkRead
 import io.airbyte.api.model.generated.PrivateLinkReadList
@@ -25,7 +26,12 @@ import io.micronaut.security.rules.SecurityRule
 @Controller("/api/v1/private_link")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 open class PrivateLinkController : PrivateLinkApi {
-  @Secured(AuthRoleConstants.WORKSPACE_EDITOR, AuthRoleConstants.ORGANIZATION_EDITOR)
+  @Secured(
+    AuthRoleConstants.WORKSPACE_EDITOR,
+    AuthRoleConstants.WORKSPACE_SOURCE_EDITOR,
+    AuthRoleConstants.WORKSPACE_DESTINATION_EDITOR,
+    AuthRoleConstants.ORGANIZATION_EDITOR,
+  )
   @Post("/create")
   @ExecuteOn(AirbyteTaskExecutors.IO)
   override fun createPrivateLink(
@@ -39,7 +45,12 @@ open class PrivateLinkController : PrivateLinkApi {
     @Body privateLinkListRequestBody: PrivateLinkListRequestBody,
   ): PrivateLinkReadList = throw ApiNotImplementedInOssProblem()
 
-  @Secured(AuthRoleConstants.WORKSPACE_EDITOR, AuthRoleConstants.ORGANIZATION_EDITOR)
+  @Secured(
+    AuthRoleConstants.WORKSPACE_EDITOR,
+    AuthRoleConstants.WORKSPACE_SOURCE_EDITOR,
+    AuthRoleConstants.WORKSPACE_DESTINATION_EDITOR,
+    AuthRoleConstants.ORGANIZATION_EDITOR,
+  )
   @Post("/delete")
   @ExecuteOn(AirbyteTaskExecutors.IO)
   override fun deletePrivateLink(
@@ -59,4 +70,11 @@ open class PrivateLinkController : PrivateLinkApi {
   override fun updatePrivateLink(
     @Body privateLinkUpdateRequestBody: PrivateLinkUpdateRequestBody,
   ): PrivateLinkRead = throw ApiNotImplementedInOssProblem()
+
+  @Secured(AuthRoleConstants.ADMIN)
+  @Post("/list_by_status")
+  @ExecuteOn(AirbyteTaskExecutors.IO)
+  override fun listPrivateLinksByStatus(
+    @Body privateLinkListByStatusRequestBody: PrivateLinkListByStatusRequestBody,
+  ): PrivateLinkReadList = throw ApiNotImplementedInOssProblem()
 }

@@ -18,13 +18,17 @@ import io.airbyte.api.model.generated.WorkspaceReadList
 import io.airbyte.commons.entitlements.EntitlementService
 import io.airbyte.config.Organization
 import io.airbyte.config.Permission
+import io.airbyte.data.ConfigNotFoundException
 import io.airbyte.data.repositories.OrgMemberCount
 import io.airbyte.data.services.OrganizationService
 import io.airbyte.data.services.PermissionService
 import io.airbyte.data.services.impls.data.OrganizationPaymentConfigServiceDataImpl
 import io.airbyte.domain.models.EntitlementPlan
 import io.airbyte.domain.models.OrganizationId
-import io.airbyte.featureflag.FeatureFlagClient
+import io.airbyte.domain.models.scim.ScimConfigurationRead
+import io.airbyte.domain.models.scim.ScimConfigurationStatus
+import io.airbyte.domain.services.scim.ScimAccessGate
+import io.airbyte.domain.services.scim.ScimConfigurationService
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -32,6 +36,7 @@ import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Optional
@@ -57,7 +62,8 @@ class OrganizationsHandlerTest {
   private lateinit var workspacesHandler: WorkspacesHandler
   private lateinit var permissionService: PermissionService
   private lateinit var entitlementService: EntitlementService
-  private lateinit var featureFlagClient: FeatureFlagClient
+  private lateinit var scimConfigurationService: ScimConfigurationService
+  private lateinit var scimAccessGate: ScimAccessGate
 
   @BeforeEach
   fun setup() {
@@ -68,7 +74,10 @@ class OrganizationsHandlerTest {
     workspacesHandler = mockk()
     permissionService = mockk()
     entitlementService = mockk(relaxed = true)
-    featureFlagClient = mockk(relaxed = true)
+    scimConfigurationService = mockk()
+    every { scimConfigurationService.getConfiguration(any()) } returns ScimConfigurationRead(status = ScimConfigurationStatus.NOT_CONFIGURED)
+    scimAccessGate = mockk()
+    every { scimAccessGate.isAllowedForOrganizationInfo(any()) } returns true
 
     organizationsHandler =
       spyk(
@@ -80,7 +89,8 @@ class OrganizationsHandlerTest {
           workspacesHandler,
           permissionService,
           entitlementService,
-          featureFlagClient,
+          scimConfigurationService,
+          scimAccessGate,
         ),
         recordPrivateCalls = true,
       )
@@ -435,7 +445,7 @@ class OrganizationsHandlerTest {
   }
 
   @Test
-  fun `createOrganization calls EntitlementService with UNIFIED_TRIAL when feature flag is enabled`() {
+  fun `createOrganization calls EntitlementService with STANDARD_TRIAL`() {
     val userId = UUID.randomUUID()
     val orgId = UUID.randomUUID()
     val newOrganization =
@@ -447,33 +457,6 @@ class OrganizationsHandlerTest {
 
     every { uuidSupplier.get() } returns orgId
     every { organizationService.writeOrganization(any()) } just runs
-    every { featureFlagClient.boolVariation(any(), any()) } returns true
-
-    val request =
-      OrganizationCreateRequestBody()
-        .organizationName(organizationName)
-        .email(organizationEmail)
-        .userId(userId)
-
-    organizationsHandler.createOrganization(request)
-
-    verify { entitlementService.addOrUpdateOrganization(OrganizationId(orgId), EntitlementPlan.UNIFIED_TRIAL) }
-  }
-
-  @Test
-  fun `createOrganization calls EntitlementService with STANDARD_TRIAL when feature flag is disabled`() {
-    val userId = UUID.randomUUID()
-    val orgId = UUID.randomUUID()
-    val newOrganization =
-      Organization()
-        .withOrganizationId(orgId)
-        .withEmail(organizationEmail)
-        .withName(organizationName)
-        .withUserId(userId)
-
-    every { uuidSupplier.get() } returns orgId
-    every { organizationService.writeOrganization(any()) } just runs
-    every { featureFlagClient.boolVariation(any(), any()) } returns false
 
     val request =
       OrganizationCreateRequestBody()
@@ -557,4 +540,102 @@ class OrganizationsHandlerTest {
 //    assertEquals(EntitlementPlan.STANDARD_TRIAL.toString(), data.planId)
 //    assertTrue(data.errorMessage.contains("Cannot downgrade from PRO (value: 1) to STANDARD (value: 0)"))
 //  }
+
+  @Test
+  fun testGetOrganizationInfoScimEnabled() {
+    every {
+      organizationService.getOrganization(organizationId1)
+    } returns
+      Optional.of(
+        Organization()
+          .withOrganizationId(organizationId1)
+          .withEmail(organizationEmail)
+          .withName(organizationName)
+          .withSsoRealm(organizationSsoRealm),
+      )
+    every {
+      scimConfigurationService.getConfiguration(OrganizationId(organizationId1))
+    } returns ScimConfigurationRead(status = ScimConfigurationStatus.ENABLED)
+
+    val result = organizationsHandler.getOrganizationInfo(organizationId1)
+
+    assertEquals(organizationId1, result.organizationId)
+    assertEquals(organizationName, result.organizationName)
+    assertEquals(true, result.sso)
+    assertEquals(true, result.scim)
+  }
+
+  @Test
+  fun testGetOrganizationInfoScimDisabled() {
+    every {
+      organizationService.getOrganization(organizationId1)
+    } returns Optional.of(organization)
+    every {
+      scimConfigurationService.getConfiguration(OrganizationId(organizationId1))
+    } returns ScimConfigurationRead(status = ScimConfigurationStatus.DISABLED)
+
+    val result = organizationsHandler.getOrganizationInfo(organizationId1)
+
+    assertEquals(false, result.sso)
+    assertEquals(false, result.scim)
+  }
+
+  @Test
+  fun testGetOrganizationInfoScimNotConfigured() {
+    every {
+      organizationService.getOrganization(organizationId1)
+    } returns Optional.of(organization)
+    every {
+      scimConfigurationService.getConfiguration(OrganizationId(organizationId1))
+    } returns ScimConfigurationRead(status = ScimConfigurationStatus.NOT_CONFIGURED)
+
+    val result = organizationsHandler.getOrganizationInfo(organizationId1)
+
+    assertEquals(false, result.scim)
+  }
+
+  @Test
+  fun testGetOrganizationInfoNotFound() {
+    every { organizationService.getOrganization(organizationId1) } returns Optional.empty()
+
+    assertThrows(ConfigNotFoundException::class.java) {
+      organizationsHandler.getOrganizationInfo(organizationId1)
+    }
+  }
+
+  @Test
+  fun testGetOrganizationInfoScimEnabledButAccessRevoked() {
+    every { organizationService.getOrganization(organizationId1) } returns Optional.of(organization)
+    every {
+      scimConfigurationService.getConfiguration(OrganizationId(organizationId1))
+    } returns ScimConfigurationRead(status = ScimConfigurationStatus.ENABLED)
+    every { scimAccessGate.isAllowedForOrganizationInfo(OrganizationId(organizationId1)) } returns false
+
+    val result = organizationsHandler.getOrganizationInfo(organizationId1)
+
+    assertEquals(false, result.scim)
+  }
+
+  @Test
+  fun testGetOrganizationInfoSkipsAccessGateWhenScimNotConfigured() {
+    every { organizationService.getOrganization(organizationId1) } returns Optional.of(organization)
+
+    val result = organizationsHandler.getOrganizationInfo(organizationId1)
+
+    assertEquals(false, result.scim)
+    verify(exactly = 0) { scimAccessGate.isAllowedForOrganizationInfo(any()) }
+  }
+
+  @Test
+  fun testGetOrganizationInfoReportsScimDisabledWhenLookupFails() {
+    every { organizationService.getOrganization(organizationId1) } returns Optional.of(organization)
+    every {
+      scimConfigurationService.getConfiguration(OrganizationId(organizationId1))
+    } throws IllegalStateException("Unsupported SCIM IdP provider: jumpcloud")
+
+    val result = organizationsHandler.getOrganizationInfo(organizationId1)
+
+    assertEquals(organizationId1, result.organizationId)
+    assertEquals(false, result.scim)
+  }
 }

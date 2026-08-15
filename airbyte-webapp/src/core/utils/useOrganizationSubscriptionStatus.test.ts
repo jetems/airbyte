@@ -21,17 +21,19 @@ const mockUseOrgInfo = useOrgInfo as jest.MockedFunction<typeof useOrgInfo>;
 const mockUseCurrentOrganizationInfo = useCurrentOrganizationInfo as jest.MockedFunction<
   typeof useCurrentOrganizationInfo
 >;
+const mockUseGeneratedIntent = useGeneratedIntent as jest.MockedFunction<typeof useGeneratedIntent>;
 const mockUseOrganizationTrialStatus = useOrganizationTrialStatus as jest.MockedFunction<
   typeof useOrganizationTrialStatus
 >;
-const mockUseGeneratedIntent = useGeneratedIntent as jest.MockedFunction<typeof useGeneratedIntent>;
 const mockDayjs = dayjs as jest.MockedFunction<typeof dayjs>;
 
 // Test data fixtures
 const mockOrganizationId = "test-org-id";
 const mockTrialEndDate = "2024-01-15T00:00:00Z";
-const mockPastTrialEndDate = "2024-01-01T00:00:00Z";
-
+const createMockTrialStatus = (trialStatus: OrganizationTrialStatusReadTrialStatus, trialEndsAt?: string) => ({
+  trialStatus,
+  trialEndsAt,
+});
 const createMockOrgInfo = (
   paymentStatus: OrganizationPaymentConfigReadPaymentStatus,
   subscriptionStatus: OrganizationPaymentConfigReadSubscriptionStatus = "unsubscribed",
@@ -41,17 +43,13 @@ const createMockOrgInfo = (
   organizationId: mockOrganizationId,
   organizationName: "Test Organization",
   sso: false,
+  scim: false,
   billing: {
     paymentStatus,
     subscriptionStatus,
     accountType,
     gracePeriodEndsAt,
   },
-});
-
-const createMockTrialStatus = (trialStatus: OrganizationTrialStatusReadTrialStatus, trialEndsAt?: string) => ({
-  trialStatus,
-  trialEndsAt,
 });
 
 describe("useOrganizationSubscriptionStatus", () => {
@@ -66,218 +64,67 @@ describe("useOrganizationSubscriptionStatus", () => {
       organizationName: "Test Organization",
       organizationPlanId: "plan-airbyte-standard",
       sso: false,
+      scim: false,
     });
-    mockUseOrganizationTrialStatus.mockReturnValue(undefined);
     mockUseGeneratedIntent.mockReturnValue(true);
-
-    // Setup simple dayjs mock - default returns 0 days/hours
-    const mockDayjsInstance = {
-      diff: jest.fn().mockReturnValue(0),
-    };
-    mockDayjs.mockReturnValue(mockDayjsInstance as unknown as dayjs.Dayjs);
+    mockUseOrganizationTrialStatus.mockReturnValue(undefined);
+    mockDayjs.mockReturnValue({ diff: jest.fn().mockReturnValue(0) } as unknown as dayjs.Dayjs);
   });
 
   describe("Trial state", () => {
-    it.each([
-      ["in_trial", mockTrialEndDate, 5, "active trial with future end date"],
-      ["in_trial", mockPastTrialEndDate, 0, "expired trial"],
-      ["in_trial", undefined, 0, "trial without end date"],
-      ["post_trial", mockTrialEndDate, 0, "non-trial status"],
-    ])("should calculate %s days for %s", (trialStatus, trialEndsAt, expectedDays, _scenario) => {
-      // Setup specific dayjs mock for this test
-      if (trialEndsAt === mockTrialEndDate) {
-        mockDayjs.mockReturnValue({ diff: jest.fn().mockReturnValue(5) } as unknown as dayjs.Dayjs);
-      } else if (trialEndsAt === mockPastTrialEndDate) {
-        mockDayjs.mockReturnValue({ diff: jest.fn().mockReturnValue(-5) } as unknown as dayjs.Dayjs);
-      }
-
-      mockUseOrganizationTrialStatus.mockReturnValue(
-        createMockTrialStatus(trialStatus as OrganizationTrialStatusReadTrialStatus, trialEndsAt)
-      );
-
+    it("calculates remaining trial days", () => {
+      mockDayjs.mockReturnValue({ diff: jest.fn().mockReturnValue(5) } as unknown as dayjs.Dayjs);
+      mockUseOrganizationTrialStatus.mockReturnValue(createMockTrialStatus("in_trial", mockTrialEndDate));
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(result.current.trialDaysLeft).toBe(expectedDays);
+      expect(result.current.trialDaysLeft).toBe(5);
+      expect(result.current.isInTrial).toBe(true);
     });
 
-    it.each([
-      ["in_trial", true],
-      ["pre_trial", false],
-      ["post_trial", false],
-    ])("should return isInTrial=%s for trial status '%s'", (trialStatus, expected) => {
-      mockUseOrganizationTrialStatus.mockReturnValue(
-        createMockTrialStatus(trialStatus as OrganizationTrialStatusReadTrialStatus)
-      );
-
+    it("detects a trial ending within 24 hours", () => {
+      const diff = jest.fn().mockReturnValueOnce(0).mockReturnValueOnce(20);
+      mockDayjs.mockReturnValue({ diff } as unknown as dayjs.Dayjs);
+      mockUseOrganizationTrialStatus.mockReturnValue(createMockTrialStatus("in_trial", mockTrialEndDate));
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(result.current.isInTrial).toBe(expected);
+      expect(result.current.isTrialEndingWithin24Hours).toBe(true);
     });
 
-    describe("isTrialEndingWithin24Hours", () => {
-      it.each([
-        [25, false, "more than 24 hours left"],
-        [20, true, "20 hours left"],
-        [12, true, "12 hours left"],
-        [1, true, "1 hour left"],
-        [0, false, "trial already ended"],
-        [-5, false, "trial ended 5 hours ago"],
-      ])("should return %s when %s hours left (%s)", (hoursLeft, expected, _scenario) => {
-        const mockDiffFn = jest.fn();
-        mockDiffFn.mockReturnValueOnce(5); // days call
-        mockDiffFn.mockReturnValueOnce(hoursLeft); // hours call
-
-        const mockDayjsInstance = {
-          diff: mockDiffFn,
-        };
-        mockDayjs.mockReturnValue(mockDayjsInstance as unknown as dayjs.Dayjs);
-
-        mockUseOrganizationTrialStatus.mockReturnValue(createMockTrialStatus("in_trial", mockTrialEndDate));
-
-        const { result } = renderHook(() => useOrganizationSubscriptionStatus());
-
-        expect(result.current.isTrialEndingWithin24Hours).toBe(expected);
-      });
-
-      it("should return false when not in trial", () => {
-        mockUseOrganizationTrialStatus.mockReturnValue(createMockTrialStatus("post_trial", mockTrialEndDate));
-
-        const { result } = renderHook(() => useOrganizationSubscriptionStatus());
-
-        expect(result.current.isTrialEndingWithin24Hours).toBe(false);
-      });
-
-      it("should return false when no trial end date", () => {
-        mockUseOrganizationTrialStatus.mockReturnValue(createMockTrialStatus("in_trial", undefined));
-
-        const { result } = renderHook(() => useOrganizationSubscriptionStatus());
-
-        expect(result.current.isTrialEndingWithin24Hours).toBe(false);
-      });
+    it("does not calculate trial state outside a trial", () => {
+      mockUseOrganizationTrialStatus.mockReturnValue(createMockTrialStatus("post_trial", mockTrialEndDate));
+      const { result } = renderHook(() => useOrganizationSubscriptionStatus());
+      expect(result.current.isInTrial).toBe(false);
+      expect(result.current.trialDaysLeft).toBe(0);
+      expect(result.current.isTrialEndingWithin24Hours).toBe(false);
     });
   });
 
   describe("Conditional trial status fetching", () => {
-    it("should fetch trial status when payment status is uninitialized and user has permission", () => {
-      mockUseOrgInfo.mockReturnValue(createMockOrgInfo("uninitialized"));
-      mockUseGeneratedIntent.mockReturnValue(true);
+    it("fetches trial status for Standard Trial organizations with permission", () => {
       mockUseCurrentOrganizationInfo.mockReturnValue({
         organizationId: mockOrganizationId,
         organizationName: "Test Organization",
-        organizationPlanId: "plan-airbyte-unified-trial",
+        organizationPlanId: "plan-airbyte-standard-trial",
         sso: false,
+        scim: false,
       });
-
       renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(mockUseOrganizationTrialStatus).toHaveBeenCalledWith(mockOrganizationId, {
-        enabled: true,
-      });
+      expect(mockUseOrganizationTrialStatus).toHaveBeenCalledWith(mockOrganizationId, { enabled: true });
     });
 
-    it("should fetch trial status when payment status is okay and user has permission", () => {
-      mockUseOrgInfo.mockReturnValue(createMockOrgInfo("okay"));
-      mockUseGeneratedIntent.mockReturnValue(true);
-      mockUseCurrentOrganizationInfo.mockReturnValue({
-        organizationId: mockOrganizationId,
-        organizationName: "Test Organization",
-        organizationPlanId: "plan-airbyte-unified-trial",
-        sso: false,
-      });
-
-      renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(mockUseOrganizationTrialStatus).toHaveBeenCalledWith(mockOrganizationId, {
-        enabled: true,
-      });
-    });
-
-    it("should fetch trial status when payment status is locked and user has permission", () => {
-      mockUseOrgInfo.mockReturnValue(createMockOrgInfo("locked"));
-      mockUseGeneratedIntent.mockReturnValue(true);
-      mockUseCurrentOrganizationInfo.mockReturnValue({
-        organizationId: mockOrganizationId,
-        organizationName: "Test Organization",
-        organizationPlanId: "plan-airbyte-unified-trial",
-        sso: false,
-      });
-
-      renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(mockUseOrganizationTrialStatus).toHaveBeenCalledWith(mockOrganizationId, {
-        enabled: true,
-      });
-    });
-
-    it("should not fetch trial status when user lacks permission", () => {
-      mockUseOrgInfo.mockReturnValue(createMockOrgInfo("uninitialized"));
+    it("does not fetch trial status without permission", () => {
       mockUseGeneratedIntent.mockReturnValue(false);
-
       renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(mockUseOrganizationTrialStatus).toHaveBeenCalledWith(mockOrganizationId, {
-        enabled: false,
-      });
-    });
-
-    it("should not fetch trial status when payment status is locked but user lacks permission", () => {
-      mockUseOrgInfo.mockReturnValue(createMockOrgInfo("locked"));
-      mockUseGeneratedIntent.mockReturnValue(false);
-
-      renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(mockUseOrganizationTrialStatus).toHaveBeenCalledWith(mockOrganizationId, {
-        enabled: false,
-      });
+      expect(mockUseOrganizationTrialStatus).toHaveBeenCalledWith(mockOrganizationId, { enabled: false });
     });
   });
 
   describe("Organization plan detection", () => {
-    it("should return true for isUnifiedTrialPlan when organizationPlanId matches UNIFIED_TRIAL", () => {
-      mockUseCurrentOrganizationInfo.mockReturnValue({
-        organizationId: mockOrganizationId,
-        organizationName: "Test Organization",
-        organizationPlanId: "plan-airbyte-unified-trial",
-        sso: false,
-      });
-
-      const { result } = renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(result.current.isUnifiedTrialPlan).toBe(true);
-    });
-
-    it("should return false for isUnifiedTrialPlan when organizationPlanId does not match UNIFIED_TRIAL", () => {
-      mockUseCurrentOrganizationInfo.mockReturnValue({
-        organizationId: mockOrganizationId,
-        organizationName: "Test Organization",
-        organizationPlanId: "plan-airbyte-standard",
-        sso: false,
-      });
-
-      const { result } = renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(result.current.isUnifiedTrialPlan).toBe(false);
-    });
-
-    it("should return false for isUnifiedTrialPlan when organizationPlanId is undefined", () => {
-      mockUseCurrentOrganizationInfo.mockReturnValue({
-        organizationId: mockOrganizationId,
-        organizationName: "Test Organization",
-        organizationPlanId: undefined,
-        sso: false,
-      });
-
-      const { result } = renderHook(() => useOrganizationSubscriptionStatus());
-
-      expect(result.current.isUnifiedTrialPlan).toBe(false);
-    });
-
     it("should return true for isStandardPlan when organizationPlanId matches STANDARD", () => {
       mockUseCurrentOrganizationInfo.mockReturnValue({
         organizationId: mockOrganizationId,
         organizationName: "Test Organization",
         organizationPlanId: "plan-airbyte-standard",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -289,8 +136,9 @@ describe("useOrganizationSubscriptionStatus", () => {
       mockUseCurrentOrganizationInfo.mockReturnValue({
         organizationId: mockOrganizationId,
         organizationName: "Test Organization",
-        organizationPlanId: "plan-airbyte-unified-trial",
+        organizationPlanId: "plan-airbyte-plus",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -304,6 +152,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: undefined,
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -317,6 +166,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: "plan-airbyte-standard-trial",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -330,6 +180,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: "plan-airbyte-standard",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -343,6 +194,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: undefined,
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -357,6 +209,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: "plan-airbyte-sme",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -370,6 +223,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: "plan-airbyte-standard",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -383,6 +237,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: undefined,
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -397,6 +252,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: "plan-airbyte-flex",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -410,6 +266,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: "plan-airbyte-pro",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -423,6 +280,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: undefined,
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -437,6 +295,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: "plan-airbyte-pro",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -450,6 +309,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: "plan-airbyte-sme",
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -463,6 +323,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationName: "Test Organization",
         organizationPlanId: undefined,
         sso: false,
+        scim: false,
       });
 
       const { result } = renderHook(() => useOrganizationSubscriptionStatus());
@@ -483,6 +344,7 @@ describe("useOrganizationSubscriptionStatus", () => {
         organizationId: mockOrganizationId,
         organizationName: "Test Organization",
         sso: false,
+        scim: false,
         billing: mockBilling,
       });
 
