@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2020-2026 Airbyte, Inc., all rights reserved.
- * JETEMS: static Chinese connector setup guides (docs-zh/).
  */
 
 package io.airbyte.jetems.docs

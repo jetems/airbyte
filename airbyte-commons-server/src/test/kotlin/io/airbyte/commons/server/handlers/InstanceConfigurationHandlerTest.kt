@@ -117,7 +117,9 @@ internal class InstanceConfigurationHandlerTest {
         .edition(if (isEnterprise) EditionEnum.ENTERPRISE else EditionEnum.COMMUNITY)
         .version("0.50.1")
         .airbyteUrl(AIRBYTE_URL)
-        .licenseStatus(if (isEnterprise) LicenseStatus.PRO else null)
+        // JETEMS: currentLicenseStatus() 被本地强制返回 PRO（含 community），
+        // 恢复正规行为时改回 `if (isEnterprise) LicenseStatus.PRO else null`。
+        .licenseStatus(LicenseStatus.PRO)
         .auth(
           if (isEnterprise) {
             AuthConfiguration()
@@ -382,7 +384,8 @@ internal class InstanceConfigurationHandlerTest {
         Optional.empty(),
         mKubernetesClientHelper,
       )
-    Assertions.assertEquals(handler.currentLicenseStatus(), LicenseStatus.INVALID)
+    // JETEMS: 强制 PRO 覆盖使 invalid license 也返回 PRO。恢复时改回 LicenseStatus.INVALID。
+    Assertions.assertEquals(handler.currentLicenseStatus(), LicenseStatus.PRO)
   }
 
   @Test
@@ -402,7 +405,8 @@ internal class InstanceConfigurationHandlerTest {
         Optional.of(Clock.fixed(Instant.MAX, ZoneId.systemDefault())),
         mKubernetesClientHelper,
       )
-    Assertions.assertEquals(handler.currentLicenseStatus(), LicenseStatus.EXPIRED)
+    // JETEMS: 强制 PRO 覆盖使 expired license 也返回 PRO。恢复时改回 LicenseStatus.EXPIRED。
+    Assertions.assertEquals(handler.currentLicenseStatus(), LicenseStatus.PRO)
   }
 
   @Test
@@ -422,8 +426,11 @@ internal class InstanceConfigurationHandlerTest {
         Optional.empty(),
         mKubernetesClientHelper,
       )
-    whenever(permissionHandler.countInstanceEditors()).thenReturn(MAX_EDITORS + 10)
-    Assertions.assertEquals(handler.currentLicenseStatus(), LicenseStatus.EXCEEDED)
+    // JETEMS: 强制 PRO 覆盖下 countInstanceEditors() 不会被调用，原打桩触发 Mockito
+    // UnnecessaryStubbingException，故移除。恢复时还原：
+    //   whenever(permissionHandler.countInstanceEditors()).thenReturn(MAX_EDITORS + 10)
+    // 并将下方断言改回 LicenseStatus.EXCEEDED。
+    Assertions.assertEquals(handler.currentLicenseStatus(), LicenseStatus.PRO)
   }
 
   private fun stubGetDefaultUser() {

@@ -49,23 +49,22 @@ class EntitlementClientFactoryTest {
 
     val org = OrganizationId(UUID.randomUUID())
     val client = factory.entitlementClient()
-    assertInstanceOf<StiggEnterpriseEntitlementClient>(client)
-
-    assertEquals(
-      listOf<EntitlementResult>(
-        EntitlementResult(featureId = "feature-a", isEntitled = true),
-        EntitlementResult(featureId = "feature-b", isEntitled = true),
-      ),
-      client.getEntitlements(org),
-    )
+    // JETEMS-START: ENTERPRISE 分支被本地覆盖为 AllEntitledClient（见 EntitlementClientConfig）。
+    // 恢复正规 license 校验时：改回 assertInstanceOf<StiggEnterpriseEntitlementClient>，
+    // 并还原下方 getEntitlements/checkEntitlement 断言（feature-c 不被授权）。
+    assertInstanceOf<AllEntitledClient>(client)
 
     client.checkEntitlement(org, FeatureEntitlement("feature-a")).assertEntitled()
     client.checkEntitlement(org, FeatureEntitlement("feature-b")).assertEntitled()
-    client.checkEntitlement(org, FeatureEntitlement("feature-c")).assertNotEntitled()
+    client.checkEntitlement(org, FeatureEntitlement("feature-c")).assertEntitled()
+    // JETEMS-END
   }
 
+  // JETEMS-START: 上游原名 `enterprise edition with no entitlements in license falls back to
+  // NoEntitlementClient`。本地覆盖下无论 license 内容如何，ENTERPRISE 一律创建 AllEntitledClient。
+  // 恢复正规行为时：改回 assertInstanceOf<NoEntitlementClient>(client) 并还原方法名。
   @Test
-  fun `enterprise edition with no entitlements in license falls back to NoEntitlementClient`() {
+  fun `enterprise edition with no entitlements in license uses jetems AllEntitledClient`() {
     val license = AirbyteLicense(LicenseType.ENTERPRISE)
     val factory =
       EntitlementClientFactory(
@@ -75,11 +74,13 @@ class EntitlementClientFactoryTest {
       )
 
     val client = factory.entitlementClient()
-    assertInstanceOf<NoEntitlementClient>(client)
+    assertInstanceOf<AllEntitledClient>(client)
   }
 
+  // 上游原名 `enterprise edition with no active license falls back to
+  // NoEntitlementClient`。同上，恢复时改回 NoEntitlementClient 断言并还原方法名。
   @Test
-  fun `enterprise edition with no active license falls back to NoEntitlementClient`() {
+  fun `enterprise edition with no active license uses jetems AllEntitledClient`() {
     val factory =
       EntitlementClientFactory(
         airbyteConfig = AirbyteConfig(edition = Configs.AirbyteEdition.ENTERPRISE),
@@ -88,8 +89,9 @@ class EntitlementClientFactoryTest {
       )
 
     val client = factory.entitlementClient()
-    assertInstanceOf<NoEntitlementClient>(client)
+    assertInstanceOf<AllEntitledClient>(client)
   }
+  // JETEMS-END
 
   @Test
   fun `cloud edition`() {
