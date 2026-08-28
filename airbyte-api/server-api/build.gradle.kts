@@ -21,9 +21,19 @@ airbyte {
   }
 }
 
+// The OpenAPI-generated sources contain no Micronaut beans, so keep KSP from walking them.
+// KSP matches excludedSources against source roots, so list the exact generated roots (a fileTree would be ignored).
+ksp {
+  excludedSources.from(
+    layout.buildDirectory.dir("generated/api/server/src/gen/java"),
+    layout.buildDirectory.dir("generated/api/server2/src/main/kotlin"),
+    layout.buildDirectory.dir("generated/api/scim-server/src/main/kotlin"),
+    layout.buildDirectory.dir("generated/api/client/src/main/kotlin"),
+  )
+}
+
 dependencies {
 
-  ksp(libs.micronaut.openapi)
   ksp(platform(libs.micronaut.platform))
   ksp(libs.bundles.micronaut.annotation.processor)
   ksp(libs.v3.swagger.annotations)
@@ -101,6 +111,7 @@ val genApiServer =
         "ConnectorBuilderProjectTestingValues" to "com.fasterxml.jackson.databind.JsonNode",
         "BillingEvent" to "com.fasterxml.jackson.databind.JsonNode",
         "ConnectorIPCOptions" to "com.fasterxml.jackson.databind.JsonNode",
+        "AuditLogDetails" to "com.fasterxml.jackson.databind.JsonNode",
       )
 
     generateApiDocumentation = false
@@ -181,6 +192,7 @@ val genApiServer2 =
         "ConnectorBuilderProjectTestingValues" to "com.fasterxml.jackson.databind.JsonNode",
         "BillingEvent" to "com.fasterxml.jackson.databind.JsonNode",
         "ConnectorIPCOptions" to "com.fasterxml.jackson.databind.JsonNode",
+        "AuditLogDetails" to "com.fasterxml.jackson.databind.JsonNode",
       )
   }
 
@@ -261,6 +273,7 @@ val genApiClient =
         "ConnectorBuilderProjectTestingValues" to "com.fasterxml.jackson.databind.JsonNode",
         "BillingEvent" to "com.fasterxml.jackson.databind.JsonNode",
         "ConnectorIPCOptions" to "com.fasterxml.jackson.databind.JsonNode",
+        "AuditLogDetails" to "com.fasterxml.jackson.databind.JsonNode",
       )
 
     generateApiDocumentation = false
@@ -311,6 +324,7 @@ val genApiDocs =
         "ConnectorBuilderProjectTestingValues" to "com.fasterxml.jackson.databind.JsonNode",
         "BillingEvent" to "com.fasterxml.jackson.databind.JsonNode",
         "ConnectorIPCOptions" to "com.fasterxml.jackson.databind.JsonNode",
+        "AuditLogDetails" to "com.fasterxml.jackson.databind.JsonNode",
       )
 
     generateApiDocumentation = false

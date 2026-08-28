@@ -2,131 +2,154 @@ import dayjs from "dayjs";
 
 import { RegionDataWorkerUsage } from "core/api/types/AirbyteClient";
 
+export type UsageGraphGranularity = "hour" | "day";
+
 export interface RegionDataBar {
   formattedDate: string;
+  regionUsage: number;
+  maxWorkspaceUsage: number;
   workspaceUsage: Record<string, number>;
 }
 
+interface TimeBucket extends RegionDataBar {
+  startTimestamp: number;
+}
+
 const DATE_FORMAT = "YYYY-MM-DD";
-const DATETIME_FORMAT = "YYYY-MM-DD HH:mm";
+const HOUR_IN_MS = 60 * 60 * 1000;
+
+const createDisplayBuckets = (displayRange: [string, string], granularity: UsageGraphGranularity): TimeBucket[] => {
+  const rangeEnd = dayjs(displayRange[1]);
+  const buckets: TimeBucket[] = [];
+  let cursor = dayjs(displayRange[0]);
+
+  while (cursor.isBefore(rangeEnd)) {
+    buckets.push({
+      formattedDate: cursor.toISOString(),
+      startTimestamp: cursor.valueOf(),
+      regionUsage: 0,
+      maxWorkspaceUsage: 0,
+      workspaceUsage: {},
+    });
+    cursor = cursor.add(1, granularity);
+  }
+
+  return buckets;
+};
 
 /**
- * Calculates graph data for a given date range and region usage.
- * Creates a data point for each day in the range, populating workspace usage values.
- *
- * For each day, finds the "peak hour" - the hour with the highest total usage across all workspaces.
- * Then uses each workspace's usage value from that peak hour as the daily value.
- * This represents the actual concurrent usage at the moment of peak demand.
- *
- * @param dateRange - A tuple of [startDate, endDate] in YYYY-MM-DD format
- * @param regionDataWorkerUsage - Optional region usage data containing workspace usage information
- * @param top10WorkspaceIds - Optional array of workspace IDs to include in the graph (top 10)
- * @param otherWorkspaceIds - Optional array of workspace IDs to aggregate into "Other" category
- * @returns An array of RegionDataBar objects, one for each day in the range
+ * Creates a bar for each bucket in an end-exclusive display range and populates it with concurrent usage data.
+ * Hourly ranges retain every absolute hour. Daily ranges use the workspace values from the hour when the region's
+ * total usage peaked. API data outside the exact display range is ignored because date-only requests can over-fetch.
  */
 export const calculateGraphData = (
-  dateRange: [string, string],
+  displayRange: [string, string],
+  granularity: UsageGraphGranularity,
   regionDataWorkerUsage: RegionDataWorkerUsage | undefined,
   top10WorkspaceIds?: string[],
   otherWorkspaceIds?: string[]
 ): RegionDataBar[] => {
-  const firstDay = dayjs(dateRange[0]).startOf("day");
-  const lastDay = dayjs(dateRange[1]).endOf("day");
-  let cursor = firstDay;
-  const days: Map<string, RegionDataBar> = new Map();
+  const buckets = createDisplayBuckets(displayRange, granularity);
+  const rangeStartTimestamp = dayjs(displayRange[0]).valueOf();
+  const rangeEndTimestamp = dayjs(displayRange[1]).valueOf();
+  const bucketsByKey = new Map(
+    buckets.map((bucket) => [
+      granularity === "hour" ? String(bucket.startTimestamp) : dayjs(bucket.formattedDate).format(DATE_FORMAT),
+      bucket,
+    ])
+  );
 
-  // Create a data point for each day in the range
-  while (cursor.isBefore(lastDay)) {
-    const formattedDate = cursor.format(DATE_FORMAT);
-    days.set(formattedDate, {
-      formattedDate,
-      workspaceUsage: {},
-    });
-    cursor = cursor.add(1, "day");
+  if (!regionDataWorkerUsage) {
+    return buckets.map(({ startTimestamp: _startTimestamp, ...bucket }) => bucket);
   }
 
-  // Populate workspace usage data
-  if (regionDataWorkerUsage) {
-    // First pass: collect all hourly data points per workspace
-    // Map: workspaceId -> Map<hourTimestamp, usage>
-    const workspaceHourlyUsage = new Map<string, Map<string, number>>();
+  const workspaceHourlyUsage = new Map<string, Map<number, number>>();
+  const hoursByBucket = new Map<string, Set<number>>();
 
-    regionDataWorkerUsage.workspaces.forEach((workspace) => {
-      const hourlyUsage = new Map<string, number>();
+  regionDataWorkerUsage.workspaces.forEach((workspace) => {
+    const hourlyUsage = new Map<number, number>();
 
-      workspace.dataWorkers.forEach(({ date, used }) => {
-        const hourKey = dayjs(date).format(DATETIME_FORMAT);
-        // If multiple entries for the same hour, take the max
-        const existing = hourlyUsage.get(hourKey) ?? 0;
-        hourlyUsage.set(hourKey, Math.max(existing, used));
-      });
+    workspace.dataWorkers.forEach(({ date, used }) => {
+      const timestamp = dayjs(date);
+      const timestampValue = timestamp.valueOf();
 
-      workspaceHourlyUsage.set(workspace.id, hourlyUsage);
+      if (timestampValue < rangeStartTimestamp || timestampValue >= rangeEndTimestamp) {
+        return;
+      }
+
+      const bucketKey =
+        granularity === "hour"
+          ? String(rangeStartTimestamp + Math.floor((timestampValue - rangeStartTimestamp) / HOUR_IN_MS) * HOUR_IN_MS)
+          : timestamp.format(DATE_FORMAT);
+      const bucket = bucketsByKey.get(bucketKey);
+
+      if (!bucket) {
+        return;
+      }
+
+      const hourTimestamp =
+        bucket.startTimestamp + Math.floor((timestampValue - bucket.startTimestamp) / HOUR_IN_MS) * HOUR_IN_MS;
+      hourlyUsage.set(hourTimestamp, Math.max(hourlyUsage.get(hourTimestamp) ?? 0, used));
+
+      const bucketHours = hoursByBucket.get(bucketKey) ?? new Set<number>();
+      bucketHours.add(hourTimestamp);
+      hoursByBucket.set(bucketKey, bucketHours);
     });
 
-    // Second pass: for each day, find the peak hour (hour with highest total across all workspaces)
-    // Map: day -> peakHourKey
-    const peakHourByDay = new Map<string, string>();
+    workspaceHourlyUsage.set(workspace.id, hourlyUsage);
+  });
 
-    // Collect all unique hours and group by day
-    const hoursByDay = new Map<string, Set<string>>();
-    workspaceHourlyUsage.forEach((hourlyUsage) => {
-      hourlyUsage.forEach((_, hourKey) => {
-        const dayKey = dayjs(hourKey, DATETIME_FORMAT).format(DATE_FORMAT);
-        if (days.has(dayKey)) {
-          if (!hoursByDay.has(dayKey)) {
-            hoursByDay.set(dayKey, new Set());
-          }
-          hoursByDay.get(dayKey)!.add(hourKey);
-        }
-      });
-    });
+  const peakHourByBucket = new Map<string, number>();
 
-    // For each day, find the hour with the highest total usage
-    hoursByDay.forEach((hours, dayKey) => {
-      let maxTotal = -1;
-      let peakHour = "";
+  hoursByBucket.forEach((hours, bucketKey) => {
+    let peakHour: number | undefined;
+    let peakRegionUsage = -1;
+    let maxWorkspaceUsage = 0;
 
-      hours.forEach((hourKey) => {
-        let totalForHour = 0;
-        workspaceHourlyUsage.forEach((hourlyUsage) => {
-          totalForHour += hourlyUsage.get(hourKey) ?? 0;
-        });
+    hours.forEach((hourTimestamp) => {
+      let regionUsage = 0;
+      let largestWorkspaceUsage = 0;
 
-        if (totalForHour > maxTotal) {
-          maxTotal = totalForHour;
-          peakHour = hourKey;
-        }
+      workspaceHourlyUsage.forEach((hourlyUsage) => {
+        const workspaceUsage = hourlyUsage.get(hourTimestamp) ?? 0;
+        regionUsage += workspaceUsage;
+        largestWorkspaceUsage = Math.max(largestWorkspaceUsage, workspaceUsage);
       });
 
-      if (peakHour) {
-        peakHourByDay.set(dayKey, peakHour);
+      if (regionUsage > peakRegionUsage) {
+        peakHour = hourTimestamp;
+        peakRegionUsage = regionUsage;
+        maxWorkspaceUsage = largestWorkspaceUsage;
       }
     });
 
-    // Third pass: for each workspace, use the value from the peak hour of each day
-    regionDataWorkerUsage.workspaces.forEach((workspace) => {
-      const isInTop10 = !top10WorkspaceIds || top10WorkspaceIds.includes(workspace.id);
-      const isInOther = otherWorkspaceIds?.includes(workspace.id);
-      const hourlyUsage = workspaceHourlyUsage.get(workspace.id)!;
+    const bucket = bucketsByKey.get(bucketKey);
+    if (bucket && peakHour !== undefined) {
+      peakHourByBucket.set(bucketKey, peakHour);
+      bucket.regionUsage = peakRegionUsage;
+      bucket.maxWorkspaceUsage = maxWorkspaceUsage;
+    }
+  });
 
-      peakHourByDay.forEach((peakHourKey, dayKey) => {
-        const day = days.get(dayKey);
-        if (day) {
-          const usageAtPeakHour = hourlyUsage.get(peakHourKey) ?? 0;
+  regionDataWorkerUsage.workspaces.forEach((workspace) => {
+    const isInTop10 = !top10WorkspaceIds || top10WorkspaceIds.includes(workspace.id);
+    const isInOther = otherWorkspaceIds?.includes(workspace.id);
+    const hourlyUsage = workspaceHourlyUsage.get(workspace.id)!;
 
-          if (isInTop10 && !isInOther) {
-            // Add to top 10 workspace
-            day.workspaceUsage[workspace.id] = usageAtPeakHour;
-          } else if (isInOther) {
-            // Sum usage values into "Other" category
-            const existingOtherUsage = day.workspaceUsage.other ?? 0;
-            day.workspaceUsage.other = existingOtherUsage + usageAtPeakHour;
-          }
-        }
-      });
+    peakHourByBucket.forEach((peakHour, bucketKey) => {
+      const bucket = bucketsByKey.get(bucketKey);
+      if (!bucket) {
+        return;
+      }
+
+      const usageAtPeakHour = hourlyUsage.get(peakHour) ?? 0;
+      if (isInTop10 && !isInOther) {
+        bucket.workspaceUsage[workspace.id] = usageAtPeakHour;
+      } else if (isInOther) {
+        bucket.workspaceUsage.other = (bucket.workspaceUsage.other ?? 0) + usageAtPeakHour;
+      }
     });
-  }
+  });
 
-  return Array.from(days.values());
+  return buckets.map(({ startTimestamp: _startTimestamp, ...bucket }) => bucket);
 };

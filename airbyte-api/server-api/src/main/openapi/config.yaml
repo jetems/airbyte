@@ -7758,6 +7758,82 @@ paths:
         "422":
           $ref: "#/components/responses/InvalidInputResponse"
 
+  /v1/data_worker_allocation/list:
+    post:
+      summary: List the Data Worker capacity an organization holds in each region
+      tags:
+        - data_worker_allocation
+      operationId: listDataWorkerAllocations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataWorkerAllocationListRequestBody"
+        required: true
+      responses:
+        "200":
+          description: The organization's capacity per region, and the total across them
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataWorkerAllocationListResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+
+  /v1/data_worker_allocation/get:
+    post:
+      summary: Get the Data Worker capacity an organization holds in one region
+      tags:
+        - data_worker_allocation
+      operationId: getDataWorkerAllocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataWorkerAllocationGetRequestBody"
+        required: true
+      responses:
+        "200":
+          description: The organization's capacity in the requested region
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataWorkerAllocationRead"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+
+  /v1/data_worker_allocation/reallocate:
+    post:
+      summary: Reallocate Data Worker capacity from one of an organization's regions to another
+      tags:
+        - data_worker_allocation
+      operationId: reallocateDataWorkerCapacity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataWorkerReallocateRequestBody"
+        required: true
+      responses:
+        "200":
+          description: The organization's capacity per region after the move
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataWorkerAllocationListResponse"
+        "400":
+          description: Same region, invalid amount, unknown or unusable region
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
+        "409":
+          description: The source region holds less than the requested amount
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+
   /v1/dataplanes/create:
     post:
       summary: Create a dataplane
@@ -8156,6 +8232,32 @@ paths:
           $ref: "#/components/responses/ForbiddenResponse"
         "404":
           $ref: "#/components/responses/NotFoundResponse"
+        "422":
+          $ref: "#/components/responses/InvalidInputResponse"
+  /v1/audit_logs/list:
+    post:
+      summary: List audit log entries for an organization
+      description: Returns audit log entries for the caller's organization, newest first. Requires the organization admin role and the feature-audit-logging entitlement. The organizationId in the request body must match the organization resolved from the authenticated request context; only that organization's entries are ever returned.
+      tags:
+        - audit_logs
+      operationId: listAuditLogs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuditLogListRequestBody"
+        required: true
+      responses:
+        "200":
+          description: Audit log entries retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogReadList"
+        "400":
+          $ref: "#/components/responses/ExceptionResponse"
+        "403":
+          $ref: "#/components/responses/ForbiddenResponse"
         "422":
           $ref: "#/components/responses/InvalidInputResponse"
 
@@ -16731,6 +16833,110 @@ components:
         newGracePeriodReason:
           type: string
 
+    AuditLogListRequestBody:
+      type: object
+      required:
+        - organizationId
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+          description: Inclusive start of the time range. Defaults to 30 days before endTime.
+          example: 2026-08-01T00:00:00Z
+        endTime:
+          type: string
+          format: date-time
+          description: Inclusive end of the time range. Defaults to now. The range between startTime and endTime must not exceed 90 days.
+          example: 2026-08-14T00:00:00Z
+        workspaceId:
+          type: string
+          format: uuid
+          description: Convenience filter on the workspace the audited action belongs to. Not an authorization boundary.
+        actorId:
+          type: string
+          description: Case-insensitive substring match over the actor id and the actor email of an entry.
+        operation:
+          type: string
+          description: Case-insensitive substring match over the operation of an entry.
+        success:
+          type: boolean
+        searchText:
+          type: string
+          description: Case-insensitive substring match over the operation, actor, and error message of an entry.
+        pageSize:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 200
+          default: 50
+        pageToken:
+          type: string
+          description: Opaque resume token from a previous response's nextPageToken. Must be combined with otherwise-identical query parameters.
+    AuditLogActor:
+      type: object
+      required:
+        - actorId
+      properties:
+        actorId:
+          type: string
+        email:
+          type: string
+        ipAddress:
+          type: string
+        userAgent:
+          type: string
+    AuditLogDetails:
+      type: object
+      description: Free-form JSON summary of an audit log entry's request or response, as produced by the audited operation's provider with sensitive fields redacted.
+    AuditLogRead:
+      type: object
+      required:
+        - id
+        - timestamp
+        - operation
+        - success
+      properties:
+        id:
+          type: string
+          format: uuid
+        timestamp:
+          type: integer
+          format: int64
+          description: Epoch milliseconds at which the audited action occurred.
+        actor:
+          $ref: "#/components/schemas/AuditLogActor"
+        operation:
+          type: string
+        request:
+          $ref: "#/components/schemas/AuditLogDetails"
+        response:
+          $ref: "#/components/schemas/AuditLogDetails"
+        success:
+          type: boolean
+        errorMessage:
+          type: string
+        organizationId:
+          type: string
+          format: uuid
+        workspaceId:
+          type: string
+          format: uuid
+    AuditLogReadList:
+      type: object
+      required:
+        - auditLogs
+      properties:
+        auditLogs:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLogRead"
+        nextPageToken:
+          type: string
+          description: Present when more entries are available; pass as pageToken in a follow-up request.
+
     # ORGANIZATIONS
     OrganizationId:
       type: string
@@ -21356,6 +21562,9 @@ components:
           $ref: "#/components/schemas/ScheduleTypeEnum"
         cronExpression:
           type: string
+        cronTimeZone:
+          type: string
+          description: Supported timezone ID or fixed offset for the cron schedule; defaults to UTC and cannot start with Etc.
       x-sdk-component: true
     ScheduleTypeEnum:
       type: string
@@ -22792,6 +23001,86 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/DataplaneGroupRead"
+    DataWorkerAllocationListRequestBody:
+      type: object
+      required:
+        - organization_id
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+    DataWorkerAllocationGetRequestBody:
+      type: object
+      required:
+        - organization_id
+        - dataplane_group_id
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+        dataplane_group_id:
+          type: string
+          format: uuid
+    DataWorkerReallocateRequestBody:
+      type: object
+      required:
+        - organization_id
+        - from_dataplane_group_id
+        - to_dataplane_group_id
+        - amount
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+        from_dataplane_group_id:
+          type: string
+          format: uuid
+        to_dataplane_group_id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          format: double
+          description: >-
+            Capacity to move out of the source region and into the destination
+            region. Must be positive. The organization's total capacity is
+            unchanged by this operation.
+    DataWorkerAllocationRead:
+      type: object
+      required:
+        - dataplane_group_id
+        - allocated_capacity
+      properties:
+        dataplane_group_id:
+          type: string
+          format: uuid
+        allocated_capacity:
+          type: number
+          format: double
+          description: >-
+            Capacity recorded against this region. Zero when the organization
+            holds no capacity here.
+    DataWorkerAllocationListResponse:
+      type: object
+      required:
+        - organization_id
+        - total_allocated_capacity
+        - allocations
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+        total_allocated_capacity:
+          type: number
+          format: double
+          description: >-
+            Sum of allocated_capacity across every region below. This is what
+            the allocation table records, which is not necessarily what the
+            organization is entitled to.
+        allocations:
+          type: array
+          items:
+            $ref: "#/components/schemas/DataWorkerAllocationRead"
     DataplaneCreateRequestBody:
       type: object
       required:

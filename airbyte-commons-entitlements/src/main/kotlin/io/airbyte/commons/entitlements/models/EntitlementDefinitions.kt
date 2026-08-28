@@ -119,10 +119,6 @@ object SourceSharepointEnterpriseListsConnector : ConnectorEntitlement(
   override val name: String = "source-sharepoint-lists"
 }
 
-object GroupsEntitlement : FeatureEntitlement(
-  featureId = "feature-groups",
-)
-
 object ScimEntitlement : FeatureEntitlement(
   featureId = "feature-scim",
 )
@@ -133,6 +129,10 @@ object OnDemandCapacityEnabledEntitlement : FeatureEntitlement(
 
 object CommittedDataWorkersEntitlement : FeatureEntitlement(
   featureId = "feature-committed-data-workers",
+)
+
+object AuditLoggingEntitlement : FeatureEntitlement(
+  featureId = "feature-audit-logging",
 )
 
 object Entitlements {
@@ -161,13 +161,13 @@ object Entitlements {
       SourceWorkdayRestEnterpriseConnector,
       SourceDb2EnterpriseConnector,
       SourceSharepointEnterpriseListsConnector,
-      GroupsEntitlement,
       ScimEntitlement,
       OnDemandCapacityEnabledEntitlement,
       CommittedDataWorkersEntitlement,
+      AuditLoggingEntitlement,
     )
 
-  // JETEMS: 暴露完整 entitlement 清单，供 AllEntitledClient 在本地把所有 entitlement 置为已授权。
+  /** All known entitlements. */
   val all: List<Entitlement>
     get() = ALL
 

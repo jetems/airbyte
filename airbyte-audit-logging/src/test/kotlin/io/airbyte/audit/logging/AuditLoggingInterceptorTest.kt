@@ -10,15 +10,21 @@ import io.airbyte.api.model.generated.PermissionType
 import io.airbyte.audit.logging.model.Actor
 import io.airbyte.audit.logging.provider.AuditProvider
 import io.airbyte.commons.annotation.AuditLogging
+import io.airbyte.commons.entitlements.EntitlementService
+import io.airbyte.commons.entitlements.models.AuditLoggingEntitlement
+import io.airbyte.commons.entitlements.models.EntitlementResult
 import io.airbyte.commons.storage.DocumentType
 import io.airbyte.commons.storage.StorageClient
 import io.airbyte.commons.storage.StorageClientFactory
+import io.airbyte.domain.models.OrganizationId
 import io.airbyte.featureflag.FeatureFlagClient
+import io.airbyte.featureflag.Organization
 import io.airbyte.featureflag.StoreAuditLogs
-import io.airbyte.micronaut.runtime.AirbyteAuditLoggingConfig
 import io.airbyte.micronaut.runtime.AirbyteStorageConfig
 import io.micronaut.aop.MethodInvocationContext
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.event.ShutdownEvent
+import io.micronaut.context.event.StartupEvent
 import io.micronaut.core.annotation.AnnotationValue
 import io.micronaut.core.type.MutableArgumentValue
 import io.micronaut.http.HttpHeaders
@@ -44,6 +50,8 @@ class AuditLoggingInterceptorTest {
   private lateinit var context: MethodInvocationContext<Any, Any>
   private lateinit var applicationContext: ApplicationContext
   private lateinit var auditLoggingHelper: AuditLoggingHelper
+  private lateinit var auditScopeResolver: AuditScopeResolver
+  private lateinit var entitlementService: EntitlementService
   private lateinit var airbyteStorageConfig: AirbyteStorageConfig
   private lateinit var storageClientFactory: StorageClientFactory
   private lateinit var featureFlagClient: FeatureFlagClient
@@ -53,6 +61,8 @@ class AuditLoggingInterceptorTest {
     context = mockk()
     applicationContext = mockk()
     auditLoggingHelper = mockk()
+    auditScopeResolver = mockk()
+    entitlementService = mockk()
     storageClientFactory = mockk(relaxed = true)
     featureFlagClient = mockk()
     airbyteStorageConfig = mockk(relaxed = true)
@@ -64,30 +74,28 @@ class AuditLoggingInterceptorTest {
   }
 
   @Test
-  fun `should only proceed the request without logging the result if it is not enabled`() {
-    interceptor =
-      AuditLoggingInterceptor(
-        AirbyteAuditLoggingConfig(enabled = false),
-        applicationContext,
-        auditLoggingHelper,
-        featureFlagClient,
-        airbyteStorageConfig,
-        storageClientFactory,
-      )
+  fun `skips the entry when the feature flag is disabled for the organization`() {
+    val organizationId = UUID.randomUUID()
+    val storageClient = mockk<StorageClient>()
+    every { storageClient.write(any(), any()) } just Runs
+    every { storageClientFactory.create(DocumentType.AUDIT_LOGS) } returns storageClient
+    every { airbyteStorageConfig.bucket.auditLogging } returns "test-audit-log-bucket"
+    every { featureFlagClient.boolVariation(StoreAuditLogs, Organization(organizationId)) } returns false
 
-    every { context.methodName } returns "createPermission"
-    every { storageClientFactory.create(DocumentType.AUDIT_LOGS) } returns mockk()
-    every { featureFlagClient.boolVariation(StoreAuditLogs, any()) } returns false
-    every { context.proceed() } returns
-      PermissionRead()
-        .userId(UUID.randomUUID())
-        .workspaceId(UUID.randomUUID())
-        .organizationId(null)
-        .permissionType(PermissionType.WORKSPACE_EDITOR)
+    interceptor = buildInterceptor()
+    interceptor.onStartupEvent(mockk<StartupEvent>())
+    interceptor.logAuditInfo(
+      actor = Actor("userId", "email", null, "userAgent"),
+      operationName = "updateOrganization",
+      request = "{}",
+      response = null,
+      success = true,
+      organizationId = organizationId,
+    )
+    interceptor.onShutdownEvent(mockk<ShutdownEvent>())
 
-    interceptor.intercept(context)
-
-    verify { context.proceed() }
+    verify(exactly = 0) { entitlementService.checkEntitlement(any(), any()) }
+    verify(exactly = 0) { storageClient.write(any(), any()) }
   }
 
   @Test
@@ -97,9 +105,10 @@ class AuditLoggingInterceptorTest {
     interceptor =
       spyk(
         AuditLoggingInterceptor(
-          AirbyteAuditLoggingConfig(enabled = true),
           applicationContext,
           auditLoggingHelper,
+          auditScopeResolver,
+          entitlementService,
           featureFlagClient,
           airbyteStorageConfig,
           storageClientFactory,
@@ -155,10 +164,16 @@ class AuditLoggingInterceptorTest {
         .organizationId(null)
         .permissionType(PermissionType.WORKSPACE_EDITOR)
 
+    val resolvedOrganizationId = UUID.randomUUID()
+    every { auditScopeResolver.resolveScope(any(), any(), any()) } returns
+      ResolvedAuditScope(organizationId = resolvedOrganizationId, workspaceId = workspaceId)
+    every { entitlementService.checkEntitlement(OrganizationId(resolvedOrganizationId), AuditLoggingEntitlement) } returns
+      EntitlementResult(featureId = AuditLoggingEntitlement.featureId, isEntitled = true)
+
     interceptor.intercept(context)
     // Verifying that request is proceeded
     verify { context.proceed() }
-    // Verify logAuditInfo was called with the correct parameters
+    // Verify logAuditInfo was called with the correct parameters, including the resolved scope
     verify {
       interceptor.logAuditInfo(
         actor = match { it.actorId == "userId" && it.userAgent == "userAgent" },
@@ -167,7 +182,96 @@ class AuditLoggingInterceptorTest {
         response = "{\"result\": \"summary\"}",
         success = true,
         error = null,
+        organizationId = resolvedOrganizationId,
+        workspaceId = workspaceId,
       )
     }
   }
+
+  @Test
+  fun `stores the entry when the organization is entitled`() {
+    val organizationId = UUID.randomUUID()
+    val storageClient = mockk<StorageClient>()
+    every { storageClient.write(any(), any()) } just Runs
+    every { storageClientFactory.create(DocumentType.AUDIT_LOGS) } returns storageClient
+    every { airbyteStorageConfig.bucket.auditLogging } returns "test-audit-log-bucket"
+    every { featureFlagClient.boolVariation(StoreAuditLogs, Organization(organizationId)) } returns true
+    every { entitlementService.checkEntitlement(OrganizationId(organizationId), AuditLoggingEntitlement) } returns
+      EntitlementResult(featureId = AuditLoggingEntitlement.featureId, isEntitled = true)
+
+    interceptor = buildInterceptor()
+    interceptor.onStartupEvent(mockk<StartupEvent>())
+    interceptor.logAuditInfo(
+      actor = Actor("userId", "email", null, "userAgent"),
+      operationName = "updateOrganization",
+      request = "{}",
+      response = null,
+      success = true,
+      organizationId = organizationId,
+    )
+    interceptor.onShutdownEvent(mockk<ShutdownEvent>())
+
+    verify { storageClient.write(match { it.contains("/$organizationId/") }, any()) }
+  }
+
+  @Test
+  fun `skips the entry when the organization is not entitled`() {
+    val organizationId = UUID.randomUUID()
+    val storageClient = mockk<StorageClient>()
+    every { storageClient.write(any(), any()) } just Runs
+    every { storageClientFactory.create(DocumentType.AUDIT_LOGS) } returns storageClient
+    every { airbyteStorageConfig.bucket.auditLogging } returns "test-audit-log-bucket"
+    every { featureFlagClient.boolVariation(StoreAuditLogs, Organization(organizationId)) } returns true
+    every { entitlementService.checkEntitlement(OrganizationId(organizationId), AuditLoggingEntitlement) } returns
+      EntitlementResult(featureId = AuditLoggingEntitlement.featureId, isEntitled = false)
+
+    interceptor = buildInterceptor()
+    interceptor.onStartupEvent(mockk<StartupEvent>())
+    interceptor.logAuditInfo(
+      actor = Actor("userId", "email", null, "userAgent"),
+      operationName = "updateOrganization",
+      request = "{}",
+      response = null,
+      success = true,
+      organizationId = organizationId,
+    )
+    interceptor.onShutdownEvent(mockk<ShutdownEvent>())
+
+    verify(exactly = 0) { storageClient.write(any(), any()) }
+  }
+
+  @Test
+  fun `skips the entry when no organization is resolved`() {
+    val storageClient = mockk<StorageClient>()
+    every { storageClient.write(any(), any()) } just Runs
+    every { storageClientFactory.create(DocumentType.AUDIT_LOGS) } returns storageClient
+    every { airbyteStorageConfig.bucket.auditLogging } returns "test-audit-log-bucket"
+
+    interceptor = buildInterceptor()
+    interceptor.onStartupEvent(mockk<StartupEvent>())
+    interceptor.logAuditInfo(
+      actor = Actor("userId", "email", null, "userAgent"),
+      operationName = "updateOrganization",
+      request = "{}",
+      response = null,
+      success = true,
+      organizationId = null,
+    )
+    interceptor.onShutdownEvent(mockk<ShutdownEvent>())
+
+    verify(exactly = 0) { featureFlagClient.boolVariation(StoreAuditLogs, any()) }
+    verify(exactly = 0) { entitlementService.checkEntitlement(any(), any()) }
+    verify(exactly = 0) { storageClient.write(any(), any()) }
+  }
+
+  private fun buildInterceptor(): AuditLoggingInterceptor =
+    AuditLoggingInterceptor(
+      applicationContext,
+      auditLoggingHelper,
+      auditScopeResolver,
+      entitlementService,
+      featureFlagClient,
+      airbyteStorageConfig,
+      storageClientFactory,
+    )
 }

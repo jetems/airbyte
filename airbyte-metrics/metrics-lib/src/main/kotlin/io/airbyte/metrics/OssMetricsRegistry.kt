@@ -174,6 +174,26 @@ enum class OssMetricsRegistry(
     metricName = "dataplane_initialize",
     metricDescription = "increments when a dataplane initialize is called",
   ),
+  DATA_WORKER_CAPACITY_ADMISSION(
+    metricName = "data_worker_capacity_admission",
+    metricDescription = "increments after a Data Worker capacity admission, tagged by admission result",
+  ),
+  DATA_WORKER_CAPACITY_QUEUE_ENTERED(
+    metricName = "data_worker_capacity_queue_entered",
+    metricDescription = "increments after a job enters the Data Worker capacity queue",
+  ),
+  DATA_WORKER_CAPACITY_QUEUE_AGE_SECONDS(
+    metricName = "data_worker_capacity_queue_age_seconds",
+    metricDescription = "distribution of Data Worker capacity queue age in seconds",
+  ),
+  DATA_WORKER_CAPACITY_QUEUE_EXITED(
+    metricName = "data_worker_capacity_queue_exited",
+    metricDescription = "increments after a job exits the Data Worker capacity queue",
+  ),
+  DATA_WORKER_CAPACITY_QUEUE_DURATION_SECONDS(
+    metricName = "data_worker_capacity_queue_duration_seconds",
+    metricDescription = "distribution of Data Worker capacity queue duration in seconds",
+  ),
   ERROR_REPORTING_EVENT_COUNT(
     metricName = "error_reporting_event_count",
     metricDescription = "whenever when we report an error event",
@@ -607,6 +627,26 @@ enum class OssMetricsRegistry(
   WORKLOAD_LAUNCH_DURATION(
     metricName = "workload_launch_duration",
     metricDescription = "tracks the duration of the launch of a workload",
+  ),
+  WORKLOAD_LAUNCH_POD_CREATE_TO_SCHEDULED_DURATION(
+    metricName = "workload_launch_pod_create_to_scheduled_duration",
+    metricDescription = "duration in seconds from pod creation to pod scheduling",
+  ),
+  WORKLOAD_LAUNCH_POD_SCHEDULED_TO_INITIALIZED_DURATION(
+    metricName = "workload_launch_pod_scheduled_to_initialized_duration",
+    metricDescription = "duration in seconds from pod scheduling to pod initialization",
+  ),
+  WORKLOAD_LAUNCH_POD_SCHEDULED_TO_INIT_CONTAINER_STARTED_DURATION(
+    metricName = "workload_launch_pod_scheduled_to_init_container_started_duration",
+    metricDescription = "duration in seconds from pod scheduling to init container start",
+  ),
+  WORKLOAD_LAUNCH_POD_INIT_CONTAINER_STARTED_TO_FINISHED_DURATION(
+    metricName = "workload_launch_pod_init_container_started_to_finished_duration",
+    metricDescription = "duration in seconds from init container start to init container finish",
+  ),
+  WORKLOAD_LAUNCH_POD_INITIALIZED_TO_READY_DURATION(
+    metricName = "workload_launch_pod_initialized_to_ready_duration",
+    metricDescription = "duration in seconds from pod initialization to pod readiness",
   ),
   WORKLOAD_LAUNCH_STATUS(
     metricName = "workload_launch_status",

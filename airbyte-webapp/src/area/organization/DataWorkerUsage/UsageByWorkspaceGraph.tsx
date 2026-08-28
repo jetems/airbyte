@@ -1,147 +1,104 @@
-import { useEffect, useMemo, useState } from "react";
+import dayjs from "dayjs";
+import { useMemo } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip,
-  TooltipProps,
-  XAxis,
-  YAxis,
-} from "recharts";
 
-import { Box } from "components/ui/Box";
 import { FlexContainer } from "components/ui/Flex";
 import { Icon } from "components/ui/Icon";
 import { Text } from "components/ui/Text";
 
 import { useOrganizationWorkerUsage } from "core/api";
-import { useAirbyteTheme } from "core/utils/useAirbyteTheme";
 
-import { calculateGraphData } from "./calculateGraphData";
+import { calculateGraphData, UsageGraphGranularity } from "./calculateGraphData";
+import { DataWorkerUsageBarChart } from "./DataWorkerUsageBarChart";
 import { GraphTooltip } from "./GraphTooltip";
 import styles from "./UsageByWorkspaceGraph.module.scss";
-import { getWorkspaceColorByIndex } from "./utils";
+
+export type UsageTimeRange = "1d" | "1w" | "1m";
 
 interface UsageByWorkspaceGraphProps {
   selectedRegionId: string;
-  dateRange: [string, string];
+  requestDateRange: [string, string];
+  displayRange: [string, string];
+  selectedTimeRange: UsageTimeRange;
   committedDataWorkers?: number | null;
 }
 
-interface ColorMap {
-  gridLine: string;
-  otherColor: string;
-  barHover: string;
-  committedLine: string;
-}
-
-const tooltipConfig: TooltipProps<number, string> = {
-  animationDuration: 300,
-  animationEasing: "ease-out",
-  allowEscapeViewBox: { x: false, y: true },
-  isAnimationActive: false,
+const TICK_STEP_BY_RANGE: Record<UsageTimeRange, number> = {
+  "1d": 6,
+  "1w": 24,
+  "1m": 5,
 };
 
-const BASE_CHART_HEIGHT = 250;
+const BAR_SIZE_BY_RANGE: Record<UsageTimeRange, number> = {
+  "1d": 16,
+  "1w": 4,
+  "1m": 16,
+};
 
 export const UsageByWorkspaceGraph = ({
   selectedRegionId,
-  dateRange,
+  requestDateRange,
+  displayRange,
+  selectedTimeRange,
   committedDataWorkers,
 }: UsageByWorkspaceGraphProps) => {
-  const { formatMessage } = useIntl();
+  const { formatDate, formatMessage } = useIntl();
+  const granularity: UsageGraphGranularity = selectedTimeRange === "1m" ? "day" : "hour";
   const allUsage = useOrganizationWorkerUsage({
-    startDate: dateRange[0],
-    endDate: dateRange[1],
+    startDate: requestDateRange[0],
+    endDate: requestDateRange[1],
   });
   const selectedRegionUsage = useMemo(
     () => allUsage?.regions.find((region) => region.id === selectedRegionId),
     [selectedRegionId, allUsage]
   );
-  const [colorMap, setColorMap] = useState<ColorMap>({
-    gridLine: "",
-    otherColor: "",
-    barHover: "",
-    committedLine: "",
-  });
-  const { colorValues } = useAirbyteTheme();
 
-  useEffect(() => {
-    const colorMap: ColorMap = {
-      gridLine: colorValues[styles.gridLine],
-      otherColor: colorValues[styles.otherColor],
-      barHover: colorValues[styles.barHover],
-      committedLine: colorValues[styles.committedLine],
-    };
-    setColorMap(colorMap);
-  }, [colorValues]);
-
-  const { formatDate } = useIntl();
-
-  // Sort workspaces by total usage descending and filter out zero-usage workspaces
   const sortedWorkspaces = useMemo(() => {
+    const rangeStart = dayjs(displayRange[0]).valueOf();
+    const rangeEnd = dayjs(displayRange[1]).valueOf();
     const workspacesWithTotals =
-      selectedRegionUsage?.workspaces.map((ws) => ({
-        workspace: ws,
-        totalUsage: ws.dataWorkers.reduce((sum, dw) => sum + dw.used, 0),
+      selectedRegionUsage?.workspaces.map((workspace) => ({
+        workspace,
+        totalUsage: workspace.dataWorkers.reduce((sum, dataWorkerUsage) => {
+          const timestamp = dayjs(dataWorkerUsage.date).valueOf();
+          return timestamp >= rangeStart && timestamp < rangeEnd ? sum + dataWorkerUsage.used : sum;
+        }, 0),
       })) ?? [];
 
-    return workspacesWithTotals.filter((w) => w.totalUsage > 0).sort((a, b) => b.totalUsage - a.totalUsage);
-  }, [selectedRegionUsage?.workspaces]);
+    return workspacesWithTotals.filter(({ totalUsage }) => totalUsage > 0).sort((a, b) => b.totalUsage - a.totalUsage);
+  }, [displayRange, selectedRegionUsage?.workspaces]);
 
-  // Split into top 10 and others
-  const top10Workspaces = useMemo(() => sortedWorkspaces.slice(0, 10).map((w) => w.workspace), [sortedWorkspaces]);
-  const otherWorkspaces = useMemo(() => sortedWorkspaces.slice(10).map((w) => w.workspace), [sortedWorkspaces]);
+  const top10Workspaces = useMemo(
+    () => sortedWorkspaces.slice(0, 10).map(({ workspace }) => workspace),
+    [sortedWorkspaces]
+  );
+  const otherWorkspaces = useMemo(
+    () => sortedWorkspaces.slice(10).map(({ workspace }) => workspace),
+    [sortedWorkspaces]
+  );
   const hasOtherCategory = otherWorkspaces.length > 0;
-
-  // Generate workspace color map with sequential colors from theme
-  const workspaceColorMap = useMemo(() => {
-    const map = new Map<string, string>();
-    top10Workspaces.forEach((workspace, index) => {
-      const color = getWorkspaceColorByIndex(index);
-      map.set(workspace.id, color);
-    });
-    return map;
-  }, [top10Workspaces]);
-
-  const stackedWorkspaceSections: Array<{ dataKey: string; fill: string; name: string }> = useMemo(() => {
-    const sections = top10Workspaces.map((workspace) => ({
-      dataKey: `workspaceUsage.${workspace.id}`,
-      name: workspace.name,
-      fill: workspaceColorMap.get(workspace.id) || "#000",
-    }));
-
-    if (hasOtherCategory) {
-      sections.push({
-        dataKey: "workspaceUsage.other",
-        name: "Other",
-        fill: colorMap.otherColor,
-      });
-    }
-
-    return sections;
-  }, [top10Workspaces, hasOtherCategory, workspaceColorMap, colorMap.otherColor]);
 
   const data = useMemo(
     () =>
       calculateGraphData(
-        dateRange,
+        displayRange,
+        granularity,
         selectedRegionUsage,
-        top10Workspaces.map((w) => w.id),
-        otherWorkspaces.map((w) => w.id)
+        top10Workspaces.map(({ id }) => id),
+        otherWorkspaces.map(({ id }) => id)
       ),
-    [dateRange, selectedRegionUsage, top10Workspaces, otherWorkspaces]
+    [displayRange, granularity, selectedRegionUsage, top10Workspaces, otherWorkspaces]
   );
 
-  const animationDuration = useMemo(() => {
-    const numberOfWorkspaces = Math.max(1, top10Workspaces.length + (hasOtherCategory ? 1 : 0));
-    return 300 / numberOfWorkspaces;
-  }, [top10Workspaces.length, hasOtherCategory]);
+  const xAxisTicks = useMemo(
+    () =>
+      data
+        .filter((_, index) => index % TICK_STEP_BY_RANGE[selectedTimeRange] === 0)
+        .map(({ formattedDate }) => formattedDate),
+    [data, selectedTimeRange]
+  );
 
-  if (!selectedRegionUsage || selectedRegionUsage.workspaces.length === 0) {
+  if (!selectedRegionUsage || selectedRegionUsage.workspaces.length === 0 || sortedWorkspaces.length === 0) {
     return (
       <FlexContainer className={styles.usageByWorkspaceGraph} alignItems="center" justifyContent="center">
         <FlexContainer alignItems="center">
@@ -155,72 +112,40 @@ export const UsageByWorkspaceGraph = ({
   }
 
   return (
-    <Box className={styles.usageByWorkspaceGraph}>
-      <ResponsiveContainer width="99%" height={BASE_CHART_HEIGHT} key={selectedRegionId}>
-        <BarChart
-          data={data}
-          margin={{
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <XAxis
-            tickFormatter={(value) => formatDate(value, { month: "short", day: "numeric" })}
-            dataKey="formattedDate"
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontSize: 10 }}
-            interval={1}
-          />
-          <YAxis
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontSize: 12 }}
-            tickFormatter={(value) => formatMessage({ id: "settings.organization.usage.graph.yAxisTick" }, { value })}
-            minTickGap={10}
-            allowDecimals={false}
-            tickMargin={10}
-          />
-
-          <Tooltip
-            wrapperStyle={{ outline: "none", zIndex: styles.tooltipZindex }}
-            content={GraphTooltip}
-            cursor={{ fill: colorMap.barHover }}
-            {...tooltipConfig}
-          />
-          <CartesianGrid stroke={colorMap.gridLine} vertical={false} />
-          {committedDataWorkers != null && committedDataWorkers > 0 && (
-            <ReferenceLine
-              y={committedDataWorkers}
-              stroke={colorMap.committedLine}
-              strokeDasharray="6 4"
-              strokeWidth={1.5}
-              ifOverflow="extendDomain"
-              label={{
-                value: formatMessage({ id: "settings.organization.usage.graph.committedCapacity" }),
-                position: "insideTopRight",
-                fontSize: 10,
-                fill: colorMap.committedLine,
-              }}
-            />
-          )}
-          {stackedWorkspaceSections.map((day, index) => (
-            <Bar
-              stackId="a"
-              key={day.dataKey}
-              name={day.name}
-              dataKey={day.dataKey}
-              fill={day.fill}
-              barSize={16}
-              animationDuration={animationDuration}
-              animationBegin={animationDuration * index}
-              animationEasing="linear"
-            />
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
-    </Box>
+    <DataWorkerUsageBarChart
+      data={data}
+      xAxisDataKey="formattedDate"
+      barDataKey="maxWorkspaceUsage"
+      xAxisTicks={xAxisTicks}
+      xAxisTickFormatter={(value) =>
+        formatDate(
+          dayjs(value).toDate(),
+          selectedTimeRange === "1d" ? { hour: "numeric" } : { month: "short", day: "numeric" }
+        )
+      }
+      xAxisInterval={0}
+      yAxisTickFormatter={(value) => formatMessage({ id: "settings.organization.usage.graph.yAxisTick" }, { value })}
+      renderTooltipContent={(barColor) => (
+        <GraphTooltip
+          regionName={selectedRegionUsage.name}
+          top10Workspaces={top10Workspaces}
+          hasOtherCategory={hasOtherCategory}
+          barColor={barColor}
+          granularity={granularity}
+        />
+      )}
+      chartKey={`${selectedRegionId}-${selectedTimeRange}`}
+      chartMargin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+      tooltipPosition={{ y: 20 }}
+      barSize={BAR_SIZE_BY_RANGE[selectedTimeRange]}
+      referenceLine={
+        committedDataWorkers != null && committedDataWorkers > 0
+          ? {
+              value: committedDataWorkers,
+              label: formatMessage({ id: "settings.organization.usage.graph.committedCapacity" }),
+            }
+          : undefined
+      }
+    />
   );
 };

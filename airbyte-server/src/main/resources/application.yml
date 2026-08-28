@@ -255,6 +255,7 @@ airbyte:
     sidecar-host: ${STIGG_SIDECAR_HOST:}
     sidecar-port: ${STIGG_SIDECAR_PORT:8800}
     webhook-secret: ${STIGG_WEBHOOK_SECRET:}
+    entitlements-file: ${STIGG_ENTITLEMENTS_FILE:}
 
   flyway:
     configs:
@@ -502,11 +503,6 @@ airbyte:
     signature-secret: ${AB_JWT_SIGNATURE_SECRET:}
     connect-timeout-seconds: ${MANIFEST_SERVER_API_CONNECT_TIMEOUT_SECONDS:30}
     read-timeout-seconds: ${MANIFEST_SERVER_API_READ_TIMEOUT_SECONDS:300}
-
-  # Enterprise feature
-  audit:
-    logging:
-      enabled: ${AUDIT_LOGGING_ENABLED:false}
 
 datasources:
   config:

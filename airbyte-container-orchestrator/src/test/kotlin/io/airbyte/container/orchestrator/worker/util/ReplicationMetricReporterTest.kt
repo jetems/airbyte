@@ -4,6 +4,7 @@
 
 package io.airbyte.container.orchestrator.worker.util
 
+import io.airbyte.metrics.MetricAttribute
 import io.airbyte.metrics.MetricClient
 import io.airbyte.metrics.OssMetricsRegistry
 import io.airbyte.persistence.job.models.IntegrationLauncherConfig
@@ -12,11 +13,15 @@ import io.airbyte.protocol.models.v0.AirbyteStreamNameNamespacePair
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 private const val DOCKER_IMAGE = "test/image:1.2.3"
 private const val NAME = "name"
 private const val NAMESPACE = "namespace"
+private const val CONNECTOR_NAME = "Connector Name"
+private const val CONNECTOR_NAME_WITH_COMMA = "Connector, Name"
 
 internal class ReplicationMetricReporterTest {
   @Test
@@ -26,10 +31,16 @@ internal class ReplicationMetricReporterTest {
     val srcLauncherConfig =
       mockk<IntegrationLauncherConfig> {
         every { dockerImage } returns DOCKER_IMAGE
+        every { connectorDefinitionName } returns CONNECTOR_NAME_WITH_COMMA
       }
+    val capturedAttributes = mutableListOf<List<MetricAttribute>>()
     val metricClient =
       mockk<MetricClient> {
-        every { count(metric = any(), value = any(), attributes = anyVararg()) } returns mockk()
+        every { count(metric = any(), value = any(), attributes = anyVararg()) } answers {
+          @Suppress("UNCHECKED_CAST")
+          capturedAttributes += (args[2] as Array<MetricAttribute?>).filterNotNull()
+          null
+        }
       }
     val replicationInput =
       mockk<ReplicationInput> {
@@ -41,6 +52,14 @@ internal class ReplicationMetricReporterTest {
 
     reporter.trackSchemaValidationErrors(stream = stream, validationErrors = validationErrors)
 
+    assertEquals(
+      setOf("error1", "error2"),
+      capturedAttributes
+        .single()
+        .filter { it.key == "validation_error" }
+        .map { it.value }
+        .toSet(),
+    )
     verify(exactly = 1) {
       metricClient.count(
         metric = OssMetricsRegistry.NUM_DISTINCT_SCHEMA_VALIDATION_ERRORS_IN_STREAMS,
@@ -48,6 +67,7 @@ internal class ReplicationMetricReporterTest {
         attributes = anyVararg(),
       )
     }
+    assertThat(capturedAttributes.single()).contains(MetricAttribute("connector", CONNECTOR_NAME_WITH_COMMA.replace(",", "")))
   }
 
   @Test
@@ -57,6 +77,7 @@ internal class ReplicationMetricReporterTest {
     val srcLauncherConfig =
       mockk<IntegrationLauncherConfig> {
         every { dockerImage } returns DOCKER_IMAGE
+        every { connectorDefinitionName } returns null
       }
     val metricClient =
       mockk<MetricClient> {
@@ -78,12 +99,43 @@ internal class ReplicationMetricReporterTest {
   }
 
   @Test
+  fun testTrackingSchemaValidationErrorsFallsBackToDockerRepo() {
+    val stream = AirbyteStreamNameNamespacePair(NAME, NAMESPACE)
+    val srcLauncherConfig =
+      mockk<IntegrationLauncherConfig> {
+        every { dockerImage } returns DOCKER_IMAGE
+        every { connectorDefinitionName } returns null
+      }
+    val capturedAttributes = mutableListOf<List<MetricAttribute>>()
+    val metricClient =
+      mockk<MetricClient> {
+        every { count(metric = any(), value = any(), attributes = anyVararg()) } answers {
+          @Suppress("UNCHECKED_CAST")
+          capturedAttributes += (args[2] as Array<MetricAttribute?>).filterNotNull()
+          null
+        }
+      }
+    val replicationInput =
+      mockk<ReplicationInput> {
+        every { sourceLauncherConfig } returns srcLauncherConfig
+      }
+
+    val reporter = ReplicationMetricReporter(metricClient = metricClient, replicationInput = replicationInput)
+    reporter.initialize()
+
+    reporter.trackSchemaValidationErrors(stream = stream, validationErrors = mutableSetOf("error"))
+
+    assertThat(capturedAttributes.single()).contains(MetricAttribute("connector", "test/image"))
+  }
+
+  @Test
   fun testTrackingSchemaValidationErrorsNullSet() {
     val stream = AirbyteStreamNameNamespacePair(NAME, NAMESPACE)
     val validationErrors: MutableSet<String?>? = null
     val srcLauncherConfig =
       mockk<IntegrationLauncherConfig> {
         every { dockerImage } returns DOCKER_IMAGE
+        every { connectorDefinitionName } returns null
       }
     val metricClient =
       mockk<MetricClient> {
@@ -111,10 +163,16 @@ internal class ReplicationMetricReporterTest {
     val srcLauncherConfig =
       mockk<IntegrationLauncherConfig> {
         every { dockerImage } returns DOCKER_IMAGE
+        every { connectorDefinitionName } returns CONNECTOR_NAME
       }
+    val capturedAttributes = mutableListOf<List<MetricAttribute>>()
     val metricClient =
       mockk<MetricClient> {
-        every { count(metric = any(), value = any(), attributes = anyVararg()) } returns mockk()
+        every { count(metric = any(), value = any(), attributes = anyVararg()) } answers {
+          @Suppress("UNCHECKED_CAST")
+          capturedAttributes += (args[2] as Array<MetricAttribute?>).filterNotNull()
+          null
+        }
       }
     val replicationInput =
       mockk<ReplicationInput> {
@@ -126,6 +184,14 @@ internal class ReplicationMetricReporterTest {
 
     reporter.trackUnexpectedFields(stream = stream, unexpectedFieldNames = unexpectedFieldNames)
 
+    assertEquals(
+      setOf("field1", "field2"),
+      capturedAttributes
+        .single()
+        .filter { it.key == "field_name" }
+        .map { it.value }
+        .toSet(),
+    )
     verify(exactly = 1) {
       metricClient.count(
         metric = OssMetricsRegistry.NUM_UNEXPECTED_FIELDS_IN_STREAMS,
@@ -133,6 +199,7 @@ internal class ReplicationMetricReporterTest {
         attributes = anyVararg(),
       )
     }
+    assertThat(capturedAttributes.single()).contains(MetricAttribute("connector", CONNECTOR_NAME))
   }
 
   @Test
@@ -142,6 +209,7 @@ internal class ReplicationMetricReporterTest {
     val srcLauncherConfig =
       mockk<IntegrationLauncherConfig> {
         every { dockerImage } returns DOCKER_IMAGE
+        every { connectorDefinitionName } returns null
       }
     val metricClient =
       mockk<MetricClient> {
