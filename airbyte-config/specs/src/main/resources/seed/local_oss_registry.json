@@ -24964,16 +24964,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -25392,15 +25392,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "high"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "high"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "high"
           }
         },
@@ -31066,7 +31066,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "1.1.0",
+      "dockerImageTag": "1.2.0",
       "dockerRepository": "airbyte/source-ashby",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/ashby",
       "externalDocumentationUrls": [
@@ -31085,8 +31085,8 @@
         "git": {
           "commit_author": "devin-ai-integration[bot]",
           "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
-          "commit_sha": "909062a646bc56f745b328e985e304992c777ea3",
-          "commit_timestamp": "2026-08-25T20:30:31-07:00"
+          "commit_sha": "863fc909be1ce9290a0e3fc50291bbb2ab317791",
+          "commit_timestamp": "2026-08-29T00:45:23+00:00"
         },
         "metrics": {
           "all": {
@@ -31105,25 +31105,25 @@
         "release": {
           "attributed_to": "pnilan",
           "attributed_to_kind": "maintainer",
-          "merge_commit_sha": "909062a646bc56f745b328e985e304992c777ea3",
-          "merged_at": "2026-08-26T03:30:32Z",
+          "merge_commit_sha": "863fc909be1ce9290a0e3fc50291bbb2ab317791",
+          "merged_at": "2026-08-29T00:45:24Z",
           "pr_author_association": "CONTRIBUTOR",
           "pr_author_id": 158243242,
           "pr_author_login": "devin-ai-integration",
           "pr_author_type": "Bot",
           "pr_merged_by_login": "pnilan",
           "pr_merged_by_type": "User",
-          "pr_number": 84392,
-          "pr_url": "https://github.com/airbytehq/airbyte/pull/84392",
-          "released_at": "2026-08-26T03:30:32Z",
+          "pr_number": 85183,
+          "pr_url": "https://github.com/airbytehq/airbyte/pull/85183",
+          "released_at": "2026-08-29T00:45:24Z",
           "source": "publish"
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-ashby/1.1.0.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-ashby/1.2.0.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-ashby/latest/metadata.yaml",
-          "metadata_last_modified": "2026-08-26T03:34:36.978160+00:00",
-          "registry_entry_generated_at": "2026-08-26T03:34:36.978160+00:00"
+          "metadata_last_modified": "2026-08-29T00:49:27.060040+00:00",
+          "registry_entry_generated_at": "2026-08-29T00:49:27.060040+00:00"
         }
       },
       "githubIssueLabel": "source-ashby",
@@ -31261,16 +31261,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -35215,16 +35215,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -36965,16 +36965,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-boldsign/0.0.37.spdx.json",
@@ -43444,16 +43444,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-clockodo/0.0.62.spdx.json",
@@ -50191,15 +50191,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "medium",
+            "sync_success_rate": "low",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "medium",
+            "sync_success_rate": "low",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "medium",
+            "sync_success_rate": "low",
             "usage": "low"
           }
         },
@@ -51945,16 +51945,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           }
         },
         "release": {
@@ -52303,16 +52303,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -52555,16 +52555,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -58626,15 +58626,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -74733,7 +74733,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.5.30",
+      "dockerImageTag": "0.5.32",
       "dockerRepository": "airbyte/source-google-drive",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/google-drive",
       "externalDocumentationUrls": [
@@ -74762,8 +74762,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "7f5fc3689f0e8801fa146e49de6176538fe3d804",
-          "commit_timestamp": "2026-08-18T05:22:11+00:00"
+          "commit_sha": "efc426d7254015e7971224140eb38d895cf05f95",
+          "commit_timestamp": "2026-08-25T05:39:28+00:00"
         },
         "metrics": {
           "all": {
@@ -74780,23 +74780,27 @@
           }
         },
         "release": {
-          "attributed_to": null,
-          "merge_commit_sha": "7f5fc3689f0e8801fa146e49de6176538fe3d804",
-          "merged_at": "2026-08-18T05:22:12Z",
+          "attributed_to": "octavia-bot-hoard",
+          "attributed_to_kind": "bot",
+          "merge_commit_sha": "efc426d7254015e7971224140eb38d895cf05f95",
+          "merged_at": "2026-08-25T05:39:29Z",
+          "pr_author_association": "CONTRIBUTOR",
           "pr_author_id": 230633153,
           "pr_author_login": "octavia-bot-hoard",
           "pr_author_type": "Bot",
-          "pr_number": 84602,
-          "pr_url": "https://github.com/airbytehq/airbyte/pull/84602",
-          "released_at": "2026-08-18T05:22:12Z",
+          "pr_merged_by_login": "octavia-bot-hoard",
+          "pr_merged_by_type": "Bot",
+          "pr_number": 85013,
+          "pr_url": "https://github.com/airbytehq/airbyte/pull/85013",
+          "released_at": "2026-08-25T05:39:29Z",
           "source": "publish"
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-google-drive/0.5.30.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-google-drive/0.5.32.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-google-drive/latest/metadata.yaml",
-          "metadata_last_modified": "2026-08-18T05:29:26.468279+00:00",
-          "registry_entry_generated_at": "2026-08-18T05:29:26.468279+00:00"
+          "metadata_last_modified": "2026-08-25T05:47:23.884995+00:00",
+          "registry_entry_generated_at": "2026-08-25T05:47:23.884995+00:00"
         }
       },
       "githubIssueLabel": "source-google-drive",
@@ -74807,826 +74811,11 @@
       "maxSecondsBetweenMessages": 3600,
       "name": "Google Drive",
       "packageInfo": {
-        "cdk_version": "python:7.25.1"
+        "cdk_version": "python:7.28.2"
       },
       "public": true,
       "releaseStage": "alpha",
       "releases": {
-        "releaseCandidates": {
-          "0.5.32": {
-            "ab_internal": {
-              "isEnterprise": false,
-              "ql": 300,
-              "requireVersionIncrementsInPullRequests": true,
-              "sl": 200
-            },
-            "allowedHosts": {
-              "hosts": [
-                "www.googleapis.com"
-              ]
-            },
-            "connectorBuildOptions": {
-              "baseImage": "docker.io/airbyte/python-connector-base:4.1.1@sha256:a268b44c733ae699a60f5fbc06a324945dba98945c6e2ab7f8609f2f895b0d28"
-            },
-            "connectorTestSuitesOptions": [
-              {
-                "suite": "acceptanceTests",
-                "testSecrets": [
-                  {
-                    "fileName": "config.json",
-                    "name": "SECRET_SOURCE_GOOGLE_DRIVE_CREDS",
-                    "secretStore": {
-                      "alias": "airbyte-connector-testing-secret-store",
-                      "type": "GSM"
-                    }
-                  },
-                  {
-                    "fileName": "oauth_config.json",
-                    "name": "SECRET_SOURCE_GOOGLE_DRIVE_OAUTH_CREDS",
-                    "secretStore": {
-                      "alias": "airbyte-connector-testing-secret-store",
-                      "type": "GSM"
-                    }
-                  }
-                ]
-              }
-            ],
-            "custom": false,
-            "dockerImageTag": "0.5.32",
-            "dockerRepository": "airbyte/source-google-drive",
-            "documentationUrl": "https://docs.airbyte.com/integrations/sources/google-drive",
-            "externalDocumentationUrls": [
-              {
-                "title": "Google Drive API reference",
-                "type": "api_reference",
-                "url": "https://developers.google.com/drive/api/reference/rest/v3"
-              },
-              {
-                "title": "Google Drive authentication",
-                "type": "authentication_guide",
-                "url": "https://developers.google.com/drive/api/guides/about-auth"
-              },
-              {
-                "title": "Google Drive quotas",
-                "type": "rate_limits",
-                "url": "https://developers.google.com/drive/api/guides/limits"
-              },
-              {
-                "title": "Google Workspace Status",
-                "type": "status_page",
-                "url": "https://www.google.com/appsstatus/"
-              }
-            ],
-            "generated": {
-              "git": {
-                "commit_author": "octavia-bot-hoard[bot]",
-                "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-                "commit_sha": "efc426d7254015e7971224140eb38d895cf05f95",
-                "commit_timestamp": "2026-08-25T05:39:28+00:00"
-              },
-              "release": {
-                "attributed_to": "octavia-bot-hoard",
-                "attributed_to_kind": "bot",
-                "merge_commit_sha": "efc426d7254015e7971224140eb38d895cf05f95",
-                "merged_at": "2026-08-25T05:39:29Z",
-                "pr_author_association": "CONTRIBUTOR",
-                "pr_author_id": 230633153,
-                "pr_author_login": "octavia-bot-hoard",
-                "pr_author_type": "Bot",
-                "pr_merged_by_login": "octavia-bot-hoard",
-                "pr_merged_by_type": "Bot",
-                "pr_number": 85013,
-                "pr_url": "https://github.com/airbytehq/airbyte/pull/85013",
-                "released_at": "2026-08-25T05:39:29Z",
-                "source": "publish"
-              },
-              "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-google-drive/0.5.32.spdx.json",
-              "source_file_info": {
-                "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
-                "metadata_file_path": "metadata/airbyte/source-google-drive/0.5.32/metadata.yaml",
-                "metadata_last_modified": "2026-08-25T05:47:23.884995+00:00",
-                "registry_entry_generated_at": "2026-08-25T05:47:23.884995+00:00"
-              }
-            },
-            "githubIssueLabel": "source-google-drive",
-            "icon": "google-drive.svg",
-            "iconUrl": "https://connectors.airbyte.com/files/metadata/airbyte/source-google-drive/latest/icon.svg",
-            "language": "python",
-            "license": "ELv2",
-            "maxSecondsBetweenMessages": 3600,
-            "name": "Google Drive",
-            "packageInfo": {
-              "cdk_version": "python:7.28.2"
-            },
-            "public": true,
-            "releaseStage": "alpha",
-            "releases": {
-              "rolloutConfiguration": {
-                "advanceDelayMinutes": 10,
-                "autopilotConfig": {
-                  "autoPromoteStages": true,
-                  "autoStart": true,
-                  "strategy": "fast"
-                },
-                "defaultRolloutMode": "autopilot",
-                "enableProgressiveRollout": true,
-                "initialPercentage": 0,
-                "maxPercentage": 50
-              }
-            },
-            "remoteRegistries": {
-              "pypi": {
-                "enabled": true,
-                "packageName": "airbyte-source-google-drive"
-              }
-            },
-            "sourceDefinitionId": "9f8dda77-1048-4368-815b-269bf54ee9b8",
-            "sourceType": "file",
-            "spec": {
-              "advanced_auth": {
-                "auth_flow_type": "oauth2.0",
-                "oauth_config_specification": {
-                  "complete_oauth_output_specification": {
-                    "additionalProperties": false,
-                    "properties": {
-                      "refresh_token": {
-                        "path_in_connector_config": [
-                          "credentials",
-                          "refresh_token"
-                        ],
-                        "path_in_oauth_response": [
-                          "refresh_token"
-                        ],
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "complete_oauth_server_input_specification": {
-                    "additionalProperties": false,
-                    "properties": {
-                      "client_id": {
-                        "type": "string"
-                      },
-                      "client_secret": {
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "complete_oauth_server_output_specification": {
-                    "additionalProperties": false,
-                    "properties": {
-                      "client_id": {
-                        "path_in_connector_config": [
-                          "credentials",
-                          "client_id"
-                        ],
-                        "type": "string"
-                      },
-                      "client_secret": {
-                        "path_in_connector_config": [
-                          "credentials",
-                          "client_secret"
-                        ],
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "oauth_connector_input_specification": {
-                    "access_token_url": "https://oauth2.googleapis.com/token?{{client_id_param}}&{{client_secret_param}}&{{auth_code_param}}&{{redirect_uri_param}}&grant_type=authorization_code",
-                    "consent_url": "https://accounts.google.com/o/oauth2/v2/auth?{{client_id_param}}&{{redirect_uri_param}}&response_type=code&{{scopes_param}}&access_type=offline&{{state_param}}&include_granted_scopes=true&prompt=consent",
-                    "scopes": [
-                      {
-                        "scope": "https://www.googleapis.com/auth/drive.readonly"
-                      },
-                      {
-                        "scope": "https://www.googleapis.com/auth/admin.directory.group.readonly"
-                      },
-                      {
-                        "scope": "https://www.googleapis.com/auth/admin.directory.group.member.readonly"
-                      },
-                      {
-                        "scope": "https://www.googleapis.com/auth/admin.directory.user.readonly"
-                      }
-                    ]
-                  }
-                },
-                "predicate_key": [
-                  "credentials",
-                  "auth_type"
-                ],
-                "predicate_value": "Client"
-              },
-              "connectionSpecification": {
-                "description": "Used during spec; allows the developer to configure the cloud provider specific options\nthat are needed when users configure a file-based source.",
-                "properties": {
-                  "credentials": {
-                    "description": "Credentials for connecting to the Google Drive API",
-                    "oneOf": [
-                      {
-                        "properties": {
-                          "auth_type": {
-                            "const": "Client",
-                            "default": "Client",
-                            "enum": [
-                              "Client"
-                            ],
-                            "title": "Auth Type",
-                            "type": "string"
-                          },
-                          "client_id": {
-                            "airbyte_secret": true,
-                            "description": "Client ID for the Google Drive API",
-                            "title": "Client ID",
-                            "type": "string"
-                          },
-                          "client_secret": {
-                            "airbyte_secret": true,
-                            "description": "Client Secret for the Google Drive API",
-                            "title": "Client Secret",
-                            "type": "string"
-                          },
-                          "refresh_token": {
-                            "airbyte_secret": true,
-                            "description": "Refresh Token for the Google Drive API",
-                            "title": "Refresh Token",
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "client_id",
-                          "client_secret",
-                          "refresh_token",
-                          "auth_type"
-                        ],
-                        "title": "Authenticate via Google (OAuth)",
-                        "type": "object"
-                      },
-                      {
-                        "properties": {
-                          "auth_type": {
-                            "const": "Service",
-                            "default": "Service",
-                            "enum": [
-                              "Service"
-                            ],
-                            "title": "Auth Type",
-                            "type": "string"
-                          },
-                          "service_account_info": {
-                            "airbyte_secret": true,
-                            "description": "The JSON key of the service account to use for authorization. Read more <a href=\"https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys\">here</a>.",
-                            "title": "Service Account Information",
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "service_account_info",
-                          "auth_type"
-                        ],
-                        "title": "Service Account Key Authentication",
-                        "type": "object"
-                      }
-                    ],
-                    "title": "Authentication",
-                    "type": "object"
-                  },
-                  "delivery_method": {
-                    "default": "use_records_transfer",
-                    "display_type": "radio",
-                    "group": "advanced",
-                    "oneOf": [
-                      {
-                        "description": "Recommended - Extract and load structured records into your destination of choice. This is the classic method of moving data in Airbyte. It allows for blocking and hashing individual fields or files from a structured schema. Data can be flattened, typed and deduped depending on the destination.",
-                        "properties": {
-                          "delivery_type": {
-                            "const": "use_records_transfer",
-                            "default": "use_records_transfer",
-                            "enum": [
-                              "use_records_transfer"
-                            ],
-                            "title": "Delivery Type",
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "delivery_type"
-                        ],
-                        "title": "Replicate Records",
-                        "type": "object"
-                      },
-                      {
-                        "description": "Copy raw files without parsing their contents. Bits are copied into the destination exactly as they appeared in the source. Recommended for use with unstructured text data, non-text and compressed files.",
-                        "properties": {
-                          "delivery_type": {
-                            "const": "use_file_transfer",
-                            "default": "use_file_transfer",
-                            "enum": [
-                              "use_file_transfer"
-                            ],
-                            "title": "Delivery Type",
-                            "type": "string"
-                          },
-                          "preserve_directory_structure": {
-                            "default": true,
-                            "description": "If enabled, sends subdirectory folder structure along with source file names to the destination. Otherwise, files will be synced by their names only. This option is ignored when file-based replication is not enabled.",
-                            "title": "Preserve Sub-Directories in File Paths",
-                            "type": "boolean"
-                          }
-                        },
-                        "required": [
-                          "delivery_type"
-                        ],
-                        "title": "Copy Raw Files",
-                        "type": "object"
-                      },
-                      {
-                        "description": "Sends one identity stream and one for more permissions (ACL) streams to the destination. This data can be used in downstream systems to recreate permission restrictions mirroring the original source.",
-                        "properties": {
-                          "delivery_type": {
-                            "const": "use_permissions_transfer",
-                            "default": "use_permissions_transfer",
-                            "enum": [
-                              "use_permissions_transfer"
-                            ],
-                            "title": "Delivery Type",
-                            "type": "string"
-                          },
-                          "domain": {
-                            "airbyte_hidden": false,
-                            "description": "The Google domain of the identities.",
-                            "order": 1,
-                            "title": "Domain",
-                            "type": "string"
-                          },
-                          "include_identities_stream": {
-                            "default": true,
-                            "description": "This data can be used in downstream systems to recreate permission restrictions mirroring the original source",
-                            "title": "Include Identity Stream",
-                            "type": "boolean"
-                          }
-                        },
-                        "required": [
-                          "delivery_type"
-                        ],
-                        "title": "Replicate Permissions ACL",
-                        "type": "object"
-                      }
-                    ],
-                    "order": 1,
-                    "title": "Delivery Method",
-                    "type": "object"
-                  },
-                  "folder_url": {
-                    "description": "URL for the folder you want to sync. Using individual streams and glob patterns, it's possible to only sync a subset of all files located in the folder.",
-                    "examples": [
-                      "https://drive.google.com/drive/folders/1Xaz0vXXXX2enKnNYU5qSt9NS70gvMyYn"
-                    ],
-                    "order": 0,
-                    "pattern": "^https://drive.google.com/.+",
-                    "pattern_descriptor": "https://drive.google.com/drive/folders/MY-FOLDER-ID",
-                    "title": "Folder Url",
-                    "type": "string"
-                  },
-                  "start_date": {
-                    "description": "UTC date and time in the format 2017-01-25T00:00:00.000000Z. Any file modified before this date will not be replicated.",
-                    "examples": [
-                      "2021-01-01",
-                      "2021-01-01T00:00:00Z",
-                      "2021-01-01T00:00:00.000Z",
-                      "2021-01-01T00:00:00.000000Z"
-                    ],
-                    "format": "date-time",
-                    "order": 1,
-                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})?)?$",
-                    "pattern_descriptor": "YYYY-MM-DD, YYYY-MM-DDTHH:mm:ssZ, or YYYY-MM-DDTHH:mm:ss.SSSSSSZ",
-                    "title": "Start Date",
-                    "type": "string"
-                  },
-                  "streams": {
-                    "description": "Each instance of this configuration defines a <a href=\"https://docs.airbyte.com/cloud/core-concepts#stream\">stream</a>. Use this to define which files belong in the stream, their format, and how they should be parsed and validated. When sending data to warehouse destination such as Snowflake or BigQuery, each stream is a separate table.",
-                    "items": {
-                      "properties": {
-                        "days_to_sync_if_history_is_full": {
-                          "default": 3,
-                          "description": "When the state history of the file store is full, syncs will only read files that were last modified in the provided day range.",
-                          "title": "Days To Sync If History Is Full",
-                          "type": "integer"
-                        },
-                        "format": {
-                          "description": "The configuration options that are used to alter how to read incoming files that deviate from the standard formatting.",
-                          "oneOf": [
-                            {
-                              "properties": {
-                                "double_as_string": {
-                                  "default": false,
-                                  "description": "Whether to convert double fields to strings. This is recommended if you have decimal numbers with a high degree of precision because there can be a loss precision when handling floating point numbers.",
-                                  "title": "Convert Double Fields to Strings",
-                                  "type": "boolean"
-                                },
-                                "filetype": {
-                                  "const": "avro",
-                                  "default": "avro",
-                                  "title": "Filetype",
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "filetype"
-                              ],
-                              "title": "Avro Format",
-                              "type": "object"
-                            },
-                            {
-                              "properties": {
-                                "delimiter": {
-                                  "default": ",",
-                                  "description": "The character delimiting individual cells in the CSV data. This may only be a 1-character string. For tab-delimited data enter '\\t'.",
-                                  "title": "Delimiter",
-                                  "type": "string"
-                                },
-                                "double_quote": {
-                                  "default": true,
-                                  "description": "Whether two quotes in a quoted CSV value denote a single quote in the data.",
-                                  "title": "Double Quote",
-                                  "type": "boolean"
-                                },
-                                "encoding": {
-                                  "default": "utf8",
-                                  "description": "The character encoding of the CSV data. Leave blank to default to <strong>UTF8</strong>. See <a href=\"https://docs.python.org/3/library/codecs.html#standard-encodings\" target=\"_blank\">list of python encodings</a> for allowable options.",
-                                  "title": "Encoding",
-                                  "type": "string"
-                                },
-                                "escape_char": {
-                                  "description": "The character used for escaping special characters. To disallow escaping, leave this field blank.",
-                                  "title": "Escape Character",
-                                  "type": "string"
-                                },
-                                "false_values": {
-                                  "default": [
-                                    "n",
-                                    "no",
-                                    "f",
-                                    "false",
-                                    "off",
-                                    "0"
-                                  ],
-                                  "description": "A set of case-sensitive strings that should be interpreted as false values.",
-                                  "items": {
-                                    "type": "string"
-                                  },
-                                  "title": "False Values",
-                                  "type": "array",
-                                  "uniqueItems": true
-                                },
-                                "filetype": {
-                                  "const": "csv",
-                                  "default": "csv",
-                                  "title": "Filetype",
-                                  "type": "string"
-                                },
-                                "header_definition": {
-                                  "default": {
-                                    "header_definition_type": "From CSV"
-                                  },
-                                  "description": "How headers will be defined. `User Provided` assumes the CSV does not have a header row and uses the headers provided and `Autogenerated` assumes the CSV does not have a header row and the CDK will generate headers using for `f{i}` where `i` is the index starting from 0. Else, the default behavior is to use the header from the CSV file. If a user wants to autogenerate or provide column names for a CSV having headers, they can skip rows.",
-                                  "oneOf": [
-                                    {
-                                      "properties": {
-                                        "header_definition_type": {
-                                          "const": "From CSV",
-                                          "default": "From CSV",
-                                          "title": "Header Definition Type",
-                                          "type": "string"
-                                        }
-                                      },
-                                      "required": [
-                                        "header_definition_type"
-                                      ],
-                                      "title": "From CSV",
-                                      "type": "object"
-                                    },
-                                    {
-                                      "properties": {
-                                        "header_definition_type": {
-                                          "const": "Autogenerated",
-                                          "default": "Autogenerated",
-                                          "title": "Header Definition Type",
-                                          "type": "string"
-                                        }
-                                      },
-                                      "required": [
-                                        "header_definition_type"
-                                      ],
-                                      "title": "Autogenerated",
-                                      "type": "object"
-                                    },
-                                    {
-                                      "properties": {
-                                        "column_names": {
-                                          "description": "The column names that will be used while emitting the CSV records",
-                                          "items": {
-                                            "type": "string"
-                                          },
-                                          "title": "Column Names",
-                                          "type": "array"
-                                        },
-                                        "header_definition_type": {
-                                          "const": "User Provided",
-                                          "default": "User Provided",
-                                          "title": "Header Definition Type",
-                                          "type": "string"
-                                        }
-                                      },
-                                      "required": [
-                                        "column_names",
-                                        "header_definition_type"
-                                      ],
-                                      "title": "User Provided",
-                                      "type": "object"
-                                    }
-                                  ],
-                                  "title": "CSV Header Definition",
-                                  "type": "object"
-                                },
-                                "ignore_errors_on_fields_mismatch": {
-                                  "default": false,
-                                  "description": "Whether to ignore errors that occur when the number of fields in the CSV does not match the number of columns in the schema.",
-                                  "title": "Ignore errors on field mismatch",
-                                  "type": "boolean"
-                                },
-                                "null_values": {
-                                  "default": [],
-                                  "description": "A set of case-sensitive strings that should be interpreted as null values. For example, if the value 'NA' should be interpreted as null, enter 'NA' in this field.",
-                                  "items": {
-                                    "type": "string"
-                                  },
-                                  "title": "Null Values",
-                                  "type": "array",
-                                  "uniqueItems": true
-                                },
-                                "quote_char": {
-                                  "default": "\"",
-                                  "description": "The character used for quoting CSV values. To disallow quoting, make this field blank.",
-                                  "title": "Quote Character",
-                                  "type": "string"
-                                },
-                                "skip_rows_after_header": {
-                                  "default": 0,
-                                  "description": "The number of rows to skip after the header row.",
-                                  "title": "Skip Rows After Header",
-                                  "type": "integer"
-                                },
-                                "skip_rows_before_header": {
-                                  "default": 0,
-                                  "description": "The number of rows to skip before the header row. For example, if the header row is on the 3rd row, enter 2 in this field.",
-                                  "title": "Skip Rows Before Header",
-                                  "type": "integer"
-                                },
-                                "strings_can_be_null": {
-                                  "default": true,
-                                  "description": "Whether strings can be interpreted as null values. If true, strings that match the null_values set will be interpreted as null. If false, strings that match the null_values set will be interpreted as the string itself.",
-                                  "title": "Strings Can Be Null",
-                                  "type": "boolean"
-                                },
-                                "true_values": {
-                                  "default": [
-                                    "y",
-                                    "yes",
-                                    "t",
-                                    "true",
-                                    "on",
-                                    "1"
-                                  ],
-                                  "description": "A set of case-sensitive strings that should be interpreted as true values.",
-                                  "items": {
-                                    "type": "string"
-                                  },
-                                  "title": "True Values",
-                                  "type": "array",
-                                  "uniqueItems": true
-                                }
-                              },
-                              "required": [
-                                "filetype"
-                              ],
-                              "title": "CSV Format",
-                              "type": "object"
-                            },
-                            {
-                              "properties": {
-                                "filetype": {
-                                  "const": "jsonl",
-                                  "default": "jsonl",
-                                  "title": "Filetype",
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "filetype"
-                              ],
-                              "title": "Jsonl Format",
-                              "type": "object"
-                            },
-                            {
-                              "properties": {
-                                "decimal_as_float": {
-                                  "default": false,
-                                  "description": "Whether to convert decimal fields to floats. There is a loss of precision when converting decimals to floats, so this is not recommended.",
-                                  "title": "Convert Decimal Fields to Floats",
-                                  "type": "boolean"
-                                },
-                                "filetype": {
-                                  "const": "parquet",
-                                  "default": "parquet",
-                                  "title": "Filetype",
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "filetype"
-                              ],
-                              "title": "Parquet Format",
-                              "type": "object"
-                            },
-                            {
-                              "description": "Extract text from document formats (.pdf, .docx, .md, .pptx) and emit as one record per file.",
-                              "properties": {
-                                "filetype": {
-                                  "const": "unstructured",
-                                  "default": "unstructured",
-                                  "title": "Filetype",
-                                  "type": "string"
-                                },
-                                "processing": {
-                                  "default": {
-                                    "mode": "local"
-                                  },
-                                  "description": "Processing configuration",
-                                  "oneOf": [
-                                    {
-                                      "description": "Process files locally, supporting `fast` and `ocr` modes. This is the default option.",
-                                      "properties": {
-                                        "mode": {
-                                          "const": "local",
-                                          "default": "local",
-                                          "enum": [
-                                            "local"
-                                          ],
-                                          "title": "Mode",
-                                          "type": "string"
-                                        }
-                                      },
-                                      "required": [
-                                        "mode"
-                                      ],
-                                      "title": "Local",
-                                      "type": "object"
-                                    }
-                                  ],
-                                  "title": "Processing",
-                                  "type": "object"
-                                },
-                                "skip_unprocessable_files": {
-                                  "always_show": true,
-                                  "default": true,
-                                  "description": "If true, skip files that cannot be parsed and pass the error message along as the _ab_source_file_parse_error field. If false, fail the sync.",
-                                  "title": "Skip Unprocessable Files",
-                                  "type": "boolean"
-                                },
-                                "strategy": {
-                                  "always_show": true,
-                                  "default": "auto",
-                                  "description": "The strategy used to parse documents. `fast` extracts text directly from the document which doesn't work for all files. `ocr_only` is more reliable, but slower. `hi_res` is the most reliable, but requires an API key and a hosted instance of unstructured and can't be used with local mode. See the unstructured.io documentation for more details: https://unstructured-io.github.io/unstructured/core/partition.html#partition-pdf",
-                                  "enum": [
-                                    "auto",
-                                    "fast",
-                                    "ocr_only",
-                                    "hi_res"
-                                  ],
-                                  "order": 0,
-                                  "title": "Parsing Strategy",
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "filetype"
-                              ],
-                              "title": "Unstructured Document Format",
-                              "type": "object"
-                            },
-                            {
-                              "properties": {
-                                "filetype": {
-                                  "const": "excel",
-                                  "default": "excel",
-                                  "title": "Filetype",
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "filetype"
-                              ],
-                              "title": "Excel Format",
-                              "type": "object"
-                            }
-                          ],
-                          "title": "Format",
-                          "type": "object"
-                        },
-                        "globs": {
-                          "default": [
-                            "**"
-                          ],
-                          "description": "The pattern used to specify which files should be selected from the file system. For more information on glob pattern matching look <a href=\"https://en.wikipedia.org/wiki/Glob_(programming)\">here</a>.",
-                          "items": {
-                            "type": "string"
-                          },
-                          "order": 1,
-                          "title": "Globs",
-                          "type": "array"
-                        },
-                        "input_schema": {
-                          "description": "The schema that will be used to validate records extracted from the file. This will override the stream schema that is auto-detected from incoming files.",
-                          "title": "Input Schema",
-                          "type": "string"
-                        },
-                        "name": {
-                          "description": "The name of the stream.",
-                          "title": "Name",
-                          "type": "string"
-                        },
-                        "primary_key": {
-                          "airbyte_hidden": true,
-                          "description": "The column or columns (for a composite key) that serves as the unique identifier of a record. If empty, the primary key will default to the parser's default primary key.",
-                          "title": "Primary Key",
-                          "type": "string"
-                        },
-                        "recent_n_files_to_read_for_schema_discovery": {
-                          "description": "The number of resent files which will be used to discover the schema for this stream.",
-                          "exclusiveMinimum": 0,
-                          "title": "Files To Read For Schema Discover",
-                          "type": "integer"
-                        },
-                        "schemaless": {
-                          "default": false,
-                          "description": "When enabled, syncs will not validate or structure records against the stream's schema.",
-                          "title": "Schemaless",
-                          "type": "boolean"
-                        },
-                        "use_first_found_file_for_schema_discovery": {
-                          "default": false,
-                          "description": "When enabled, the source will use the first found file for schema discovery. Helps to avoid long discovery step.",
-                          "title": "Use First Found File For Schema Discover",
-                          "type": "boolean"
-                        },
-                        "validation_policy": {
-                          "default": "Emit Record",
-                          "description": "The name of the validation policy that dictates sync behavior when a record does not adhere to the stream schema.",
-                          "enum": [
-                            "Emit Record",
-                            "Skip Record",
-                            "Wait for Discover"
-                          ],
-                          "title": "Validation Policy"
-                        }
-                      },
-                      "required": [
-                        "name",
-                        "format"
-                      ],
-                      "title": "FileBasedStreamConfig",
-                      "type": "object"
-                    },
-                    "order": 10,
-                    "title": "The list of streams to sync",
-                    "type": "array"
-                  }
-                },
-                "required": [
-                  "streams",
-                  "folder_url",
-                  "credentials"
-                ],
-                "title": "Google Drive Source Spec",
-                "type": "object"
-              },
-              "documentationUrl": "https://docs.airbyte.com/integrations/sources/google-drive",
-              "supportsDBT": false,
-              "supportsNormalization": false
-            },
-            "supportLevel": "certified",
-            "supportsDataActivation": false,
-            "supportsFileTransfer": true,
-            "tags": [
-              "language:python",
-              "cdk:python-file-based"
-            ],
-            "tombstone": false
-          }
-        },
         "rolloutConfiguration": {
           "advanceDelayMinutes": 10,
           "autopilotConfig": {
@@ -78999,15 +78188,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "high",
+            "sync_success_rate": "medium",
             "usage": "medium"
           },
           "cloud": {
-            "sync_success_rate": "high",
+            "sync_success_rate": "medium",
             "usage": "medium"
           },
           "oss": {
-            "sync_success_rate": "high",
+            "sync_success_rate": "medium",
             "usage": "medium"
           }
         },
@@ -79126,16 +78315,12 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.24.0@sha256:e34fb609bccdeb77474763c77e3621ea9d5adf9f65f2d9851102cc14a1caa281"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.25.1@sha256:cdbd1578932d121f2852c065fbabebc49ccbf00078606dc503be5e4c66b373df"
       },
       "connectorTestSuitesOptions": [
         {
           "suite": "liveTests",
           "testConnections": [
-            {
-              "id": "2234aee5-c67b-48f7-8c6d-45a1e0303ea1",
-              "name": "greenhouse_config_users_only_dev_null"
-            },
             {
               "id": "2bcce6b2-2c89-46a4-9980-82a299266774",
               "name": "greenhouse_config_dev_null"
@@ -79149,16 +78334,8 @@
           "suite": "acceptanceTests",
           "testSecrets": [
             {
-              "fileName": "config_users_only.json",
-              "name": "SECRET_SOURCE-GREENHOUSE_USERS_ONLY__CREDS",
-              "secretStore": {
-                "alias": "airbyte-connector-testing-secret-store",
-                "type": "GSM"
-              }
-            },
-            {
-              "fileName": "config.json",
-              "name": "SECRET_SOURCE-GREENHOUSE__CREDS",
+              "fileName": "config_oauth.json",
+              "name": "SECRET_SOURCE-GREENHOUSE__CREDS_OAUTH",
               "secretStore": {
                 "alias": "airbyte-connector-testing-secret-store",
                 "type": "GSM"
@@ -79168,7 +78345,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.8.0",
+      "dockerImageTag": "1.0.0",
       "dockerRepository": "airbyte/source-greenhouse",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/greenhouse",
       "externalDocumentationUrls": [
@@ -79192,8 +78369,8 @@
         "git": {
           "commit_author": "devin-ai-integration[bot]",
           "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
-          "commit_sha": "722558adc073c1c36f8bd65d36fb9edeb69e2658",
-          "commit_timestamp": "2026-08-12T05:40:40+00:00"
+          "commit_sha": "d967099cade84039b4975d3412fd150287e9ac2c",
+          "commit_timestamp": "2026-08-28T08:59:18-07:00"
         },
         "metrics": {
           "all": {
@@ -79209,12 +78386,28 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-greenhouse/0.8.0.spdx.json",
+        "release": {
+          "attributed_to": "pnilan",
+          "attributed_to_kind": "maintainer",
+          "merge_commit_sha": "d967099cade84039b4975d3412fd150287e9ac2c",
+          "merged_at": "2026-08-28T15:59:18Z",
+          "pr_author_association": "CONTRIBUTOR",
+          "pr_author_id": 158243242,
+          "pr_author_login": "devin-ai-integration",
+          "pr_author_type": "Bot",
+          "pr_merged_by_login": "pnilan",
+          "pr_merged_by_type": "User",
+          "pr_number": 84846,
+          "pr_url": "https://github.com/airbytehq/airbyte/pull/84846",
+          "released_at": "2026-08-28T15:59:18Z",
+          "source": "publish"
+        },
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-greenhouse/1.0.0.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-greenhouse/latest/metadata.yaml",
-          "metadata_last_modified": "2026-08-12T05:45:41.684917+00:00",
-          "registry_entry_generated_at": "2026-08-12T05:45:41.684917+00:00"
+          "metadata_last_modified": "2026-08-28T16:03:55.164904+00:00",
+          "registry_entry_generated_at": "2026-08-28T16:03:55.164904+00:00"
         }
       },
       "githubIssueLabel": "source-greenhouse",
@@ -79222,193 +78415,64 @@
       "iconUrl": "https://connectors.airbyte.com/files/metadata/airbyte/source-greenhouse/latest/icon.svg",
       "language": "manifest-only",
       "license": "ELv2",
-      "maxSecondsBetweenMessages": 10,
+      "maxSecondsBetweenMessages": 3600,
       "name": "Greenhouse",
       "packageInfo": {},
       "public": true,
       "releaseStage": "generally_available",
       "releases": {
-        "releaseCandidates": {
-          "0.8.1": {
-            "ab_internal": {
-              "isEnterprise": false,
-              "ql": 200,
-              "requireVersionIncrementsInPullRequests": true,
-              "sl": 100
-            },
-            "allowedHosts": {
-              "hosts": [
-                "harvest.greenhouse.io",
-                "auth.greenhouse.io"
-              ]
-            },
-            "connectorBuildOptions": {
-              "baseImage": "docker.io/airbyte/source-declarative-manifest:7.25.1@sha256:cdbd1578932d121f2852c065fbabebc49ccbf00078606dc503be5e4c66b373df"
-            },
-            "connectorTestSuitesOptions": [
+        "breakingChanges": {
+          "1.0.0": {
+            "deadlineAction": "disable",
+            "message": "This release migrates all Greenhouse streams from Harvest v1 to Harvest v3 because Greenhouse is sunsetting Harvest v1 and v2 on 2026-08-31, and replaces API-key authentication with OAuth Authorization Code authentication. Every deployment now authenticates with the client ID and secret of a Greenhouse partner OAuth application, authorizes the requested scopes through the Greenhouse consent flow, and lets Airbyte manage the access and refresh tokens. This release also removes three duplicate streams: use demographics_answers, interviews, and job_stages instead of applications_demographics_answers, applications_interviews, and jobs_stages. Because no stream is a one-to-one replacement, there are two upgrade paths: we strongly recommend setting up a new connection on 1.0.0 that writes to a new destination namespace or table prefix, keeping your existing Harvest v1 tables as history. If you upgrade this connection in place instead, update the source configuration, refresh the schemas, and clear the affected streams so v3 records do not land beside v1 records. See the [Greenhouse migration guide](https://docs.airbyte.com/integrations/sources/greenhouse-migrations) for details.",
+            "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/greenhouse-migrations#1.0.0",
+            "scopedImpact": [
               {
-                "suite": "liveTests",
-                "testConnections": [
-                  {
-                    "id": "2234aee5-c67b-48f7-8c6d-45a1e0303ea1",
-                    "name": "greenhouse_config_users_only_dev_null"
-                  },
-                  {
-                    "id": "2bcce6b2-2c89-46a4-9980-82a299266774",
-                    "name": "greenhouse_config_dev_null"
-                  }
-                ]
-              },
-              {
-                "suite": "unitTests"
-              },
-              {
-                "suite": "acceptanceTests",
-                "testSecrets": [
-                  {
-                    "fileName": "config_users_only.json",
-                    "name": "SECRET_SOURCE-GREENHOUSE_USERS_ONLY__CREDS",
-                    "secretStore": {
-                      "alias": "airbyte-connector-testing-secret-store",
-                      "type": "GSM"
-                    }
-                  },
-                  {
-                    "fileName": "config.json",
-                    "name": "SECRET_SOURCE-GREENHOUSE__CREDS",
-                    "secretStore": {
-                      "alias": "airbyte-connector-testing-secret-store",
-                      "type": "GSM"
-                    }
-                  }
-                ]
-              }
-            ],
-            "custom": false,
-            "dockerImageTag": "0.8.1",
-            "dockerRepository": "airbyte/source-greenhouse",
-            "documentationUrl": "https://docs.airbyte.com/integrations/sources/greenhouse",
-            "externalDocumentationUrls": [
-              {
-                "title": "Greenhouse Harvest API",
-                "type": "api_reference",
-                "url": "https://harvestdocs.greenhouse.io/"
-              },
-              {
-                "title": "Greenhouse authentication",
-                "type": "authentication_guide",
-                "url": "https://harvestdocs.greenhouse.io/docs/authentication"
-              },
-              {
-                "title": "Greenhouse rate limits",
-                "type": "rate_limits",
-                "url": "https://harvestdocs.greenhouse.io/docs/api-rate-limiting"
-              }
-            ],
-            "generated": {
-              "git": {
-                "commit_author": "octavia-bot-hoard[bot]",
-                "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-                "commit_sha": "ea3d15ab449b9c7e79c578d32826925425f84bfc",
-                "commit_timestamp": "2026-08-18T05:53:19+00:00"
-              },
-              "release": {
-                "attributed_to": null,
-                "merge_commit_sha": "ea3d15ab449b9c7e79c578d32826925425f84bfc",
-                "merged_at": "2026-08-18T05:53:19Z",
-                "pr_author_id": 230633153,
-                "pr_author_login": "octavia-bot-hoard",
-                "pr_author_type": "Bot",
-                "pr_number": 84641,
-                "pr_url": "https://github.com/airbytehq/airbyte/pull/84641",
-                "released_at": "2026-08-18T05:53:19Z",
-                "source": "publish"
-              },
-              "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-greenhouse/0.8.1.spdx.json",
-              "source_file_info": {
-                "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
-                "metadata_file_path": "metadata/airbyte/source-greenhouse/0.8.1/metadata.yaml",
-                "metadata_last_modified": "2026-08-18T05:57:28.605017+00:00",
-                "registry_entry_generated_at": "2026-08-18T05:57:28.605017+00:00"
-              }
-            },
-            "githubIssueLabel": "source-greenhouse",
-            "icon": "greenhouse.svg",
-            "iconUrl": "https://connectors.airbyte.com/files/metadata/airbyte/source-greenhouse/latest/icon.svg",
-            "language": "manifest-only",
-            "license": "ELv2",
-            "maxSecondsBetweenMessages": 10,
-            "name": "Greenhouse",
-            "packageInfo": {},
-            "public": true,
-            "releaseStage": "generally_available",
-            "releases": {
-              "rolloutConfiguration": {
-                "advanceDelayMinutes": 10,
-                "autopilotConfig": {
-                  "autoPromoteStages": true,
-                  "autoStart": true,
-                  "strategy": "fast"
-                },
-                "defaultRolloutMode": "autopilot",
-                "enableProgressiveRollout": true,
-                "initialPercentage": 0,
-                "maxPercentage": 50
-              }
-            },
-            "remoteRegistries": {
-              "pypi": {
-                "enabled": false,
-                "packageName": "airbyte-source-greenhouse"
-              }
-            },
-            "sourceDefinitionId": "59f1e50a-331f-4f09-b3e8-2e8d4d355f44",
-            "sourceType": "api",
-            "spec": {
-              "connectionSpecification": {
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "additionalProperties": true,
-                "properties": {
-                  "api_key": {
-                    "airbyte_secret": true,
-                    "description": "Greenhouse API Key. See the <a href=\"https://docs.airbyte.com/integrations/sources/greenhouse\">docs</a> for more information on how to generate this key.",
-                    "order": 0,
-                    "title": "API Key",
-                    "type": "string"
-                  },
-                  "num_workers": {
-                    "default": 2,
-                    "description": "The number of worker threads to use for syncing. The default is tuned against Greenhouse's documented Harvest API rate limit. Increase this only if your Greenhouse account can support higher API usage, or lower it if you see rate-limit errors.",
-                    "examples": [
-                      1,
-                      2,
-                      3
-                    ],
-                    "maximum": 8,
-                    "minimum": 1,
-                    "order": 1,
-                    "title": "Number of concurrent threads",
-                    "type": "integer"
-                  }
-                },
-                "required": [
-                  "api_key"
+                "impactedScopes": [
+                  "applications",
+                  "applications_demographics_answers",
+                  "applications_interviews",
+                  "candidates",
+                  "close_reasons",
+                  "custom_fields",
+                  "degrees",
+                  "demographics_answers",
+                  "demographics_answer_options",
+                  "demographics_questions",
+                  "demographics_answers_answer_options",
+                  "demographics_question_sets",
+                  "demographics_question_sets_questions",
+                  "departments",
+                  "jobs",
+                  "jobs_openings",
+                  "interviews",
+                  "job_posts",
+                  "job_stages",
+                  "jobs_stages",
+                  "offers",
+                  "rejection_reasons",
+                  "scorecards",
+                  "sources",
+                  "users",
+                  "activity_feed",
+                  "approvals",
+                  "disciplines",
+                  "schools",
+                  "eeoc",
+                  "email_templates",
+                  "offices",
+                  "prospect_pools",
+                  "tags",
+                  "user_roles",
+                  "user_permissions"
                 ],
-                "type": "object"
-              },
-              "supportsDBT": false,
-              "supportsNormalization": false
-            },
-            "supportLevel": "community",
-            "supportsDataActivation": false,
-            "supportsFileTransfer": false,
-            "tags": [
-              "language:manifest-only",
-              "cdk:low-code"
+                "scopeType": "stream"
+              }
             ],
-            "tombstone": false
+            "upgradeDeadline": "2026-08-31"
           }
         },
+        "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/greenhouse-migrations",
         "rolloutConfiguration": {
           "advanceDelayMinutes": 10,
           "autopilotConfig": {
@@ -79417,7 +78481,7 @@
             "strategy": "fast"
           },
           "defaultRolloutMode": "autopilot",
-          "enableProgressiveRollout": true,
+          "enableProgressiveRollout": false,
           "initialPercentage": 0,
           "maxPercentage": 50
         }
@@ -79431,20 +78495,166 @@
       "sourceDefinitionId": "59f1e50a-331f-4f09-b3e8-2e8d4d355f44",
       "sourceType": "api",
       "spec": {
+        "advanced_auth": {
+          "auth_flow_type": "oauth2.0",
+          "oauth_config_specification": {
+            "complete_oauth_output_specification": {
+              "properties": {
+                "access_token": {
+                  "path_in_connector_config": [
+                    "credentials",
+                    "access_token"
+                  ],
+                  "type": "string"
+                },
+                "expires_at": {
+                  "format": "date-time",
+                  "path_in_connector_config": [
+                    "credentials",
+                    "token_expiry_date"
+                  ],
+                  "type": "string"
+                },
+                "refresh_token": {
+                  "path_in_connector_config": [
+                    "credentials",
+                    "refresh_token"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "refresh_token"
+              ]
+            },
+            "complete_oauth_server_input_specification": {
+              "properties": {
+                "client_id": {
+                  "type": "string"
+                },
+                "client_secret": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "client_id",
+                "client_secret"
+              ]
+            },
+            "complete_oauth_server_output_specification": {
+              "properties": {
+                "client_id": {
+                  "path_in_connector_config": [
+                    "credentials",
+                    "client_id"
+                  ],
+                  "type": "string"
+                },
+                "client_secret": {
+                  "path_in_connector_config": [
+                    "credentials",
+                    "client_secret"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "client_id",
+                "client_secret"
+              ]
+            },
+            "oauth_connector_input_specification": {
+              "access_token_headers": {
+                "Authorization": "Basic {{ (client_id_value ~ ':' ~ client_secret_value) | b64encode }}",
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              "access_token_params": {
+                "code": "{{ auth_code_value }}",
+                "grant_type": "authorization_code",
+                "redirect_uri": "{{ redirect_uri_value }}"
+              },
+              "access_token_url": "https://auth.greenhouse.io/token",
+              "consent_url": "https://auth.greenhouse.io/authorize?client_id={{client_id_value}}&redirect_uri={{redirect_uri_value}}&response_type=code&state={{state_value}}&{{scopes_param}}",
+              "extract_output": [
+                "access_token",
+                "refresh_token",
+                "expires_at"
+              ],
+              "scope": "harvest:applications:list harvest:approval_flows:list harvest:candidate_tags:list harvest:candidates:list harvest:close_reasons:list harvest:custom_field_options:list harvest:custom_fields:list harvest:demographic_answer_options:list harvest:demographic_answers:list harvest:demographic_question_sets:list harvest:demographic_questions:list harvest:departments:list harvest:eeoc:list harvest:email_templates:list harvest:interviews:list harvest:job_interview_stages:list harvest:job_posts:list harvest:jobs:list harvest:notes:list harvest:offers:list harvest:offices:list harvest:openings:list harvest:prospect_pools:list harvest:rejection_reasons:list harvest:scorecards:list harvest:sources:list harvest:user_job_permissions:list harvest:user_roles:list harvest:users:list",
+              "scopes_join_strategy": "space"
+            }
+          },
+          "predicate_key": [
+            "credentials",
+            "auth_type"
+          ],
+          "predicate_value": "Client"
+        },
         "connectionSpecification": {
           "$schema": "http://json-schema.org/draft-07/schema#",
           "additionalProperties": true,
           "properties": {
-            "api_key": {
-              "airbyte_secret": true,
-              "description": "Greenhouse API Key. See the <a href=\"https://docs.airbyte.com/integrations/sources/greenhouse\">docs</a> for more information on how to generate this key.",
+            "credentials": {
+              "oneOf": [
+                {
+                  "description": "Authorize with Greenhouse and Airbyte manages the access and refresh tokens for you.",
+                  "properties": {
+                    "access_token": {
+                      "airbyte_secret": true,
+                      "order": 4,
+                      "title": "Access token",
+                      "type": "string"
+                    },
+                    "auth_type": {
+                      "const": "Client",
+                      "order": 0,
+                      "type": "string"
+                    },
+                    "client_id": {
+                      "airbyte_secret": true,
+                      "description": "The client ID of your Greenhouse partner OAuth application.",
+                      "order": 1,
+                      "title": "OAuth client ID",
+                      "type": "string"
+                    },
+                    "client_secret": {
+                      "airbyte_secret": true,
+                      "description": "The client secret of your Greenhouse partner OAuth application.",
+                      "order": 2,
+                      "title": "OAuth client secret",
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "airbyte_secret": true,
+                      "description": "The refresh token obtained from the Greenhouse authorization code exchange. Populated automatically when you authorize above.",
+                      "order": 3,
+                      "title": "Refresh token",
+                      "type": "string"
+                    },
+                    "token_expiry_date": {
+                      "format": "date-time",
+                      "order": 5,
+                      "title": "Token expiry date",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "auth_type",
+                    "client_id",
+                    "client_secret",
+                    "refresh_token"
+                  ],
+                  "title": "OAuth",
+                  "type": "object"
+                }
+              ],
               "order": 0,
-              "title": "API Key",
-              "type": "string"
+              "title": "Authentication",
+              "type": "object"
             },
             "num_workers": {
               "default": 2,
-              "description": "The number of worker threads to use for syncing. The default is tuned against Greenhouse's documented Harvest API rate limit. Increase this only if your Greenhouse account can support higher API usage, or lower it if you see rate-limit errors.",
+              "description": "The number of worker threads to use for syncing. Greenhouse publishes no Harvest v3 rate-limit ceiling, so the default is conservative and all threads share a single budget. Increase this only if your Greenhouse account can support higher API usage, or lower it if you see rate-limit errors.",
               "examples": [
                 1,
                 2,
@@ -79452,13 +78662,24 @@
               ],
               "maximum": 8,
               "minimum": 1,
-              "order": 1,
+              "order": 2,
               "title": "Number of concurrent threads",
               "type": "integer"
+            },
+            "start_date": {
+              "description": "UTC date and time in the format YYYY-MM-DDTHH:MM:SSZ. Records updated before this date will not be replicated. If omitted, the connector replicates all history.",
+              "examples": [
+                "2024-01-01T00:00:00Z"
+              ],
+              "format": "date-time",
+              "order": 1,
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+              "title": "Start date",
+              "type": "string"
             }
           },
           "required": [
-            "api_key"
+            "credentials"
           ],
           "type": "object"
         },
@@ -85318,16 +84539,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-instatus/0.2.15.spdx.json",
@@ -86016,16 +85237,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -90532,16 +89753,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -91085,7 +90306,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.4.0",
+      "dockerImageTag": "1.0.0",
       "dockerRepository": "airbyte/source-linear",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/linear",
       "externalDocumentationUrls": [
@@ -91114,8 +90335,8 @@
         "git": {
           "commit_author": "devin-ai-integration[bot]",
           "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
-          "commit_sha": "fdf8dc25c70ac956c382b84e92a807cc6e210763",
-          "commit_timestamp": "2026-08-26T18:20:35-07:00"
+          "commit_sha": "3989bb2aed31c5030f9b1638a4af2086f07827e9",
+          "commit_timestamp": "2026-08-28T09:06:06-07:00"
         },
         "metrics": {
           "all": {
@@ -91134,25 +90355,25 @@
         "release": {
           "attributed_to": "pnilan",
           "attributed_to_kind": "maintainer",
-          "merge_commit_sha": "fdf8dc25c70ac956c382b84e92a807cc6e210763",
-          "merged_at": "2026-08-27T01:20:35Z",
+          "merge_commit_sha": "3989bb2aed31c5030f9b1638a4af2086f07827e9",
+          "merged_at": "2026-08-28T16:06:06Z",
           "pr_author_association": "CONTRIBUTOR",
           "pr_author_id": 158243242,
           "pr_author_login": "devin-ai-integration",
           "pr_author_type": "Bot",
           "pr_merged_by_login": "pnilan",
           "pr_merged_by_type": "User",
-          "pr_number": 85056,
-          "pr_url": "https://github.com/airbytehq/airbyte/pull/85056",
-          "released_at": "2026-08-27T01:20:35Z",
+          "pr_number": 85095,
+          "pr_url": "https://github.com/airbytehq/airbyte/pull/85095",
+          "released_at": "2026-08-28T16:06:06Z",
           "source": "publish"
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-linear/0.4.0.spdx.json",
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-linear/1.0.0.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-linear/latest/metadata.yaml",
-          "metadata_last_modified": "2026-08-27T01:24:37.818895+00:00",
-          "registry_entry_generated_at": "2026-08-27T01:24:37.818895+00:00"
+          "metadata_last_modified": "2026-08-28T16:10:47.440350+00:00",
+          "registry_entry_generated_at": "2026-08-28T16:10:47.440350+00:00"
         }
       },
       "githubIssueLabel": "source-linear",
@@ -91167,6 +90388,38 @@
       "releaseDate": "2025-04-11",
       "releaseStage": "alpha",
       "releases": {
+        "breakingChanges": {
+          "1.0.0": {
+            "deadlineAction": "disable",
+            "message": "This release corrects Linear date and datetime schemas so destinations receive accurate date and timestamp column types, and removes fields deprecated by Linear: `users.inviteHash`, `users.calendarHash`, `teams.inviteHash`, `teams.private`, `teams.markedAsDuplicateWorkflowState` (with its derived `teams.markedAsDuplicateWorkflowStateId`), and `customer_statuses.type` (`teams.visibility` replaces `teams.private`). Users syncing any of these streams are affected: `attachments`, `comments`, `customer_needs`, `customer_statuses`, `customer_tiers`, `customers`, `cycles`, `issue_labels`, `issue_relations`, `issues`, `project_milestones`, `project_statuses`, `projects`, `teams`, `users`, and `workflow_states`. After upgrading and before the first sync, refresh the source schema, update downstream references to removed fields or string casts, and clear those streams. See the [Linear 1.0.0 migration guide](https://docs.airbyte.com/integrations/sources/linear-migrations#upgrading-to-100) for field-level details and steps.",
+            "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/linear-migrations#1.0.0",
+            "scopedImpact": [
+              {
+                "impactedScopes": [
+                  "attachments",
+                  "comments",
+                  "customer_needs",
+                  "customer_statuses",
+                  "customer_tiers",
+                  "customers",
+                  "cycles",
+                  "issue_labels",
+                  "issue_relations",
+                  "issues",
+                  "project_milestones",
+                  "project_statuses",
+                  "projects",
+                  "teams",
+                  "users",
+                  "workflow_states"
+                ],
+                "scopeType": "stream"
+              }
+            ],
+            "upgradeDeadline": "2026-09-11"
+          }
+        },
+        "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/linear-migrations",
         "rolloutConfiguration": {
           "advanceDelayMinutes": 10,
           "enableProgressiveRollout": false,
@@ -92291,15 +91544,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -92612,16 +91865,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           }
         },
         "release": {
@@ -93023,15 +92276,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "high",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "high",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "high",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -93988,16 +93241,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-mailersend/0.2.25.spdx.json",
@@ -94553,16 +93806,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           }
         },
         "release": {
@@ -94681,16 +93934,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "medium",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "medium",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "medium",
+            "usage": "low"
           }
         },
         "release": {
@@ -94929,7 +94182,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "2.1.1",
+      "dockerImageTag": "2.1.2",
       "dockerRepository": "airbyte/source-marketo",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/marketo",
       "externalDocumentationUrls": [
@@ -94951,10 +94204,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "Ella6882",
-          "commit_author_email": "64746286+Ella6882@users.noreply.github.com",
-          "commit_sha": "699618d17f8e46b59f52f4618f82c0f1dadea87b",
-          "commit_timestamp": "2026-07-27T14:09:12-06:00"
+          "commit_author": "devin-ai-integration[bot]",
+          "commit_author_email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
+          "commit_sha": "2d565dbc8483bed3c339b7d3826a84ce0d3344df",
+          "commit_timestamp": "2026-08-28T11:49:38-07:00"
         },
         "metrics": {
           "all": {
@@ -94970,12 +94223,28 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-marketo/2.1.1.spdx.json",
+        "release": {
+          "attributed_to": "sophiecuiy",
+          "attributed_to_kind": "maintainer",
+          "merge_commit_sha": "2d565dbc8483bed3c339b7d3826a84ce0d3344df",
+          "merged_at": "2026-08-28T18:49:39Z",
+          "pr_author_association": "CONTRIBUTOR",
+          "pr_author_id": 158243242,
+          "pr_author_login": "devin-ai-integration",
+          "pr_author_type": "Bot",
+          "pr_merged_by_login": "sophiecuiy",
+          "pr_merged_by_type": "User",
+          "pr_number": 85097,
+          "pr_url": "https://github.com/airbytehq/airbyte/pull/85097",
+          "released_at": "2026-08-28T18:49:39Z",
+          "source": "publish"
+        },
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-marketo/2.1.2.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-marketo/latest/metadata.yaml",
-          "metadata_last_modified": "2026-07-27T20:15:13.345810+00:00",
-          "registry_entry_generated_at": "2026-07-27T20:15:13.345810+00:00"
+          "metadata_last_modified": "2026-08-28T18:55:43.373077+00:00",
+          "registry_entry_generated_at": "2026-08-28T18:55:43.373077+00:00"
         }
       },
       "githubIssueLabel": "source-marketo",
@@ -96020,15 +95289,15 @@
         "metrics": {
           "all": {
             "sync_success_rate": "medium",
-            "usage": "medium"
+            "usage": "low"
           },
           "cloud": {
             "sync_success_rate": "medium",
-            "usage": "medium"
+            "usage": "low"
           },
           "oss": {
             "sync_success_rate": "medium",
-            "usage": "medium"
+            "usage": "low"
           }
         },
         "release": {
@@ -104727,16 +103996,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -105662,16 +104931,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "high",
+            "usage": "low"
           }
         },
         "release": {
@@ -106115,7 +105384,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "0.3.21",
+      "dockerImageTag": "0.3.23",
       "dockerRepository": "airbyte/source-okta",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/okta",
       "externalDocumentationUrls": [
@@ -106142,10 +105411,10 @@
       ],
       "generated": {
         "git": {
-          "commit_author": "Aaron (\"AJ\") Steers",
-          "commit_author_email": "aj@airbyte.io",
-          "commit_sha": "f589f89217fcd99c0f9bde1874730559aa8f0eeb",
-          "commit_timestamp": "2025-11-18T18:09:21-08:00"
+          "commit_author": "Airbyte Support Bot",
+          "commit_author_email": "airbyte-support-bot@airbyte.io",
+          "commit_sha": "297eaa98a9d9ad6f38f6df873ad57c4694ce32d4",
+          "commit_timestamp": "2026-08-28T11:41:06-07:00"
         },
         "metrics": {
           "all": {
@@ -106161,12 +105430,28 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-okta/0.3.21.spdx.json",
+        "release": {
+          "attributed_to": "pnilan",
+          "attributed_to_kind": "maintainer",
+          "merge_commit_sha": "297eaa98a9d9ad6f38f6df873ad57c4694ce32d4",
+          "merged_at": "2026-08-28T18:41:07Z",
+          "pr_author_association": "CONTRIBUTOR",
+          "pr_author_id": 274123553,
+          "pr_author_login": "airbyte-support-bot",
+          "pr_author_type": "User",
+          "pr_merged_by_login": "pnilan",
+          "pr_merged_by_type": "User",
+          "pr_number": 85169,
+          "pr_url": "https://github.com/airbytehq/airbyte/pull/85169",
+          "released_at": "2026-08-28T18:41:07Z",
+          "source": "publish"
+        },
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-okta/0.3.23.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-okta/latest/metadata.yaml",
-          "metadata_last_modified": "2025-11-19T02:29:36.485000+00:00",
-          "registry_entry_generated_at": "2025-11-19T02:45:22.529801"
+          "metadata_last_modified": "2026-08-28T18:46:58.689661+00:00",
+          "registry_entry_generated_at": "2026-08-28T18:46:58.689661+00:00"
         }
       },
       "githubIssueLabel": "source-okta",
@@ -106255,6 +105540,7 @@
                     "private_key": {
                       "airbyte_secret": true,
                       "description": "The private key in PEM format",
+                      "multiline": true,
                       "order": 3,
                       "title": "Private key",
                       "type": "string"
@@ -106604,16 +105890,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -110806,16 +110092,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -112808,16 +112094,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-persistiq/0.3.24.spdx.json",
@@ -120780,16 +120066,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -122176,15 +121462,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -124136,16 +123422,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-reply-io/0.2.22.spdx.json",
@@ -125305,15 +124591,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "medium"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "medium"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "medium"
           }
         },
@@ -129115,16 +128401,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -132858,16 +132144,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "medium",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "medium",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "medium",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-serpstat/0.2.24.spdx.json",
@@ -135312,6 +134598,20 @@
           "commit_author_email": "aj@airbyte.io",
           "commit_sha": "43aacb828a67de96bba9ee4773844286d4ddc691",
           "commit_timestamp": "2026-08-27T05:41:01-07:00"
+        },
+        "metrics": {
+          "all": {
+            "sync_success_rate": null,
+            "usage": null
+          },
+          "cloud": {
+            "sync_success_rate": null,
+            "usage": null
+          },
+          "oss": {
+            "sync_success_rate": null,
+            "usage": null
+          }
         },
         "release": {
           "attributed_to": "aaronsteers",
@@ -138960,16 +138260,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "medium",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "medium",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "medium",
+            "usage": "low"
           }
         },
         "release": {
@@ -139694,6 +138994,112 @@
       "tags": [
         "language:python",
         "cdk:python"
+      ],
+      "tombstone": false
+    },
+    {
+      "ab_internal": {
+        "isEnterprise": false,
+        "ql": 100,
+        "requireVersionIncrementsInPullRequests": true,
+        "sl": 100
+      },
+      "allowedHosts": {
+        "hosts": [
+          "rest.smsmode.com"
+        ]
+      },
+      "connectorBuildOptions": {
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.23.1@sha256:f71ff70e2761f634c080233f6d718bb4bcf96fa310351d56e98ba58d43ab1c9f"
+      },
+      "connectorTestSuitesOptions": [
+        {
+          "suite": "unitTests"
+        }
+      ],
+      "custom": false,
+      "dockerImageTag": "0.0.1",
+      "dockerRepository": "airbyte/source-smsmode-sms",
+      "documentationUrl": "https://docs.airbyte.com/integrations/sources/smsmode-sms",
+      "generated": {
+        "git": {
+          "commit_author": "SMSMODE",
+          "commit_author_email": "33345549+CaladeTechnologies@users.noreply.github.com",
+          "commit_sha": "67109b1fcd86f0b0fc377953e6051b56122b7aee",
+          "commit_timestamp": "2026-08-28T20:42:18+02:00"
+        },
+        "release": {
+          "attributed_to": "pnilan",
+          "attributed_to_kind": "maintainer",
+          "merge_commit_sha": "67109b1fcd86f0b0fc377953e6051b56122b7aee",
+          "merged_at": "2026-08-28T18:42:19Z",
+          "pr_author_association": "CONTRIBUTOR",
+          "pr_author_id": 33345549,
+          "pr_author_login": "CaladeTechnologies",
+          "pr_author_type": "User",
+          "pr_merged_by_login": "pnilan",
+          "pr_merged_by_type": "User",
+          "pr_number": 79709,
+          "pr_url": "https://github.com/airbytehq/airbyte/pull/79709",
+          "released_at": "2026-08-28T18:42:19Z",
+          "source": "publish"
+        },
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-smsmode-sms/0.0.1.spdx.json",
+        "source_file_info": {
+          "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
+          "metadata_file_path": "metadata/airbyte/source-smsmode-sms/latest/metadata.yaml",
+          "metadata_last_modified": "2026-08-28T18:51:28.937912+00:00",
+          "registry_entry_generated_at": "2026-08-28T18:51:28.937912+00:00"
+        }
+      },
+      "githubIssueLabel": "source-smsmode-sms",
+      "icon": "icon.svg",
+      "iconUrl": "https://connectors.airbyte.com/files/metadata/airbyte/source-smsmode-sms/latest/icon.svg",
+      "language": "manifest-only",
+      "license": "ELv2",
+      "name": "smsmode SMS",
+      "packageInfo": {},
+      "public": true,
+      "releaseDate": "2026-08-28",
+      "releaseStage": "alpha",
+      "releases": {},
+      "remoteRegistries": {
+        "pypi": {
+          "enabled": false,
+          "packageName": "airbyte-source-smsmode-sms"
+        }
+      },
+      "sourceDefinitionId": "58bf5021-0dc4-46d3-b834-bf576ee27748",
+      "sourceType": "api",
+      "spec": {
+        "connectionSpecification": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "additionalProperties": true,
+          "properties": {
+            "api_key": {
+              "airbyte_secret": true,
+              "description": "Your smsmode API key. You can generate and manage API keys in the smsmode dashboard under the 'Credentials' section: https://dev.smsmode.com/commons/v1/#tag/Credential. Make sure the key is active and has the required permissions for your use case.",
+              "name": "api_key",
+              "order": 0,
+              "title": "API Key",
+              "type": "string"
+            }
+          },
+          "required": [
+            "api_key"
+          ],
+          "type": "object"
+        },
+        "documentationUrl": "https://dev.smsmode.com/sms/v1/#tag/Callback/operation/receive-sms-mo-message",
+        "supportsDBT": false,
+        "supportsNormalization": false
+      },
+      "supportLevel": "community",
+      "supportsDataActivation": false,
+      "supportsFileTransfer": false,
+      "tags": [
+        "language:manifest-only",
+        "cdk:low-code"
       ],
       "tombstone": false
     },
@@ -142739,16 +142145,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-strava/0.3.52.spdx.json",
@@ -142879,7 +142285,7 @@
         ]
       },
       "connectorBuildOptions": {
-        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.24.0@sha256:e34fb609bccdeb77474763c77e3621ea9d5adf9f65f2d9851102cc14a1caa281"
+        "baseImage": "docker.io/airbyte/source-declarative-manifest:7.25.1@sha256:cdbd1578932d121f2852c065fbabebc49ccbf00078606dc503be5e4c66b373df"
       },
       "connectorTestSuitesOptions": [
         {
@@ -142933,7 +142339,7 @@
         }
       ],
       "custom": false,
-      "dockerImageTag": "6.0.13",
+      "dockerImageTag": "6.0.15",
       "dockerRepository": "airbyte/source-stripe",
       "documentationUrl": "https://docs.airbyte.com/integrations/sources/stripe",
       "erdUrl": "https://dbdocs.io/airbyteio/source-stripe?view=relationships",
@@ -142983,8 +142389,8 @@
         "git": {
           "commit_author": "octavia-bot-hoard[bot]",
           "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-          "commit_sha": "90f507bcfa288fb8ae969171c0bf06f79a1b631b",
-          "commit_timestamp": "2026-08-11T08:34:25+00:00"
+          "commit_sha": "8700f763bab0d9a430ab9e5e0017f74432cb59f5",
+          "commit_timestamp": "2026-08-18T08:22:12+00:00"
         },
         "metrics": {
           "all": {
@@ -143000,12 +142406,24 @@
             "usage": "high"
           }
         },
-        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-stripe/6.0.13.spdx.json",
+        "release": {
+          "attributed_to": null,
+          "merge_commit_sha": "8700f763bab0d9a430ab9e5e0017f74432cb59f5",
+          "merged_at": "2026-08-18T08:22:13Z",
+          "pr_author_id": 230633153,
+          "pr_author_login": "octavia-bot-hoard",
+          "pr_author_type": "Bot",
+          "pr_number": 84768,
+          "pr_url": "https://github.com/airbytehq/airbyte/pull/84768",
+          "released_at": "2026-08-18T08:22:13Z",
+          "source": "publish"
+        },
+        "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-stripe/6.0.15.spdx.json",
         "source_file_info": {
           "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
           "metadata_file_path": "metadata/airbyte/source-stripe/latest/metadata.yaml",
-          "metadata_last_modified": "2026-08-11T08:38:27.095004+00:00",
-          "registry_entry_generated_at": "2026-08-11T08:38:27.095004+00:00"
+          "metadata_last_modified": "2026-08-18T08:26:39.313157+00:00",
+          "registry_entry_generated_at": "2026-08-18T08:26:39.313157+00:00"
         }
       },
       "githubIssueLabel": "source-stripe",
@@ -143059,373 +142477,6 @@
           }
         },
         "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/stripe-migrations",
-        "releaseCandidates": {
-          "6.0.15": {
-            "ab_internal": {
-              "isEnterprise": false,
-              "ql": 400,
-              "requireVersionIncrementsInPullRequests": true,
-              "sl": 300
-            },
-            "allowedHosts": {
-              "hosts": [
-                "api.stripe.com"
-              ]
-            },
-            "connectorBuildOptions": {
-              "baseImage": "docker.io/airbyte/source-declarative-manifest:7.25.1@sha256:cdbd1578932d121f2852c065fbabebc49ccbf00078606dc503be5e4c66b373df"
-            },
-            "connectorTestSuitesOptions": [
-              {
-                "suite": "liveTests",
-                "testConnections": [
-                  {
-                    "id": "0f3c8a84-53e2-4a33-89a9-26bf36a2367c",
-                    "name": "stripe_config_dev_null"
-                  },
-                  {
-                    "id": "4f738e2c-a1d2-48b4-9b93-f56e2258068d",
-                    "name": "stripe_performance-config_dev_null"
-                  },
-                  {
-                    "id": "97d55640-b443-49c5-a9d9-aed28396841d",
-                    "name": "stripe_connected_account_config_dev_null"
-                  }
-                ]
-              },
-              {
-                "suite": "unitTests"
-              },
-              {
-                "suite": "acceptanceTests",
-                "testSecrets": [
-                  {
-                    "fileName": "connected_account_config.json",
-                    "name": "SECRET_SOURCE-STRIPE_CONNECTED_ACCOUNT__CREDS",
-                    "secretStore": {
-                      "alias": "airbyte-connector-testing-secret-store",
-                      "type": "GSM"
-                    }
-                  },
-                  {
-                    "fileName": "config.json",
-                    "name": "SECRET_SOURCE-STRIPE__CREDS",
-                    "secretStore": {
-                      "alias": "airbyte-connector-testing-secret-store",
-                      "type": "GSM"
-                    }
-                  },
-                  {
-                    "fileName": "performance-config.json",
-                    "name": "SECRET_SOURCE-STRIPE__PERFORMANCE",
-                    "secretStore": {
-                      "alias": "airbyte-connector-testing-secret-store",
-                      "type": "GSM"
-                    }
-                  }
-                ]
-              }
-            ],
-            "custom": false,
-            "dockerImageTag": "6.0.15",
-            "dockerRepository": "airbyte/source-stripe",
-            "documentationUrl": "https://docs.airbyte.com/integrations/sources/stripe",
-            "erdUrl": "https://dbdocs.io/airbyteio/source-stripe?view=relationships",
-            "externalDocumentationUrls": [
-              {
-                "title": "Stripe API reference",
-                "type": "api_reference",
-                "url": "https://stripe.com/docs/api"
-              },
-              {
-                "title": "API changelog",
-                "type": "api_release_history",
-                "url": "https://docs.stripe.com/changelog"
-              },
-              {
-                "title": "API upgrades",
-                "type": "api_release_history",
-                "url": "https://docs.stripe.com/upgrades"
-              },
-              {
-                "title": "Stripe API changelog",
-                "type": "api_release_history",
-                "url": "https://stripe.com/docs/upgrades"
-              },
-              {
-                "title": "Stripe authentication",
-                "type": "authentication_guide",
-                "url": "https://stripe.com/docs/api/authentication"
-              },
-              {
-                "title": "Stripe API OpenAPI specification",
-                "type": "openapi_spec",
-                "url": "https://github.com/stripe/openapi"
-              },
-              {
-                "title": "Stripe rate limits",
-                "type": "rate_limits",
-                "url": "https://stripe.com/docs/rate-limits"
-              },
-              {
-                "title": "Stripe Status",
-                "type": "status_page",
-                "url": "https://status.stripe.com/"
-              }
-            ],
-            "generated": {
-              "git": {
-                "commit_author": "octavia-bot-hoard[bot]",
-                "commit_author_email": "230633153+octavia-bot-hoard[bot]@users.noreply.github.com",
-                "commit_sha": "8700f763bab0d9a430ab9e5e0017f74432cb59f5",
-                "commit_timestamp": "2026-08-18T08:22:12+00:00"
-              },
-              "release": {
-                "attributed_to": null,
-                "merge_commit_sha": "8700f763bab0d9a430ab9e5e0017f74432cb59f5",
-                "merged_at": "2026-08-18T08:22:13Z",
-                "pr_author_id": 230633153,
-                "pr_author_login": "octavia-bot-hoard",
-                "pr_author_type": "Bot",
-                "pr_number": 84768,
-                "pr_url": "https://github.com/airbytehq/airbyte/pull/84768",
-                "released_at": "2026-08-18T08:22:13Z",
-                "source": "publish"
-              },
-              "sbomUrl": "https://connectors.airbyte.com/files/sbom/airbyte/source-stripe/6.0.15.spdx.json",
-              "source_file_info": {
-                "metadata_bucket_name": "prod-airbyte-cloud-connector-metadata-service",
-                "metadata_file_path": "metadata/airbyte/source-stripe/6.0.15/metadata.yaml",
-                "metadata_last_modified": "2026-08-18T08:26:39.313157+00:00",
-                "registry_entry_generated_at": "2026-08-18T08:26:39.313157+00:00"
-              }
-            },
-            "githubIssueLabel": "source-stripe",
-            "icon": "stripe.svg",
-            "iconUrl": "https://connectors.airbyte.com/files/metadata/airbyte/source-stripe/latest/icon.svg",
-            "language": "manifest-only",
-            "license": "ELv2",
-            "maxSecondsBetweenMessages": 86400,
-            "name": "Stripe",
-            "packageInfo": {},
-            "public": true,
-            "releaseStage": "generally_available",
-            "releases": {
-              "breakingChanges": {
-                "4.0.0": {
-                  "message": "Version 4.0.0 changes the cursors in most of the Stripe streams that support incremental sync mode. This is done to not only sync the data that was created since previous sync, but also the data that was modified. A schema refresh of all effected streams is required to use the new cursor format.",
-                  "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/stripe-migrations#4.0.0",
-                  "upgradeDeadline": "2023-09-14"
-                },
-                "5.0.0": {
-                  "message": "Version 5.0.0 introduces fixes for the `CheckoutSessions`, `CheckoutSessionsLineItems` and `Refunds` streams. The cursor field is changed for the `CheckoutSessionsLineItems` and `Refunds` streams. This will prevent data loss during incremental syncs. Also, the `Invoices`, `Subscriptions` and `SubscriptionSchedule` stream schemas have been updated.",
-                  "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/stripe-migrations#5.0.0",
-                  "upgradeDeadline": "2023-12-11"
-                },
-                "5.4.0": {
-                  "message": "Version 5.4.0 introduces fixes for the `Refunds` streams. The `Refunds`, which previously was `incremental` on the `creation date`, now tracks updates as well. In order to do that, the cursor field needs to be updated and a `resetting` is required to get the updates.",
-                  "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/stripe-migrations#5.4.0",
-                  "scopedImpact": [
-                    {
-                      "impactedScopes": [
-                        "refunds"
-                      ],
-                      "scopeType": "stream"
-                    }
-                  ],
-                  "upgradeDeadline": "2024-07-14"
-                },
-                "6.0.0": {
-                  "message": "Version 6.0.0 fixes a bug where the `invoice_line_items` and `subscription_items` incremental streams emitted only one record per event instead of expanding nested line items. Previously synced data for these streams may be incomplete. Users can run a full refresh to recapture the correct values. If choosing Full Refresh, decide between Refresh and Retain (keeps existing destination data) or Refresh and Clear (replaces destination data but may lose events older than 30 days due to the Stripe Events API retention limit). See the [migration guide](https://docs.airbyte.com/integrations/sources/stripe-migrations#upgrading-to-600) for details.",
-                  "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/stripe-migrations#6.0.0",
-                  "scopedImpact": [
-                    {
-                      "impactedScopes": [
-                        "invoice_line_items",
-                        "subscription_items"
-                      ],
-                      "scopeType": "stream"
-                    }
-                  ],
-                  "upgradeDeadline": "2026-05-12"
-                }
-              },
-              "migrationDocumentationUrl": "https://docs.airbyte.com/integrations/sources/stripe-migrations",
-              "rolloutConfiguration": {
-                "advanceDelayMinutes": 10,
-                "autopilotConfig": {
-                  "autoPromoteStages": true,
-                  "autoStart": true,
-                  "strategy": "fast"
-                },
-                "defaultRolloutMode": "autopilot",
-                "enableProgressiveRollout": true,
-                "initialPercentage": 0,
-                "maxPercentage": 50
-              }
-            },
-            "remoteRegistries": {
-              "pypi": {
-                "enabled": false,
-                "packageName": "airbyte-source-stripe"
-              }
-            },
-            "sourceDefinitionId": "e094cb9a-26de-4645-8761-65c0c425d1de",
-            "sourceType": "api",
-            "spec": {
-              "connectionSpecification": {
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "properties": {
-                  "account_id": {
-                    "description": "Your Stripe account ID (starts with 'acct_', find yours <a href=\"https://dashboard.stripe.com/settings/account\">here</a>).",
-                    "order": 0,
-                    "title": "Account ID",
-                    "type": "string"
-                  },
-                  "api_retention_streams": {
-                    "default": [],
-                    "description": "Select streams where cursor age is validated against the Stripe API 30-day event retention period. When a selected stream's cursor is older than 30 days, the connector performs a full refresh to avoid missing data. Streams not selected here will always use incremental sync regardless of cursor age.",
-                    "items": {
-                      "enum": [
-                        "accounts",
-                        "application_fees",
-                        "application_fees_refunds",
-                        "authorizations",
-                        "bank_accounts",
-                        "cardholders",
-                        "charges",
-                        "checkout_sessions",
-                        "coupons",
-                        "credit_notes",
-                        "customers",
-                        "disputes",
-                        "early_fraud_warnings",
-                        "external_account_bank_accounts",
-                        "external_account_cards",
-                        "invoice_items",
-                        "invoice_line_items",
-                        "invoices",
-                        "payment_intents",
-                        "payment_methods",
-                        "payouts",
-                        "persons",
-                        "plans",
-                        "prices",
-                        "products",
-                        "promotion_codes",
-                        "refunds",
-                        "reviews",
-                        "setup_intents",
-                        "subscription_items",
-                        "subscription_schedule",
-                        "subscriptions",
-                        "top_ups",
-                        "transactions",
-                        "transfers"
-                      ],
-                      "type": "string"
-                    },
-                    "order": 7,
-                    "title": "Streams with API Data Retention Validation",
-                    "type": "array",
-                    "uniqueItems": true
-                  },
-                  "call_rate_limit": {
-                    "description": "The number of API calls per second that you allow connector to make. This value can not be bigger than real API call rate limit (https://stripe.com/docs/rate-limits). If not specified the default maximum is 25 calls per second for test/sandbox tokens and 100 for production tokens.",
-                    "examples": [
-                      25,
-                      100
-                    ],
-                    "title": "Max number of API calls per second",
-                    "type": "integer"
-                  },
-                  "client_secret": {
-                    "airbyte_secret": true,
-                    "description": "Stripe API key (usually starts with 'sk_live_'; find yours <a href=\"https://dashboard.stripe.com/apikeys\">here</a>).",
-                    "order": 1,
-                    "title": "Secret Key",
-                    "type": "string"
-                  },
-                  "lookback_window_days": {
-                    "default": 0,
-                    "description": "When set, the connector will always re-export data from the past N days, where N is the value set here. This is useful if your data is frequently updated after creation. The Lookback Window only applies to streams that do not support event-based incremental syncs: Events, SetupAttempts, ShippingRates, BalanceTransactions, Files, FileLinks, Refunds. More info <a href=\"https://docs.airbyte.com/integrations/sources/stripe#requirements\">here</a>",
-                    "minimum": 0,
-                    "order": 3,
-                    "title": "Lookback Window in days",
-                    "type": "integer"
-                  },
-                  "num_workers": {
-                    "default": 10,
-                    "description": "The number of worker thread to use for the sync. The performance upper boundary depends on call_rate_limit setting and type of account.",
-                    "examples": [
-                      2,
-                      3,
-                      4
-                    ],
-                    "maximum": 100,
-                    "minimum": 2,
-                    "order": 5,
-                    "title": "Number of concurrent threads",
-                    "type": "integer"
-                  },
-                  "slice_range": {
-                    "default": 365,
-                    "description": "The time increment used by the connector when requesting data from the Stripe API. The bigger the value is, the less requests will be made and faster the sync will be. On the other hand, the more seldom the state is persisted.",
-                    "examples": [
-                      1,
-                      3,
-                      10,
-                      30,
-                      180,
-                      360
-                    ],
-                    "minimum": 1,
-                    "order": 4,
-                    "title": "Data request time increment in days",
-                    "type": "integer"
-                  },
-                  "start_date": {
-                    "default": "2017-01-25T00:00:00Z",
-                    "description": "UTC date and time in the format 2017-01-25T00:00:00Z. Only data generated after this date will be replicated.",
-                    "examples": [
-                      "2017-01-25T00:00:00Z"
-                    ],
-                    "format": "date-time",
-                    "order": 2,
-                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
-                    "title": "Replication start date",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "client_secret",
-                  "account_id"
-                ],
-                "title": "Stripe Source Spec",
-                "type": "object"
-              },
-              "supportsDBT": false,
-              "supportsNormalization": false
-            },
-            "suggestedStreams": {
-              "streams": [
-                "customers",
-                "invoices",
-                "charges",
-                "subscriptions",
-                "refunds"
-              ]
-            },
-            "supportLevel": "certified",
-            "supportsDataActivation": false,
-            "supportsFileTransfer": false,
-            "tags": [
-              "cdk:low-code",
-              "language:manifest-only"
-            ],
-            "tombstone": false
-          }
-        },
         "rolloutConfiguration": {
           "advanceDelayMinutes": 10,
           "autopilotConfig": {
@@ -144474,16 +143525,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -146362,16 +145413,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -148642,15 +147693,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "high",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "high",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "high",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -149291,16 +148342,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -153268,15 +152319,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "low",
+            "sync_success_rate": "medium",
             "usage": "low"
           }
         },
@@ -153401,15 +152452,15 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "medium",
+            "sync_success_rate": "low",
             "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": "medium",
+            "sync_success_rate": "low",
             "usage": "low"
           },
           "oss": {
-            "sync_success_rate": "medium",
+            "sync_success_rate": "low",
             "usage": "low"
           }
         },
@@ -155528,16 +154579,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "cloud": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           },
           "oss": {
-            "sync_success_rate": null,
-            "usage": null
+            "sync_success_rate": "low",
+            "usage": "low"
           }
         },
         "release": {
@@ -156594,16 +155645,16 @@
         },
         "metrics": {
           "all": {
-            "sync_success_rate": "medium",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "cloud": {
-            "sync_success_rate": "medium",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           },
           "oss": {
-            "sync_success_rate": "medium",
-            "usage": "low"
+            "sync_success_rate": null,
+            "usage": null
           }
         },
         "release": {
@@ -161584,15 +160635,15 @@
         "metrics": {
           "all": {
             "sync_success_rate": "medium",
-            "usage": "high"
+            "usage": "medium"
           },
           "cloud": {
             "sync_success_rate": "medium",
-            "usage": "high"
+            "usage": "medium"
           },
           "oss": {
             "sync_success_rate": "medium",
-            "usage": "high"
+            "usage": "medium"
           }
         },
         "release": {

@@ -179,7 +179,8 @@ export const useOrganizationUsage = ({ timeWindow }: { timeWindow: ConsumptionTi
 };
 
 export const useOrganizationWorkerUsage = (
-  params: Pick<OrganizationDataWorkerUsageRequestBody, "startDate" | "endDate">
+  params: Pick<OrganizationDataWorkerUsageRequestBody, "startDate" | "endDate">,
+  refetchInterval = 60_000
 ) => {
   const requestOptions = useRequestOptions();
   const organizationId = useCurrentOrganizationId();
@@ -189,8 +190,31 @@ export const useOrganizationWorkerUsage = (
     () => getOrganizationDataWorkerUsage({ organizationId, ...params }, requestOptions),
     // A refetch on mount can land mid-animation and cancel the chart's mount animation,
     // so range switches must always render straight from cache. The polling interval is
-    // the sole freshness mechanism; it starts a minute after mount, safely past the animation.
-    { staleTime: Infinity, refetchInterval: 60_000 }
+    // the sole freshness mechanism; it starts after the configured interval, safely past the animation.
+    { staleTime: Infinity, refetchInterval }
+  );
+};
+
+/**
+ * Deliberately a plain `useQuery` rather than `useSuspenseQuery`. Historical comparison data is
+ * fetched only when the caller enables comparison, and the current-period chart must remain
+ * visible while this query loads or fails. Callers render query failures inline. Unlike the
+ * current-period query above, completed historical periods do not poll.
+ */
+export const useOrganizationHistoricalWorkerUsage = (
+  params: Pick<OrganizationDataWorkerUsageRequestBody, "startDate" | "endDate">,
+  options?: { enabled?: boolean }
+) => {
+  const requestOptions = useRequestOptions();
+  const organizationId = useCurrentOrganizationId();
+
+  return useQuery(
+    organizationKeys.workerUsage(organizationId, params.startDate, params.endDate),
+    () => getOrganizationDataWorkerUsage({ organizationId, ...params }, requestOptions),
+    {
+      enabled: options?.enabled ?? true,
+      staleTime: Infinity,
+    }
   );
 };
 
