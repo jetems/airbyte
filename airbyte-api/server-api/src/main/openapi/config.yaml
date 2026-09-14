@@ -5652,6 +5652,21 @@ paths:
       responses:
         "204":
           description: Successfully unscheduled cancelation of the subscription
+  /v1/billing/unschedule_plan_change:
+    post:
+      summary: Unschedule a scheduled plan change of the subscription of an organization
+      tags:
+        - billing
+        - cloud-only
+      operationId: unschedulePlanChange
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationIdRequestBody"
+      responses:
+        "204":
+          description: Successfully unscheduled the plan change of the subscription
   /v1/billing/disable_delinquent_workspaces:
     post:
       summary: Disable connections in workspaces that are delinquent in payment
@@ -9576,7 +9591,7 @@ paths:
           schema:
             type: boolean
           required: false
-          description: Rather than return *** for secret properties include the secret coordinate information
+          description: "Rather than return *** for secret properties include the secret coordinate information. Coordinates are opaque pointers, not secret values, and resolving one requires access to the secret storage that holds it. They are not stable: a coordinate changes when the secret is rewritten."
     patch:
       tags:
         - public_sources
@@ -9832,7 +9847,7 @@ paths:
           schema:
             type: boolean
           required: false
-          description: Rather than return *** for secret properties include the secret coordinate information
+          description: "Rather than return *** for secret properties include the secret coordinate information. Coordinates are opaque pointers, not secret values, and resolving one requires access to the secret storage that holds it. They are not stable: a coordinate changes when the secret is rewritten."
     delete:
       tags:
         - public_destinations
@@ -12542,6 +12557,13 @@ components:
           type: string
         feature_name:
           type: string
+        value:
+          type: integer
+          format: int64
+          description: The numeric value of a numeric entitlement with a finite value. Null for boolean entitlements, unlimited numeric entitlements, and entitlements that are not granted.
+        is_unlimited:
+          type: boolean
+          description: True when the entitlement is a granted numeric entitlement that is unlimited.
 
     GetEntitlementsByOrganizationIdRequestBody:
       type: object
@@ -12948,6 +12970,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/WorkspaceRead"
+        total_workspace_count:
+          type: integer
+          format: int64
+          description: The total number of non-deleted workspaces in the organization, ignoring pagination and keyword filtering. Only populated by organization-scoped list operations.
     TimeWindowRequestBody:
       description: Input to filter workspaces with most recently running jobs within the given time window
       type: object
@@ -14378,7 +14404,7 @@ components:
         sourceId:
           $ref: "#/components/schemas/SourceId"
         includeSecretCoordinates:
-          description: If true, the response will include secret coordinates in the connection configuration.
+          description: "Rather than return *** for secret properties include the secret coordinate information. Coordinates are opaque pointers, not secret values, and resolving one requires access to the secret storage that holds it. They are not stable: a coordinate changes when the secret is rewritten."
           type: boolean
           default: false
     SourceCloneRequestBody:
@@ -16619,10 +16645,19 @@ components:
           default: portal
         plan:
           type: string
-          description: Requested self-serve plan when initiating setup checkout. Defaults to standard for backwards compatibility.
+          description: |
+            Requested self-serve plan when initiating setup checkout or switching plans. Plus tiers differ only in
+            included credits and price. `plus` is a legacy alias for `plus_100`. Defaults to standard for backwards
+            compatibility.
           enum:
             - standard
             - plus
+            - plus_40
+            - plus_100
+            - plus_250
+            - plus_500
+            - plus_1000
+            - plus_2000
           default: standard
     CustomerPortalRead:
       type: object
@@ -16776,6 +16811,39 @@ components:
                 $ref: "#/components/schemas/CreditBlockRead"
         entitlementPlan:
           $ref: "#/components/schemas/EntitlementPlanResponse"
+        selfServePlan:
+          type: string
+          description: The self-serve plan the organization's active self-serve subscription is on. Absent when the organization has no subscription on a configured self-serve plan.
+          enum:
+            - standard
+            - plus_40
+            - plus_100
+            - plus_250
+            - plus_500
+            - plus_1000
+            - plus_2000
+        pendingPlanChange:
+          type: object
+          description: A plan change scheduled on the organization's active self-serve subscription. Absent when no plan change is scheduled.
+          required:
+            - effectiveDate
+            - planName
+          properties:
+            effectiveDate:
+              $ref: "#/components/schemas/ISO8601DateTime"
+            planName:
+              type: string
+            selfServePlan:
+              type: string
+              description: The self-serve plan the subscription will move to. Absent when the target plan is not a configured self-serve plan.
+              enum:
+                - standard
+                - plus_40
+                - plus_100
+                - plus_250
+                - plus_500
+                - plus_1000
+                - plus_2000
     EntitlementPlanResponse:
       type: object
       required:

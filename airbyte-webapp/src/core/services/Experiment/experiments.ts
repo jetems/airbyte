@@ -7,8 +7,10 @@
  */
 
 export interface Experiments {
+  "adp.external-cloud-orgs.enabled": boolean;
   allowAgentsDataReplicationAccess: boolean;
   asyncSchemaDiscovery: boolean;
+  "audit-log-ui": boolean;
   "billing.early-sync-enabled": boolean;
   "billing.selfServePlusPlan": boolean;
   "connection.allowToSupportAllSyncModes": boolean;
@@ -31,6 +33,8 @@ export interface Experiments {
   "connectorBuilder.generateConnectorFromParams": boolean;
   "onboarding.surveyEnabled": boolean;
   "organization.workerUsagePage": boolean;
+  "plan-page-redesign-ui": boolean;
+  "platform.enable-data-worker-allocation": boolean;
   "platform.llm-sync-job-failure-explanation": boolean;
   "platform.use-runtime-secret-persistence": boolean;
   "platform.use-verified-domains-for-sso-activate": boolean;
@@ -45,8 +49,10 @@ export interface Experiments {
 }
 
 export const defaultExperimentValues: Experiments = {
+  "adp.external-cloud-orgs.enabled": false,
   allowAgentsDataReplicationAccess: false,
   asyncSchemaDiscovery: true,
+  "audit-log-ui": false,
   "billing.early-sync-enabled": false,
   "billing.selfServePlusPlan": false,
   "connection.allowToSupportAllSyncModes": false,
@@ -84,6 +90,8 @@ export const defaultExperimentValues: Experiments = {
   "connectorBuilder.generateConnectorFromParams": false,
   "onboarding.surveyEnabled": false,
   "organization.workerUsagePage": false,
+  "plan-page-redesign-ui": false,
+  "platform.enable-data-worker-allocation": false,
   "platform.llm-sync-job-failure-explanation": false,
   "platform.use-runtime-secret-persistence": false,
   "platform.use-verified-domains-for-sso-activate": false,

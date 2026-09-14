@@ -11,6 +11,7 @@ import io.airbyte.commons.entitlements.models.Entitlement
 import io.airbyte.commons.entitlements.models.EntitlementResult
 import io.airbyte.commons.entitlements.models.Entitlements
 import io.airbyte.commons.entitlements.models.NumericEntitlementResult
+import io.airbyte.commons.entitlements.models.PlanNameEntitlement
 import io.airbyte.domain.models.EntitlementPlan
 import io.airbyte.domain.models.OrganizationId
 import io.airbyte.featureflag.BypassStiggEntitlementChecks
@@ -146,7 +147,7 @@ internal class StiggWrapper(
             GetEnumEntitlementRequest
               .newBuilder()
               .setCustomerId(organizationId.value.toString())
-              .setFeatureId("feature-plan-name")
+              .setFeatureId(PlanNameEntitlement.featureId)
               .build(),
           )
         }
@@ -348,10 +349,18 @@ internal class StiggWrapper(
     }
 
     return result.entitlementsList.mapNotNull {
+      var numericValue: Long? = null
+      var isUnlimited = false
       val featureId =
         when (it.entitlementCase) {
           io.stigg.sidecar.proto.v1.Entitlement.EntitlementCase.BOOLEAN -> it.boolean.feature.id
-          io.stigg.sidecar.proto.v1.Entitlement.EntitlementCase.NUMERIC -> it.numeric.feature.id
+          io.stigg.sidecar.proto.v1.Entitlement.EntitlementCase.NUMERIC -> {
+            if (!it.numeric.isUnlimited) {
+              numericValue = it.numeric.value.toLong()
+            }
+            isUnlimited = it.numeric.isUnlimited
+            it.numeric.feature.id
+          }
           io.stigg.sidecar.proto.v1.Entitlement.EntitlementCase.METERED -> it.metered.feature.id
           io.stigg.sidecar.proto.v1.Entitlement.EntitlementCase.ENUM -> it.enum.feature.id
           io.stigg.sidecar.proto.v1.Entitlement.EntitlementCase.ENTITLEMENT_NOT_SET -> {
@@ -374,6 +383,8 @@ internal class StiggWrapper(
         isEntitled = true,
         reason = null,
         featureName = entitlement?.name,
+        value = numericValue,
+        isUnlimited = isUnlimited,
       )
     }
   }

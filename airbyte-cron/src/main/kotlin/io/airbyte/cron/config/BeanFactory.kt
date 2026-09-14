@@ -7,6 +7,8 @@ package io.airbyte.cron.config
 import io.airbyte.commons.constants.WorkerConstants.KubeConstants
 import io.airbyte.commons.micronaut.EnvConstants
 import io.airbyte.config.persistence.StreamResetPersistence
+import io.airbyte.config.persistence.UserPersistence
+import io.airbyte.config.persistence.WorkspacePersistence
 import io.airbyte.data.services.shared.DataSourceUnwrapper
 import io.airbyte.db.Database
 import io.airbyte.db.check.DatabaseMigrationCheck
@@ -136,6 +138,16 @@ class BeanFactory {
   fun metadataPersistence(
     @Named("jobsDatabase") jobDatabase: Database,
   ): MetadataPersistence = DefaultMetadataPersistence(jobDatabase)
+
+  @Singleton
+  fun workspacePersistence(
+    @Named("configDatabase") configDatabase: Database,
+  ): WorkspacePersistence = WorkspacePersistence(configDatabase)
+
+  @Singleton
+  fun userPersistence(
+    @Named("configDatabase") configDatabase: Database,
+  ): UserPersistence = UserPersistence(configDatabase)
 
   @Singleton
   @Named("dbPrune")

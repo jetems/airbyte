@@ -24,11 +24,14 @@ import io.airbyte.api.model.generated.WorkspaceUpdate
 import io.airbyte.api.model.generated.WorkspaceUpdateName
 import io.airbyte.api.model.generated.WorkspaceUpdateOrganization
 import io.airbyte.api.problems.model.generated.ProblemMessageData
+import io.airbyte.api.problems.model.generated.ProblemWorkspaceLimitData
 import io.airbyte.api.problems.throwable.generated.ForbiddenProblem
+import io.airbyte.api.problems.throwable.generated.WorkspaceLimitForOrganizationReachedProblem
 import io.airbyte.commons.PRIVATELINK_DATAPLANE_GROUP_ORGANIZATION_ID
 import io.airbyte.commons.annotation.InternalForTesting
 import io.airbyte.commons.auth.roles.AuthRoleConstants
 import io.airbyte.commons.entitlements.EntitlementService
+import io.airbyte.commons.entitlements.models.MaximumWorkspacesEntitlement
 import io.airbyte.commons.entitlements.models.PrivateLinkEntitlement
 import io.airbyte.commons.random.randomAlpha
 import io.airbyte.commons.server.authorization.RoleResolver
@@ -77,6 +80,9 @@ import java.util.Optional
 import java.util.UUID
 import java.util.function.Supplier
 import java.util.stream.Collectors
+
+/** Workspaces allowed to an organization whose plan grants no workspace entitlement. */
+private const val DEFAULT_WORKSPACE_LIMIT = 1L
 
 /**
  * WorkspacesHandler. Javadocs suppressed because api docs should be used as source of truth.
@@ -173,6 +179,8 @@ class WorkspacesHandler
         throw BadObjectSchemaKnownException("Workspace missing org ID.")
       }
 
+      ensureWithinMaximumWorkspaces(workspaceCreateWithId.id, workspaceCreateWithId.organizationId)
+
       val email = workspaceCreateWithId.email
       val anonymousDataCollection = workspaceCreateWithId.anonymousDataCollection
       val news = workspaceCreateWithId.news
@@ -224,6 +232,57 @@ class WorkspacesHandler
 
       return persistStandardWorkspace(workspace)
     }
+
+    /**
+     * Enforce the feature-maximum-workspaces entitlement: creating a workspace must not bring the
+     * organization's workspace count above the entitled maximum. Unlimited entitlements, and
+     * entitlements without a numeric value, do not impose a limit. Instance admins are exempt.
+     */
+    private fun ensureWithinMaximumWorkspaces(
+      workspaceId: UUID,
+      organizationId: UUID,
+    ) {
+      // Re-creating an existing workspace updates it rather than adding a new one, so it is exempt.
+      if (workspacePersistence.workspaceExists(workspaceId)) return
+
+      val limitResult =
+        entitlementService.getNumericEntitlement(
+          OrganizationId(organizationId),
+          MaximumWorkspacesEntitlement,
+        )
+      if (limitResult.isUnlimited) return
+
+      val limit =
+        when {
+          limitResult.hasAccess -> limitResult.value ?: return
+          // Cloud plans without a workspace entitlement (Standard) allow exactly one workspace. Deployments without a
+          // plan (Community, unlicensed Enterprise, Cloud without an entitlement platform) keep unlimited workspaces.
+          airbyteEdition == AirbyteEdition.CLOUD && entitlementService.getCurrentPlanId(OrganizationId(organizationId)) != null ->
+            DEFAULT_WORKSPACE_LIMIT
+          else -> return
+        }
+      val existingWorkspaceCount = workspacePersistence.countWorkspacesByOrganizationId(organizationId)
+      if (existingWorkspaceCount < limit) return
+
+      // Instance admins may always create workspaces, regardless of the limit.
+      if (isCallerInstanceAdmin()) return
+
+      throw WorkspaceLimitForOrganizationReachedProblem(
+        data = ProblemWorkspaceLimitData().limit(limit),
+      )
+    }
+
+    private fun isCallerInstanceAdmin(): Boolean =
+      try {
+        roleResolver
+          .newRequest()
+          .withCurrentUser()
+          .roles()
+          .contains(AuthRoleConstants.ADMIN)
+      } catch (e: Exception) {
+        // If the caller's roles cannot be resolved, do not grant the instance-admin exemption.
+        false
+      }
 
     fun deleteWorkspace(workspaceIdRequestBody: WorkspaceIdRequestBody) {
       // get existing implementation
@@ -345,7 +404,9 @@ class WorkspacesHandler
             .map<WorkspaceRead> { obj: StandardWorkspace -> domainToApiModel(obj) }
             .collect(Collectors.toList<WorkspaceRead>())
         }
-      return WorkspaceReadList().workspaces(standardWorkspaces)
+      return WorkspaceReadList()
+        .workspaces(standardWorkspaces)
+        .totalWorkspaceCount(workspacePersistence.countWorkspacesByOrganizationId(request.organizationId))
     }
 
     fun listWorkspacesInOrganizationForUser(
@@ -379,7 +440,11 @@ class WorkspacesHandler
             .map { obj: StandardWorkspace -> domainToApiModel(obj) }
             .collect(Collectors.toList())
         }
-      return WorkspaceReadList().workspaces(standardWorkspaces)
+      // The list contains only the workspaces the calling user can access, but the total reflects
+      // the whole organization so clients can enforce org-wide workspace limits.
+      return WorkspaceReadList()
+        .workspaces(standardWorkspaces)
+        .totalWorkspaceCount(workspacePersistence.countWorkspacesByOrganizationId(request.organizationId))
     }
 
     private fun listWorkspacesByInstanceAdminUser(request: ListWorkspacesByUserRequestBody): WorkspaceReadList {

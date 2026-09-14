@@ -4,7 +4,8 @@ import { mocked, render } from "test-utils";
 
 import { useGetConnectorsOutOfDate } from "area/connector/utils/useConnector";
 import { isOrganizationSubscribed, useCurrentOrganizationId } from "area/organization/utils";
-import { useDefaultWorkspaceInOrganization, useOrgInfo } from "core/api";
+import { useShowAgentsOptIn } from "cloud/components/AgentsOptIn/useShowAgentsOptIn";
+import { useAgentsProvisioningStatus, useDefaultWorkspaceInOrganization, useOrgInfo } from "core/api";
 import { useExperiment } from "core/services/Experiment";
 import { FeatureItem, useFeature } from "core/services/features";
 import { useIsCloudApp } from "core/utils/app";
@@ -24,8 +25,13 @@ jest.mock("area/organization/utils", () => ({
 // The core/api barrel cannot be spread from jest.requireActual (its import graph is circular and
 // fails at module evaluation), so this factory must explicitly list every export the page tree uses.
 jest.mock("core/api", () => ({
+  useAgentsProvisioningStatus: jest.fn(),
   useDefaultWorkspaceInOrganization: jest.fn(),
   useOrgInfo: jest.fn(),
+}));
+
+jest.mock("cloud/components/AgentsOptIn/useShowAgentsOptIn", () => ({
+  useShowAgentsOptIn: jest.fn(() => false),
 }));
 
 jest.mock("core/services/Experiment", () => ({
@@ -57,8 +63,10 @@ jest.mock("area/settings/components/SettingsLayout", () => ({
 const mockUseGetConnectorsOutOfDate = mocked(useGetConnectorsOutOfDate);
 const mockIsOrganizationSubscribed = mocked(isOrganizationSubscribed);
 const mockUseCurrentOrganizationId = mocked(useCurrentOrganizationId);
+const mockUseAgentsProvisioningStatus = mocked(useAgentsProvisioningStatus);
 const mockUseDefaultWorkspaceInOrganization = mocked(useDefaultWorkspaceInOrganization);
 const mockUseOrgInfo = mocked(useOrgInfo);
+const mockUseShowAgentsOptIn = mocked(useShowAgentsOptIn);
 const mockUseExperiment = mocked(useExperiment);
 const mockUseFeature = mocked(useFeature);
 const mockUseIsCloudApp = mocked(useIsCloudApp);
@@ -68,6 +76,7 @@ describe("OrganizationSettingsPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseCurrentOrganizationId.mockReturnValue("test-organization-id");
+    mockUseAgentsProvisioningStatus.mockReturnValue(null);
     mockUseGetConnectorsOutOfDate.mockReturnValue({
       countNewSourceVersion: 0,
       countNewDestinationVersion: 0,
@@ -148,14 +157,66 @@ describe("OrganizationSettingsPage", () => {
     expect(screen.queryByText("Audit Logs")).not.toBeInTheDocument();
   });
 
-  it("shows the Audit Logs nav link for an admin with the audit logging entitlement", async () => {
+  it("hides the Audit Logs nav link for an admin with the audit logging entitlement when audit-log-ui is off", async () => {
     mockUseFeature.mockImplementation((feature) => feature === FeatureItem.AllowAuditLogs);
     mockUseGeneratedIntent.mockImplementation(
       (intent) => intent === Intent.ViewOrganizationSettings || intent === Intent.UpdateOrganizationPermissions
     );
+    // The beforeEach default leaves audit-log-ui off.
+
+    await render(<OrganizationSettingsPage />);
+
+    expect(screen.queryByText("Audit Logs")).not.toBeInTheDocument();
+  });
+
+  it("shows the Audit Logs nav link for an admin with the audit logging entitlement when audit-log-ui is on", async () => {
+    mockUseFeature.mockImplementation((feature) => feature === FeatureItem.AllowAuditLogs);
+    mockUseGeneratedIntent.mockImplementation(
+      (intent) => intent === Intent.ViewOrganizationSettings || intent === Intent.UpdateOrganizationPermissions
+    );
+    mockUseExperiment.mockImplementation((key) => key === "audit-log-ui");
 
     await render(<OrganizationSettingsPage />);
 
     expect(screen.getByText("Audit Logs")).toBeInTheDocument();
+  });
+
+  it("shows the Agents nav link when the opt-in is enabled for an eligible organization", async () => {
+    mockUseIsCloudApp.mockReturnValue(true);
+    mockUseShowAgentsOptIn.mockReturnValue(true);
+    mockUseAgentsProvisioningStatus.mockReturnValue({
+      is_enrolled: false,
+      is_instance_admin: false,
+      provisioning_state: "not_provisioned",
+      organization_id: "test-organization-id",
+      organization_kind: null,
+      external_cloud_eligible: true,
+      eligible_external_organization_id: "test-organization-id",
+    });
+
+    await render(<OrganizationSettingsPage />);
+
+    expect(screen.getByText("Context layer")).toBeInTheDocument();
+  });
+
+  it("shows only the Context layer nav link to eligible organization members", async () => {
+    mockUseIsCloudApp.mockReturnValue(true);
+    mockUseShowAgentsOptIn.mockReturnValue(true);
+    mockUseAgentsProvisioningStatus.mockReturnValue({
+      is_enrolled: true,
+      is_instance_admin: false,
+      provisioning_state: "provisioned",
+      organization_id: "test-organization-id",
+      organization_kind: "external_cloud",
+      external_cloud_eligible: true,
+      eligible_external_organization_id: null,
+    });
+    mockUseGeneratedIntent.mockReturnValue(false);
+
+    await render(<OrganizationSettingsPage />);
+
+    expect(screen.getByText("Context layer")).toBeInTheDocument();
+    expect(screen.queryByText("SSO")).not.toBeInTheDocument();
+    expect(screen.queryByText("General")).not.toBeInTheDocument();
   });
 });

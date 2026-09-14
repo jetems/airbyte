@@ -14,6 +14,12 @@ import { EntityNameCell } from "area/connection/components/EntityTable/component
 import { LastSyncCell } from "area/connection/components/EntityTable/components/LastSyncCell";
 import { NumberOfConnectionsCell } from "area/connection/components/EntityTable/components/NumberOfConnectionsCell";
 import {
+  ActorAgentAccessToggle,
+  ActorSemanticSearchToggle,
+  useShowActorContextLayerToggles,
+} from "cloud/components/AgentsOptIn/ActorContextLayerToggles";
+import { AgentsSourceCta } from "cloud/components/AgentsOptIn/AgentsSourceCta";
+import {
   ActorDefinitionVersionBreakingChanges,
   ActorListSortKey,
   ActorStatus,
@@ -119,6 +125,7 @@ export const ActorTable: React.FC<ActorTableProps> = ({
   setSortKey,
 }) => {
   const connectorBreakingChangeDeadlinesEnabled = useFeature(FeatureItem.ConnectorBreakingChangeDeadlines);
+  const showActorContextLayerToggles = useShowActorContextLayerToggles();
 
   const tableData = useMemo(() => createActorTableData(actorReadList), [actorReadList]);
 
@@ -196,6 +203,32 @@ export const ActorTable: React.FC<ActorTableProps> = ({
         ),
         enableSorting: false,
       }),
+      ...(showActorContextLayerToggles
+        ? [
+            columnHelper.display({
+              header: () => <FormattedMessage id="tables.agentAccess" />,
+              id: "agentAccess",
+              meta: {
+                noPadding: false,
+              },
+              cell: (props) => (
+                <ActorAgentAccessToggle actorId={props.row.original.id} actorType={props.row.original.actorType} />
+              ),
+              enableSorting: false,
+            }),
+            columnHelper.display({
+              header: () => <FormattedMessage id="tables.semanticSearch" />,
+              id: "semanticSearch",
+              meta: {
+                noPadding: false,
+              },
+              cell: (props) => (
+                <ActorSemanticSearchToggle actorId={props.row.original.id} actorType={props.row.original.actorType} />
+              ),
+              enableSorting: false,
+            }),
+          ]
+        : []),
       columnHelper.accessor("breakingChanges", {
         header: () => null,
         id: "breakingChanges",
@@ -237,8 +270,19 @@ export const ActorTable: React.FC<ActorTableProps> = ({
         },
         enableSorting: false,
       }),
+      columnHelper.display({
+        header: () => null,
+        id: "agentsCta",
+        cell: (props) => (
+          <AgentsSourceCta
+            actorType={props.row.original.actorType}
+            actorDefinitionName={props.row.original.actorDefinitionName}
+          />
+        ),
+        enableSorting: false,
+      }),
     ],
-    [connectorBreakingChangeDeadlinesEnabled]
+    [connectorBreakingChangeDeadlinesEnabled, showActorContextLayerToggles]
   );
 
   const customScrollParent = useContext(ScrollParentContext);

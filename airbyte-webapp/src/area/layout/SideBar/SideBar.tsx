@@ -17,6 +17,7 @@ import { AirbyteHomeLink } from "area/layout/SideBar/AirbyteHomeLink";
 import { OrganizationPicker } from "area/organization/OrganizationPicker/OrganizationPicker";
 import { useCurrentOrganizationId, useTrackLastOrganization } from "area/organization/utils";
 import { WorkspacesPickerNext } from "area/workspace/components/WorkspacesPickerNext";
+import { AgentsSidebarLink } from "cloud/components/AgentsOptIn";
 import { CloudHelpDropdown } from "cloud/components/CloudHelpDropdown";
 import {
   useCurrentWorkspaceOrUndefined,
@@ -110,6 +111,7 @@ const OrganizationNavItems = () => {
           testId="orgSettingsLink"
         />
       )}
+      <AgentsSidebarLink />
     </MenuContent>
   );
 };

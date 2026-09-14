@@ -38,12 +38,24 @@ object AiCopilotEntitlement : FeatureEntitlement(
   featureId = "feature-ai-copilot",
 )
 
-object MultipleWorkspacesEntitlement : FeatureEntitlement(
-  featureId = "feature-multiple-workspaces",
+object MaximumWorkspacesEntitlement : FeatureEntitlement(
+  featureId = "feature-maximum-workspaces",
+)
+
+/**
+ * The plan the organization is on. Stigg models the plan as an enum entitlement whose value is a
+ * plan id (e.g. plan-airbyte-plus); see [EntitlementPlan] and StiggWrapper.getPlans.
+ */
+object PlanNameEntitlement : FeatureEntitlement(
+  featureId = "feature-plan-name",
 )
 
 object MappersEntitlement : FeatureEntitlement(
   featureId = "feature-mappers",
+)
+
+object AdvancedMappersEntitlement : FeatureEntitlement(
+  featureId = "feature-advanced-mappers",
 )
 
 object RbacRolesEntitlement : FeatureEntitlement(
@@ -146,8 +158,10 @@ object Entitlements {
       PrivateLinkEntitlement,
       PrivateLinkLimitEntitlement,
       AiCopilotEntitlement,
-      MultipleWorkspacesEntitlement,
+      MaximumWorkspacesEntitlement,
+      PlanNameEntitlement,
       MappersEntitlement,
+      AdvancedMappersEntitlement,
       RbacRolesEntitlement,
       RejectedRecordsStorage,
       ConfigTemplateEntitlement,

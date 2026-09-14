@@ -28,8 +28,9 @@ const entitlementIdToFeatureItem: Record<string, FeatureItem> = {
   "feature-fe-display-organization-users": FeatureItem.DisplayOrganizationUsers,
   "feature-fe-indicate-guest-users": FeatureItem.IndicateGuestUsers,
   "feature-mappers": FeatureItem.MappingsUI,
+  "feature-advanced-mappers": FeatureItem.AdvancedMappingsUI,
   "feature-sso": FeatureItem.AllowUpdateSSOConfig,
-  "feature-multiple-workspaces": FeatureItem.CreateMultipleWorkspaces,
+  "feature-maximum-workspaces": FeatureItem.CreateMultipleWorkspaces,
   "feature-ai-copilot": FeatureItem.AICopilot,
   "feature-faster-sync-frequency": FeatureItem.AllowSyncFrequencyUnderOneHour,
   "feature-15-minute-sync-frequency": FeatureItem.AllowSyncFrequencyUnderOneHour,
@@ -39,6 +40,36 @@ const entitlementIdToFeatureItem: Record<string, FeatureItem> = {
   "feature-self-managed-regions": FeatureItem.SelfManagedRegions,
   "feature-privatelink": FeatureItem.PrivateLinks,
 };
+
+/**
+ * Fetches the entitlements for an organization and applies them to the FeatureService.
+ * Shared by all entitlement hooks so the side effect runs no matter which observer wins the
+ * query deduplication.
+ */
+async function fetchEntitlements(
+  organizationId: string,
+  requestOptions: ReturnType<typeof useRequestOptions>,
+  setEntitlementOverwrites: ReturnType<typeof useFeatureService>["setEntitlementOverwrites"]
+): Promise<GetEntitlementsByOrganizationIdResponse> {
+  try {
+    const { entitlements } = await getEntitlements({ organization_id: organizationId }, requestOptions);
+
+    // Apply entitlements immediately during fetch
+    const featureSet: FeatureSet = {};
+    for (const entitlement of entitlements) {
+      const featureItem = entitlementIdToFeatureItem[entitlement.feature_id];
+      if (featureItem) {
+        featureSet[featureItem] = entitlement.is_entitled;
+      }
+    }
+    setEntitlementOverwrites(featureSet);
+
+    return { entitlements };
+  } catch (error) {
+    trackError(error, { context: "entitlements_fetch", orgId: organizationId });
+    throw error;
+  }
+}
 
 /**
  * Hook to fetch and set entitlements for an organization
@@ -52,26 +83,34 @@ export const useSetEntitlements = (): void => {
 
   useSuspenseQuery<GetEntitlementsByOrganizationIdResponse>(
     entitlementsKeys.byOrganization(currentOrganizationId ?? ""),
-    async () => {
-      try {
-        const { entitlements } = await getEntitlements({ organization_id: currentOrganizationId }, requestOptions);
-
-        // Apply entitlements immediately during fetch
-        const featureSet: FeatureSet = {};
-        for (const entitlement of entitlements) {
-          const featureItem = entitlementIdToFeatureItem[entitlement.feature_id];
-          if (featureItem) {
-            featureSet[featureItem] = entitlement.is_entitled;
-          }
-        }
-        setEntitlementOverwrites(featureSet);
-
-        return { entitlements };
-      } catch (error) {
-        trackError(error, { context: "entitlements_fetch", orgId: currentOrganizationId });
-        throw error;
-      }
-    },
+    () => fetchEntitlements(currentOrganizationId ?? "", requestOptions, setEntitlementOverwrites),
     { enabled: !!currentOrganizationId }
   );
+};
+
+/**
+ * Returns the maximum number of workspaces the current organization may have, according to the
+ * feature-maximum-workspaces entitlement. Returns null when there is no finite limit (no
+ * entitlement, unlimited, or no organization).
+ */
+export const useMaximumWorkspaces = (): number | null => {
+  const requestOptions = useRequestOptions();
+  const currentOrganizationId = useCurrentOrganizationId();
+  const { setEntitlementOverwrites } = useFeatureService();
+
+  const entitlementsResponse = useSuspenseQuery<GetEntitlementsByOrganizationIdResponse>(
+    entitlementsKeys.byOrganization(currentOrganizationId ?? ""),
+    () => fetchEntitlements(currentOrganizationId ?? "", requestOptions, setEntitlementOverwrites),
+    { enabled: !!currentOrganizationId }
+  );
+
+  const entitlement = entitlementsResponse?.entitlements.find((e) => e.feature_id === "feature-maximum-workspaces");
+  // Plans without a workspace entitlement (Standard) allow exactly one workspace.
+  if (!entitlement?.is_entitled) {
+    return 1;
+  }
+  if (entitlement.is_unlimited || entitlement.value == null) {
+    return null;
+  }
+  return entitlement.value;
 };
