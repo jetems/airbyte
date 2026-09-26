@@ -3,7 +3,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import { EnterpriseStubConnectorPage } from "area/connector/components/EnterpriseStubConnectorPage/EnterpriseStubConnectorPage";
 import { UserSettingsRoutes } from "area/settings/UserSettingsRoutes";
-import { useShowAgentsOptIn } from "cloud/components/AgentsOptIn/useShowAgentsOptIn";
 import OrganizationBillingPage from "cloud/views/billing/OrganizationBillingPage";
 import OrganizationUsagePage from "cloud/views/billing/OrganizationUsagePage";
 import { CloudSettingsPage } from "cloud/views/settings/CloudSettingsPage";
@@ -48,7 +47,6 @@ const SourceSettingsPage = React.lazy(() => import("pages/source/SourceSettingsP
 
 const ConnectionsRoutes = React.lazy(() => import("pages/connections/ConnectionsRoutes"));
 const ConnectorBuilderRoutes = React.lazy(() => import("pages/connectorBuilder/ConnectorBuilderRoutes"));
-const OrganizationContextLayerPage = React.lazy(() => import("pages/SettingsPage/pages/OrganizationContextLayerPage"));
 
 export const WorkspacesRoutes: React.FC = () => {
   usePrefetchWorkspaceData();
@@ -58,7 +56,6 @@ export const WorkspacesRoutes: React.FC = () => {
   const canViewOrganizationUsage = useGeneratedIntent(Intent.ViewOrganizationUsage);
   const showOnboarding = useExperiment("onboarding.surveyEnabled");
   const isCloudApp = useIsCloudApp();
-  const showAgentsOptIn = useShowAgentsOptIn();
 
   useExperimentContext("workspace", workspace.workspaceId);
 
@@ -130,8 +127,16 @@ export const WorkspacesRoutes: React.FC = () => {
         {canViewOrganizationUsage && (
           <Route path={CloudSettingsRoutePaths.OrganizationUsage} element={<OrganizationUsagePage />} />
         )}
-        {isCloudApp && showAgentsOptIn && (
-          <Route path={CloudSettingsRoutePaths.ContextLayer} element={<OrganizationContextLayerPage />} />
+        {isCloudApp && (
+          <Route
+            path={CloudSettingsRoutePaths.ContextLayer}
+            element={
+              <Navigate
+                to={`/${RoutePaths.Organization}/${workspace.organizationId}/${RoutePaths.ContextLayer}`}
+                replace
+              />
+            }
+          />
         )}
         <Route path={CloudSettingsRoutePaths.Advanced} element={<AdvancedSettingsPage />} />
         <Route path="*" element={<Navigate to={CloudSettingsRoutePaths.Workspace} replace />} />

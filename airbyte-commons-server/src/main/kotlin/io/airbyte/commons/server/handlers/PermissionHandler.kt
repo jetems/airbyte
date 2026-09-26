@@ -14,7 +14,6 @@ import io.airbyte.api.model.generated.PermissionType
 import io.airbyte.api.model.generated.PermissionUpdate
 import io.airbyte.api.model.generated.PermissionsCheckMultipleWorkspacesRequest
 import io.airbyte.commons.enums.convertTo
-import io.airbyte.commons.lang.Exceptions
 import io.airbyte.commons.server.errors.ConflictException
 import io.airbyte.commons.server.errors.OperationNotAllowedException
 import io.airbyte.config.Permission
@@ -133,6 +132,9 @@ open class PermissionHandler(
    */
   fun getPermissionRead(permissionIdRequestBody: PermissionIdRequestBody): PermissionRead {
     val permission = getPermissionById(permissionIdRequestBody.permissionId)
+    if (permission.groupId != null) {
+      throw OperationNotAllowedException("Permission is inherited from a group and cannot be read as a user permission.")
+    }
     return buildPermissionRead(permission)
   }
 
@@ -166,6 +168,10 @@ open class PermissionHandler(
 
     val existingPermission = getPermissionById(permissionUpdate.permissionId)
 
+    if (existingPermission.groupId != null) {
+      throw OperationNotAllowedException("Permission is inherited from a group and cannot be updated as a user permission.")
+    }
+
     val updatedPermission =
       Permission()
         .withPermissionId(permissionUpdate.permissionId)
@@ -190,16 +196,14 @@ open class PermissionHandler(
    * @throws IOException if unable to check the permission.
    */
   fun checkPermissions(permissionCheckRequest: PermissionCheckRequest): PermissionCheckRead {
-    val userPermissions = permissionReadListForUser(permissionCheckRequest.userId).permissions
+    val userPermissions = effectivePermissionReadListForUser(permissionCheckRequest.userId).permissions
 
     val anyMatch =
       userPermissions.stream().anyMatch { userPermission: PermissionRead ->
-        Exceptions.toRuntime<Boolean> {
-          checkPermissions(
-            permissionCheckRequest,
-            userPermission,
-          )
-        }
+        checkPermissions(
+          permissionCheckRequest,
+          userPermission,
+        )
       }
 
     return PermissionCheckRead().status(if (anyMatch) PermissionCheckRead.StatusEnum.SUCCEEDED else PermissionCheckRead.StatusEnum.FAILED)
@@ -353,15 +357,52 @@ open class PermissionHandler(
    */
   fun permissionReadListForUser(userId: UUID): PermissionReadList {
     val permissions = permissionService.getPermissionsForUser(userId)
+    val workspaceIds = permissions.mapNotNull { it.workspaceId }.distinct()
+    val liveWorkspaceIds =
+      if (workspaceIds.isNotEmpty()) {
+        workspaceService.listStandardWorkspacesWithIds(workspaceIds, false).map { it.workspaceId }.toSet()
+      } else {
+        emptySet()
+      }
     return PermissionReadList().permissions(
       permissions
         .stream()
+        .filter { permission: Permission -> permission.workspaceId == null || liveWorkspaceIds.contains(permission.workspaceId) }
         .map { permission: Permission -> buildPermissionRead(permission) }
         .collect(Collectors.toList<@Valid PermissionRead?>()),
     )
   }
 
   fun listPermissionsForUser(userId: UUID): List<Permission> = permissionService.getPermissionsForUser(userId)
+
+  /**
+   * Lists the effective permissions for a user: direct user permissions plus permissions derived
+   * through group memberships. Read-only projection — never use for permission CRUD.
+   */
+  fun listEffectivePermissionsForUser(userId: UUID): List<Permission> = permissionService.getEffectivePermissionsForUser(userId)
+
+  /**
+   * Lists the effective permissions for a user as [PermissionRead]s: direct user permissions plus
+   * permissions derived through group memberships. Group-derived rows carry the requested userId
+   * (the underlying permission row has a null user_id) and expose their groupId. Read-only
+   * projection — never use for permission CRUD. Note that a group-derived row's permissionId
+   * identifies the group-owned permission row; it cannot be passed to the get, update or delete
+   * user-permission endpoints.
+   */
+  fun effectivePermissionReadListForUser(userId: UUID): PermissionReadList {
+    val permissions = permissionService.getEffectivePermissionsForUser(userId)
+    return PermissionReadList().permissions(
+      permissions
+        .stream()
+        .map { permission: Permission ->
+          val read = buildPermissionRead(permission)
+          if (permission.userId == null) {
+            read.userId(userId)
+          }
+          read
+        }.collect(Collectors.toList<@Valid PermissionRead?>()),
+    )
+  }
 
   /**
    * Lists the permissions by user in an organization.
@@ -395,8 +436,14 @@ open class PermissionHandler(
    *
    * @param permissionIdRequestBody The permission to be deleted.
    * @throws ConflictException if deletion is prevented by business logic.
+   * @throws OperationNotAllowedException if the permission is inherited from a group.
    */
   fun deletePermission(permissionIdRequestBody: PermissionIdRequestBody) {
+    val permission = getPermissionById(permissionIdRequestBody.permissionId)
+    if (permission.groupId != null) {
+      throw OperationNotAllowedException("Permission is inherited from a group and cannot be deleted as a user permission.")
+    }
+
     try {
       permissionService.deletePermission(permissionIdRequestBody.permissionId)
     } catch (e: RemoveLastOrgAdminPermissionException) {
@@ -481,5 +528,6 @@ open class PermissionHandler(
           permission.permissionType.convertTo<PermissionType>(),
         ).workspaceId(permission.workspaceId)
         .organizationId(permission.organizationId)
+        .groupId(permission.groupId)
   }
 }

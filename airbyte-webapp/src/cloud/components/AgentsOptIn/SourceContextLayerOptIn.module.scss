@@ -22,27 +22,8 @@
   padding-left: variables.$spacing-xl;
 }
 
-.text {
-  display: flex;
-  flex-direction: column;
-  gap: variables.$spacing-sm;
-}
-
 .control {
   flex-shrink: 0;
-
-  input:disabled + span {
-    // Higher specificity than the shared Switch's disabled rule
-    cursor: default !important;
-  }
-}
-
-.title {
-  margin: 0;
-}
-
-.description {
-  margin: 0;
 }
 
 .unsupported {

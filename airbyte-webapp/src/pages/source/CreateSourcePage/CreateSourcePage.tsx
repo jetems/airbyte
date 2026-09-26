@@ -20,7 +20,7 @@ import type { SourceContextLayerOptInValue } from "cloud/components/AgentsOptIn/
 import { useShowAgentsOptIn } from "cloud/components/AgentsOptIn/useShowAgentsOptIn";
 import {
   useAgentsProvisioningStatus,
-  useAgentsSupportedSourceDefinitions,
+  useAgentsSupportedSourceDefinitionIds,
   useCreateSource,
   useGetSourceDefinitionSpecificationAsync,
   useSetExternalActorEnabled,
@@ -55,7 +55,7 @@ export const CreateSourcePage: React.FC = () => {
   const isCloudApp = useIsCloudApp();
   const showAgentsOptIn = useShowAgentsOptIn();
   const status = useAgentsProvisioningStatus({ enabled: isCloudApp && showAgentsOptIn });
-  const supportedSourceDefinitions = useAgentsSupportedSourceDefinitions();
+  const supportedSourceDefinitionIds = useAgentsSupportedSourceDefinitionIds();
   const canManage = useGeneratedIntent(Intent.CreateOrEditSource);
   // Semantic search is UI-only until Sonar exposes an endpoint.
   // Users who cannot change the toggles must not be opted in by default.
@@ -109,7 +109,7 @@ export const CreateSourcePage: React.FC = () => {
       status?.is_enrolled === true &&
       canManage &&
       values.setupFlow !== "agent" &&
-      supportedSourceDefinitions.has(connector.name);
+      supportedSourceDefinitionIds.has(connector.sourceDefinitionId);
     if (shouldSyncContextLayer) {
       void setExternalActorEnabled({
         actorId: result.sourceId,
@@ -166,9 +166,9 @@ export const CreateSourcePage: React.FC = () => {
               onSubmit={onSubmitSourceStep}
               sourceDefinitions={sourceDefinitions}
               selectedSourceDefinitionId={sourceDefinitionId}
-              preFooterSlot={
+              contextLayerOptIn={
                 <SourceContextLayerOptIn
-                  sourceDefinitionName={selectedSourceDefinition?.name}
+                  sourceDefinitionId={selectedSourceDefinition?.sourceDefinitionId}
                   value={contextLayerOptIn}
                   onChange={setContextLayerOptIn}
                 />
@@ -191,9 +191,9 @@ export const CreateSourcePage: React.FC = () => {
               onSubmit={onSubmitSourceStep}
               sourceDefinitions={sourceDefinitions}
               selectedSourceDefinitionId={sourceDefinitionId}
-              preFooterSlot={
+              contextLayerOptIn={
                 <SourceContextLayerOptIn
-                  sourceDefinitionName={selectedSourceDefinition?.name}
+                  sourceDefinitionId={selectedSourceDefinition?.sourceDefinitionId}
                   value={contextLayerOptIn}
                   onChange={setContextLayerOptIn}
                 />

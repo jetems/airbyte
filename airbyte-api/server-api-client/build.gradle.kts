@@ -65,6 +65,15 @@ val genApiClient =
         "OAuthConfiguration" to "com.fasterxml.jackson.databind.JsonNode",
         "SourceDefinitionSpecification" to "com.fasterxml.jackson.databind.JsonNode",
         "SourceConfiguration" to "com.fasterxml.jackson.databind.JsonNode",
+        "SourceExecuteData" to "com.fasterxml.jackson.databind.JsonNode",
+        "DestinationExecuteData" to "com.fasterxml.jackson.databind.JsonNode",
+        "SourceExecuteResponse" to "com.fasterxml.jackson.databind.JsonNode",
+        "DestinationExecuteResponse" to "com.fasterxml.jackson.databind.JsonNode",
+        "SkillDocsResponse" to "com.fasterxml.jackson.databind.JsonNode",
+        "SourceExecuteParams" to "com.fasterxml.jackson.databind.JsonNode",
+        "DestinationExecuteParams" to "com.fasterxml.jackson.databind.JsonNode",
+        "SourceExecuteMeta" to "com.fasterxml.jackson.databind.JsonNode",
+        "DestinationExecuteMeta" to "com.fasterxml.jackson.databind.JsonNode",
         "DestinationDefinitionSpecification" to "com.fasterxml.jackson.databind.JsonNode",
         "DestinationConfiguration" to "com.fasterxml.jackson.databind.JsonNode",
         "StreamJsonSchema" to "com.fasterxml.jackson.databind.JsonNode",
@@ -249,4 +258,13 @@ ${imports.joinToString("\n")}
 $body
     """.trimIndent(),
   )
+}
+
+// Every Kotlin source here is generated; the models annotate constructor parameters (@JsonProperty,
+// @field:Valid, ...). Keep the current parameter-only annotation target and drop the K2 warning that
+// the default will change, which nothing hand-written can act on in this module.
+kotlin {
+  compilerOptions {
+    freeCompilerArgs.add("-Xannotation-default-target=first-only")
+  }
 }

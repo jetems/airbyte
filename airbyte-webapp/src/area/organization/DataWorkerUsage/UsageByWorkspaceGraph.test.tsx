@@ -105,7 +105,7 @@ const rangeProps: Record<
 
 const renderGraph = (
   selectedTimeRange: UsageTimeRange,
-  committedDataWorkers: number | null = 4,
+  capacityDataWorkers: number | null = 4,
   comparisonEnabled = false,
   props = rangeProps[selectedTimeRange]
 ) =>
@@ -114,7 +114,7 @@ const renderGraph = (
       selectedRegionId="region-1"
       selectedTimeRange={selectedTimeRange}
       comparisonEnabled={comparisonEnabled}
-      committedDataWorkers={committedDataWorkers}
+      capacityDataWorkers={capacityDataWorkers}
       {...props}
     />
   );
@@ -163,7 +163,7 @@ describe(`${UsageByWorkspaceGraph.name}`, () => {
         chartKey: "region-1-1d",
         xAxisInterval: 0,
         barSize: 16,
-        referenceLine: { value: 4, label: "Contracted capacity" },
+        referenceLine: { value: 4, label: "Allocated capacity" },
       })
     );
 
@@ -317,7 +317,7 @@ describe(`${UsageByWorkspaceGraph.name}`, () => {
         comparisonBarDataKey: "previousUsage",
         barSize: 8,
         chartKey: "region-1-1d-comparison",
-        referenceLine: { value: 4, label: "Contracted capacity" },
+        referenceLine: { value: 4, label: "Allocated capacity" },
       })
     );
     expect(chartProps.data).toHaveLength(24);
@@ -659,8 +659,8 @@ describe(`${UsageByWorkspaceGraph.name}`, () => {
     expect(screen.queryByTestId("data-worker-bar-chart")).not.toBeInTheDocument();
   });
 
-  it.each([null, 0])("omits the capacity line when committed capacity is %s", async (committedDataWorkers) => {
-    await renderGraph("1w", committedDataWorkers);
+  it.each([null, 0])("omits the capacity line when capacity is %s", async (capacityDataWorkers) => {
+    await renderGraph("1w", capacityDataWorkers);
 
     expect(lastChartProps().referenceLine).toBeUndefined();
   });

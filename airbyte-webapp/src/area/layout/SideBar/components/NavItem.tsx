@@ -6,12 +6,12 @@ import { NavLink } from "react-router-dom";
 import { Badge } from "components/ui/Badge";
 import { FlexContainer } from "components/ui/Flex";
 import { Icon, IconProps } from "components/ui/Icon";
-import { Text } from "components/ui/Text";
+import { Text, TextColor } from "components/ui/Text";
 
 import styles from "./NavItem.module.scss";
 import { NotificationIndicator } from "../NotificationIndicator";
 
-interface NavItemBaseProps extends NavItemInnerProps {
+interface NavItemBaseProps extends Omit<NavItemInnerProps, "isActive"> {
   className?: string;
   activeClassName?: string;
   testId?: string;
@@ -23,12 +23,14 @@ interface LinkNavItemProps extends NavItemBaseProps {
   as?: "a";
   to: string;
   onClick?: undefined;
+  isActive?: false;
 }
 
 interface ButtonNavItemProps extends NavItemBaseProps {
   as: "button";
   onClick?: () => void;
   to?: undefined;
+  isActive?: boolean;
 }
 
 type NavItemProps = LinkNavItemProps | ButtonNavItemProps;
@@ -38,23 +40,38 @@ interface NavItemInnerProps {
   icon: IconProps["type"];
   withNotification?: boolean;
   isActive?: boolean;
-  withBadge?: "beta";
+  withBadge?: "beta" | "new";
+  labelColor?: TextColor;
 }
 
-const NavItemInner: React.FC<NavItemInnerProps> = ({ icon, label, withNotification, isActive, withBadge }) => {
+const NavItemInner: React.FC<NavItemInnerProps> = ({
+  icon,
+  label,
+  withNotification,
+  isActive,
+  withBadge,
+  labelColor,
+}) => {
   return (
     <FlexContainer direction="row" alignItems="center" gap="md">
       <span className={styles.icon}>
         <Icon type={icon} />
       </span>
       {label && (
-        <Text size="sm" color={isActive ? "darkBlue" : "grey500"} bold className={styles.label}>
+        <Text size="sm" color={isActive ? "darkBlue" : labelColor ?? "grey500"} bold className={styles.label}>
           {label}
         </Text>
       )}
       {withBadge && (
-        <Badge variant="blue" className={styles.badge}>
+        <Badge
+          variant={withBadge === "beta" ? "grey" : "blue"}
+          className={classNames(styles.badge, {
+            [styles.badgeNew]: withBadge === "new",
+            [styles.badgeBeta]: withBadge === "beta",
+          })}
+        >
           {withBadge === "beta" && <FormattedMessage id="sidebar.beta" />}
+          {withBadge === "new" && <FormattedMessage id="sidebar.new" />}
         </Badge>
       )}
       {withNotification && <NotificationIndicator />}
@@ -77,6 +94,7 @@ export const NavItem = React.forwardRef<HTMLButtonElement | null, NavItemProps>(
       withNotification = false,
       isActive,
       withBadge,
+      labelColor,
       external,
     },
     ref
@@ -109,6 +127,7 @@ export const NavItem = React.forwardRef<HTMLButtonElement | null, NavItemProps>(
             withNotification={withNotification}
             isActive={isActive}
             withBadge={withBadge}
+            labelColor={labelColor}
           />
         </button>
       );
@@ -117,7 +136,7 @@ export const NavItem = React.forwardRef<HTMLButtonElement | null, NavItemProps>(
     if (disabled) {
       return (
         <div className={menuItemStyle(false, true)}>
-          <NavItemInner label={label} icon={icon} />
+          <NavItemInner label={label} icon={icon} labelColor={labelColor} />
         </div>
       );
     }
@@ -125,20 +144,32 @@ export const NavItem = React.forwardRef<HTMLButtonElement | null, NavItemProps>(
     if (external) {
       return (
         <a className={menuItemStyle(false)} href={to} target="_blank" rel="noopener noreferrer" data-testid={testId}>
-          <NavItemInner label={label} icon={icon} withNotification={withNotification} withBadge={withBadge} />
+          <NavItemInner
+            label={label}
+            icon={icon}
+            withNotification={withNotification}
+            withBadge={withBadge}
+            labelColor={labelColor}
+          />
         </a>
       );
     }
 
     return (
-      <NavLink className={({ isActive }) => menuItemStyle(isActive)} to={to} data-testid={testId}>
-        {({ isActive }) => (
+      <NavLink
+        className={({ isActive: linkActive }) => menuItemStyle(isActive ?? linkActive)}
+        to={to}
+        data-testid={testId}
+        aria-current={isActive === false ? false : undefined}
+      >
+        {({ isActive: linkActive }) => (
           <NavItemInner
             label={label}
             icon={icon}
             withNotification={withNotification}
-            isActive={isActive}
+            isActive={isActive ?? linkActive}
             withBadge={withBadge}
+            labelColor={labelColor}
           />
         )}
       </NavLink>

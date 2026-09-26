@@ -41,6 +41,7 @@ import io.airbyte.data.services.impls.jooq.WorkspaceServiceJooqImpl
 import io.airbyte.data.services.shared.ActorServicePaginationHelper
 import io.airbyte.data.services.shared.ResourcesByOrganizationQueryPaginated
 import io.airbyte.data.services.shared.ResourcesByUserQueryPaginated
+import io.airbyte.db.instance.configs.jooq.generated.Tables
 import io.airbyte.featureflag.FeatureFlagClient
 import io.airbyte.featureflag.TestClient
 import io.airbyte.metrics.MetricClient
@@ -699,6 +700,115 @@ internal class WorkspacePersistenceTest : BaseConfigDatabaseTest() {
   }
 
   @Test
+  fun testUserWorkspaceListsExcludeWorkspacesInTombstonedOrganizations() {
+    val userId = UUID.randomUUID()
+    userPersistence.writeAuthenticatedUser(
+      AuthenticatedUser()
+        .withUserId(userId)
+        .withName("user")
+        .withAuthUserId("auth_id")
+        .withEmail("email")
+        .withAuthProvider(AuthProvider.AIRBYTE),
+    )
+
+    val activeWorkspace =
+      createBaseStandardWorkspace()
+        .withWorkspaceId(UUID.randomUUID())
+        .withOrganizationId(MockData.ORGANIZATION_ID_1)
+        .withName("active workspace")
+        .withDataplaneGroupId(MockData.DATAPLANE_GROUP_ID_ORG_1)
+    val tombstonedOrganizationWorkspace =
+      createBaseStandardWorkspace()
+        .withWorkspaceId(UUID.randomUUID())
+        .withOrganizationId(MockData.ORGANIZATION_ID_2)
+        .withName("a tombstoned organization workspace")
+        .withDataplaneGroupId(MockData.DATAPLANE_GROUP_ID_ORG_2)
+
+    workspaceService.writeStandardWorkspaceNoSecrets(activeWorkspace)
+    workspaceService.writeStandardWorkspaceNoSecrets(tombstonedOrganizationWorkspace)
+    writePermission(
+      Permission()
+        .withPermissionId(UUID.randomUUID())
+        .withWorkspaceId(activeWorkspace.workspaceId)
+        .withUserId(userId)
+        .withPermissionType(Permission.PermissionType.WORKSPACE_READER),
+    )
+    writePermission(
+      Permission()
+        .withPermissionId(UUID.randomUUID())
+        .withWorkspaceId(tombstonedOrganizationWorkspace.workspaceId)
+        .withUserId(userId)
+        .withPermissionType(Permission.PermissionType.WORKSPACE_READER),
+    )
+    database!!.query { ctx ->
+      ctx
+        .update(Tables.ORGANIZATION)
+        .set(Tables.ORGANIZATION.TOMBSTONE, true)
+        .where(Tables.ORGANIZATION.ID.eq(MockData.ORGANIZATION_ID_2))
+        .execute()
+    }
+
+    assertWorkspacesEqual(
+      setOf(activeWorkspace),
+      workspacePersistence.listActiveWorkspacesByUserId(userId, Optional.empty<String>()).toSet(),
+    )
+    assertWorkspacesEqual(
+      setOf(activeWorkspace),
+      workspacePersistence
+        .listWorkspacesByUserIdPaginated(
+          ResourcesByUserQueryPaginated(userId, false, 10, 0),
+          Optional.empty<String>(),
+        ).toSet(),
+    )
+    assertWorkspacesEqual(
+      setOf(activeWorkspace),
+      workspacePersistence
+        .listWorkspacesByUserIdPaginated(
+          ResourcesByUserQueryPaginated(userId, false, 1, 0),
+          Optional.empty<String>(),
+        ).toSet(),
+    )
+    assertWorkspacesEqual(
+      setOf(activeWorkspace),
+      workspacePersistence.listWorkspacesByInstanceAdminUser(false, Optional.empty<String>()).toSet(),
+    )
+    assertWorkspacesEqual(
+      setOf(activeWorkspace),
+      workspacePersistence
+        .listWorkspacesByInstanceAdminUserPaginated(
+          false,
+          10,
+          0,
+          Optional.empty<String>(),
+        ).toSet(),
+    )
+    assertWorkspacesEqual(
+      setOf(activeWorkspace),
+      workspacePersistence
+        .listWorkspacesByInstanceAdminUserPaginated(
+          false,
+          1,
+          0,
+          Optional.empty<String>(),
+        ).toSet(),
+    )
+    assertWorkspacesEqual(
+      setOf(tombstonedOrganizationWorkspace, activeWorkspace),
+      workspacePersistence.listWorkspacesByInstanceAdminUser(true, Optional.empty<String>()).toSet(),
+    )
+    assertWorkspacesEqual(
+      setOf(tombstonedOrganizationWorkspace, activeWorkspace),
+      workspacePersistence
+        .listWorkspacesByInstanceAdminUserPaginated(
+          true,
+          10,
+          0,
+          Optional.empty<String>(),
+        ).toSet(),
+    )
+  }
+
+  @Test
   fun testListWorkspacesInOrganizationByUserIdWithKeyword() {
     val workspaceId1 = UUID.randomUUID()
     val workspaceId2 = UUID.randomUUID()
@@ -1254,6 +1364,297 @@ internal class WorkspacePersistenceTest : BaseConfigDatabaseTest() {
 
     assertEquals(1, secondPageWorkspaces.size)
     assertWorkspaceEquals(workspace3, secondPageWorkspaces[0]) // C_workspace (third alphabetically)
+  }
+
+  @Test
+  fun testGroupDerivedWorkspacePermissionGrantsAccess() {
+    val userId = createUser()
+    val workspaceId = UUID.randomUUID()
+
+    val workspace: StandardWorkspace =
+      createBaseStandardWorkspace()
+        .withWorkspaceId(workspaceId)
+        .withOrganizationId(MockData.ORGANIZATION_ID_1)
+        .withName("group_runner_workspace")
+        .withDataplaneGroupId(MockData.DATAPLANE_GROUP_ID_ORG_1)
+    workspaceService.writeStandardWorkspaceNoSecrets(workspace)
+
+    // a workspace the user should NOT see: different org, no access path
+    val otherWorkspace: StandardWorkspace =
+      createBaseStandardWorkspace()
+        .withWorkspaceId(UUID.randomUUID())
+        .withOrganizationId(MockData.ORGANIZATION_ID_2)
+        .withName("other_group_runner_workspace")
+        .withDataplaneGroupId(MockData.DATAPLANE_GROUP_ID_ORG_2)
+    workspaceService.writeStandardWorkspaceNoSecrets(otherWorkspace)
+
+    val groupId = createGroup(MockData.ORGANIZATION_ID_1)
+    createGroupMember(groupId, userId)
+    writeGroupPermission(groupId, null, workspaceId, Permission.PermissionType.WORKSPACE_RUNNER)
+    // group-derived permissions require a direct organization-level membership row
+    writePermission(
+      Permission()
+        .withPermissionId(UUID.randomUUID())
+        .withOrganizationId(MockData.ORGANIZATION_ID_1)
+        .withUserId(userId)
+        .withPermissionType(Permission.PermissionType.ORGANIZATION_MEMBER),
+    )
+
+    // organization_member alone grants no workspace access, so the workspace is only
+    // visible through the group-derived workspace_runner permission.
+    val activeWorkspaces = workspacePersistence.listActiveWorkspacesByUserId(userId, Optional.empty<String>()).toSet()
+    assertWorkspacesEqual(setOf(workspace), activeWorkspaces)
+
+    // pagination + name filter
+    val paginated =
+      workspacePersistence.listWorkspacesByUserIdPaginated(
+        ResourcesByUserQueryPaginated(userId, false, 10, 0),
+        Optional.of<String>("group_runner"),
+      )
+    assertWorkspacesEqual(setOf(workspace), paginated.toSet())
+
+    // name filter excludes non-matching workspaces
+    val paginatedNoMatch =
+      workspacePersistence.listWorkspacesByUserIdPaginated(
+        ResourcesByUserQueryPaginated(userId, false, 10, 0),
+        Optional.of<String>("nomatch"),
+      )
+    assertEquals(0, paginatedNoMatch.size)
+
+    val inOrg =
+      workspacePersistence.listWorkspacesInOrganizationByUserId(
+        MockData.ORGANIZATION_ID_1,
+        userId,
+        Optional.empty<String>(),
+      )
+    assertWorkspacesEqual(setOf(workspace), inOrg.toSet())
+
+    val inOrgPaginated =
+      workspacePersistence.listWorkspacesInOrganizationByUserIdPaginated(
+        ResourcesByOrganizationQueryPaginated(MockData.ORGANIZATION_ID_1, false, 10, 0),
+        userId,
+        Optional.empty<String>(),
+      )
+    assertWorkspacesEqual(setOf(workspace), inOrgPaginated.toSet())
+  }
+
+  @Test
+  fun testGroupDerivedOrganizationPermissionGrantsAllOrgWorkspaces() {
+    val userId = createUser()
+    val workspaceId1 = UUID.randomUUID()
+    val workspaceId2 = UUID.randomUUID()
+
+    val workspace1: StandardWorkspace =
+      createBaseStandardWorkspace()
+        .withWorkspaceId(workspaceId1)
+        .withOrganizationId(MockData.ORGANIZATION_ID_2)
+        .withName("group_org_ws_1")
+        .withDataplaneGroupId(MockData.DATAPLANE_GROUP_ID_ORG_2)
+    workspaceService.writeStandardWorkspaceNoSecrets(workspace1)
+
+    val workspace2: StandardWorkspace =
+      createBaseStandardWorkspace()
+        .withWorkspaceId(workspaceId2)
+        .withOrganizationId(MockData.ORGANIZATION_ID_2)
+        .withName("group_org_ws_2")
+        .withDataplaneGroupId(MockData.DATAPLANE_GROUP_ID_ORG_2)
+    workspaceService.writeStandardWorkspaceNoSecrets(workspace2)
+
+    val groupId = createGroup(MockData.ORGANIZATION_ID_2)
+    createGroupMember(groupId, userId)
+    writeGroupPermission(groupId, MockData.ORGANIZATION_ID_2, null, Permission.PermissionType.ORGANIZATION_READER)
+    writePermission(
+      Permission()
+        .withPermissionId(UUID.randomUUID())
+        .withOrganizationId(MockData.ORGANIZATION_ID_2)
+        .withUserId(userId)
+        .withPermissionType(Permission.PermissionType.ORGANIZATION_MEMBER),
+    )
+
+    val expected = setOf(workspace1, workspace2)
+    assertWorkspacesEqual(expected, workspacePersistence.listActiveWorkspacesByUserId(userId, Optional.empty<String>()).toSet())
+    assertWorkspacesEqual(
+      expected,
+      workspacePersistence
+        .listWorkspacesInOrganizationByUserId(
+          MockData.ORGANIZATION_ID_2,
+          userId,
+          Optional.empty<String>(),
+        ).toSet(),
+    )
+    assertWorkspacesEqual(
+      expected,
+      workspacePersistence
+        .listWorkspacesInOrganizationByUserIdPaginated(
+          ResourcesByOrganizationQueryPaginated(MockData.ORGANIZATION_ID_2, false, 10, 0),
+          userId,
+          Optional.empty<String>(),
+        ).toSet(),
+    )
+  }
+
+  @Test
+  fun testGroupPermissionInOtherOrganizationIsIgnored() {
+    val userId = createUser()
+    val workspaceId = UUID.randomUUID()
+
+    // workspace in org_3; the user's group lives in org_2, so permissions on org_3 or its
+    // workspaces derived through the group must not apply.
+    val workspace: StandardWorkspace =
+      createBaseStandardWorkspace()
+        .withWorkspaceId(workspaceId)
+        .withOrganizationId(MockData.ORGANIZATION_ID_3)
+        .withName("cross_org_workspace")
+        .withDataplaneGroupId(MockData.DATAPLANE_GROUP_ID_ORG_3)
+    workspaceService.writeStandardWorkspaceNoSecrets(workspace)
+
+    val groupId = createGroup(MockData.ORGANIZATION_ID_2)
+    createGroupMember(groupId, userId)
+    writeGroupPermission(groupId, MockData.ORGANIZATION_ID_3, null, Permission.PermissionType.ORGANIZATION_ADMIN)
+    writeGroupPermission(groupId, null, workspaceId, Permission.PermissionType.WORKSPACE_ADMIN)
+    writePermission(
+      Permission()
+        .withPermissionId(UUID.randomUUID())
+        .withOrganizationId(MockData.ORGANIZATION_ID_2)
+        .withUserId(userId)
+        .withPermissionType(Permission.PermissionType.ORGANIZATION_MEMBER),
+    )
+
+    assertEquals(0, workspacePersistence.listActiveWorkspacesByUserId(userId, Optional.empty<String>()).size)
+    assertEquals(
+      0,
+      workspacePersistence
+        .listWorkspacesInOrganizationByUserId(
+          MockData.ORGANIZATION_ID_3,
+          userId,
+          Optional.empty<String>(),
+        ).size,
+    )
+  }
+
+  @Test
+  fun testGroupPermissionWithoutOrganizationMembershipYieldsNothing() {
+    val userId = createUser()
+    val workspaceId = UUID.randomUUID()
+
+    val workspace: StandardWorkspace =
+      createBaseStandardWorkspace()
+        .withWorkspaceId(workspaceId)
+        .withOrganizationId(MockData.ORGANIZATION_ID_1)
+        .withName("no_membership_workspace")
+        .withDataplaneGroupId(MockData.DATAPLANE_GROUP_ID_ORG_1)
+    workspaceService.writeStandardWorkspaceNoSecrets(workspace)
+
+    val groupId = createGroup(MockData.ORGANIZATION_ID_1)
+    createGroupMember(groupId, userId)
+    writeGroupPermission(groupId, null, workspaceId, Permission.PermissionType.WORKSPACE_ADMIN)
+    writeGroupPermission(groupId, MockData.ORGANIZATION_ID_1, null, Permission.PermissionType.ORGANIZATION_ADMIN)
+
+    // the user is a member of the group but has no direct organization membership, so
+    // group-derived permissions do not apply.
+    assertEquals(0, workspacePersistence.listActiveWorkspacesByUserId(userId, Optional.empty<String>()).size)
+    assertEquals(
+      0,
+      workspacePersistence
+        .listWorkspacesInOrganizationByUserId(
+          MockData.ORGANIZATION_ID_1,
+          userId,
+          Optional.empty<String>(),
+        ).size,
+    )
+  }
+
+  @Test
+  fun testDirectPermissionsUnchangedWhenUserIsGroupMemberWithoutGroupPermissions() {
+    val userId = createUser()
+    val workspaceId = UUID.randomUUID()
+
+    val workspace: StandardWorkspace =
+      createBaseStandardWorkspace()
+        .withWorkspaceId(workspaceId)
+        .withOrganizationId(MockData.ORGANIZATION_ID_1)
+        .withName("direct_only_workspace")
+        .withDataplaneGroupId(MockData.DATAPLANE_GROUP_ID_ORG_1)
+    workspaceService.writeStandardWorkspaceNoSecrets(workspace)
+
+    val groupId = createGroup(MockData.ORGANIZATION_ID_1)
+    createGroupMember(groupId, userId)
+
+    writePermission(
+      Permission()
+        .withPermissionId(UUID.randomUUID())
+        .withWorkspaceId(workspaceId)
+        .withUserId(userId)
+        .withPermissionType(Permission.PermissionType.WORKSPACE_READER),
+    )
+
+    assertWorkspacesEqual(
+      setOf(workspace),
+      workspacePersistence.listActiveWorkspacesByUserId(userId, Optional.empty<String>()).toSet(),
+    )
+  }
+
+  private fun createUser(): UUID {
+    val userId = UUID.randomUUID()
+    userPersistence.writeAuthenticatedUser(
+      AuthenticatedUser()
+        .withUserId(userId)
+        .withName("user-$userId")
+        .withAuthUserId("auth-$userId")
+        .withEmail("$userId@example.com")
+        .withAuthProvider(AuthProvider.AIRBYTE),
+    )
+    return userId
+  }
+
+  private fun createGroup(organizationId: UUID): UUID {
+    val groupId = UUID.randomUUID()
+    database!!.query { ctx ->
+      ctx.execute(
+        "INSERT INTO \"group\" (id, name, organization_id) VALUES (?, ?, ?)",
+        groupId,
+        "group-$groupId",
+        organizationId,
+      )
+    }
+    return groupId
+  }
+
+  private fun createGroupMember(
+    groupId: UUID,
+    userId: UUID,
+  ) {
+    database!!.query { ctx ->
+      ctx.execute(
+        "INSERT INTO group_member (id, group_id, user_id) VALUES (?, ?, ?)",
+        UUID.randomUUID(),
+        groupId,
+        userId,
+      )
+    }
+  }
+
+  private fun writeGroupPermission(
+    groupId: UUID,
+    organizationId: UUID?,
+    workspaceId: UUID?,
+    permissionType: Permission.PermissionType,
+  ): UUID {
+    val permissionId = UUID.randomUUID()
+    database!!.query { ctx ->
+      ctx.execute(
+        """
+        INSERT INTO permission (id, permission_type, group_id, organization_id, workspace_id)
+        VALUES (?, CAST(? AS permission_type), ?, ?, ?)
+        """.trimIndent(),
+        permissionId,
+        permissionType.value(),
+        groupId,
+        organizationId,
+        workspaceId,
+      )
+    }
+    return permissionId
   }
 
   companion object {

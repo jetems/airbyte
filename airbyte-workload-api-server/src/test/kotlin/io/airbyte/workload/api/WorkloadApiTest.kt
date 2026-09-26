@@ -4,12 +4,17 @@
 
 package io.airbyte.workload.api
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import io.airbyte.api.client.AirbyteApiClient
 import io.airbyte.commons.json.Jsons
 import io.airbyte.commons.server.authorization.RoleResolver
 import io.airbyte.config.WorkloadPriority
 import io.airbyte.data.services.DataplaneGroupService
+import io.airbyte.workload.api.domain.GcsDownscopedOAuthLogUploadAuthorization
 import io.airbyte.workload.api.domain.KnownExceptionInfo
+import io.airbyte.workload.api.domain.LogDeliveryMode
 import io.airbyte.workload.api.domain.WorkloadCancelRequest
 import io.airbyte.workload.api.domain.WorkloadClaimRequest
 import io.airbyte.workload.api.domain.WorkloadCreateRequest
@@ -21,22 +26,30 @@ import io.airbyte.workload.api.domain.WorkloadQueueQueryRequest
 import io.airbyte.workload.api.domain.WorkloadRunningRequest
 import io.airbyte.workload.api.domain.WorkloadSuccessRequest
 import io.airbyte.workload.common.WorkloadQueueService
+import io.airbyte.workload.errors.ConflictException
+import io.airbyte.workload.errors.ForbiddenException
 import io.airbyte.workload.errors.InvalidStatusTransitionException
+import io.airbyte.workload.errors.LogUploadAuthorizationBrokerException
 import io.airbyte.workload.errors.NotFoundException
+import io.airbyte.workload.errors.UnauthorizedException
 import io.airbyte.workload.handler.ApiWorkload
 import io.airbyte.workload.handler.WorkloadHandler
 import io.airbyte.workload.handler.WorkloadHandlerImpl
+import io.airbyte.workload.logging.LogUploadAuthorizationService
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import io.micronaut.context.annotation.Property
 import io.micronaut.context.annotation.Replaces
 import io.micronaut.context.env.Environment
 import io.micronaut.core.util.SupplierUtil
+import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.mockk.Runs
@@ -48,6 +61,7 @@ import jakarta.inject.Singleton
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Property(name = "airbyte.workload-api.workload-redelivery-window", value = "PT30M")
@@ -90,6 +104,12 @@ class WorkloadApiTest(
   @Replaces(DataplaneGroupService::class)
   fun dataplaneGroupService(): DataplaneGroupService = dataplaneGroupService
 
+  private val logUploadAuthorizationService = mockk<LogUploadAuthorizationService>()
+
+  @MockBean(LogUploadAuthorizationService::class)
+  @Replaces(LogUploadAuthorizationService::class)
+  fun logUploadAuthorizationService(): LogUploadAuthorizationService = logUploadAuthorizationService
+
   @Test
   fun `test create success`() {
     every { workloadHandler.workloadAlreadyExists(any()) } returns false
@@ -112,7 +132,7 @@ class WorkloadApiTest(
   @Test
   fun `test claim success`() {
     every { workloadHandler.claimWorkload(any(), any(), any(), any()) }.returns(true)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testEndpointStatus(HttpRequest.PUT("/api/v1/workload/claim", Jsons.serialize(WorkloadClaimRequest())), HttpStatus.OK)
   }
 
@@ -120,7 +140,7 @@ class WorkloadApiTest(
   fun `test claim workload id not found`() {
     val exceptionMessage = "workload id not found"
     every { workloadHandler.claimWorkload(any(), any(), any(), any()) } throws NotFoundException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/claim", WorkloadClaimRequest()),
       HttpStatus.NOT_FOUND,
@@ -132,7 +152,7 @@ class WorkloadApiTest(
   fun `test claim workload has already been claimed`() {
     val exceptionMessage = "workload has already been claimed"
     every { workloadHandler.claimWorkload(any(), any(), any(), any()) } throws InvalidStatusTransitionException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/claim", WorkloadClaimRequest()),
       HttpStatus.GONE,
@@ -141,9 +161,95 @@ class WorkloadApiTest(
   }
 
   @Test
-  fun `test get success`() {
-    every { workloadHandler.getWorkload(any()) }.returns(ApiWorkload())
-    testEndpointStatus(HttpRequest.GET("/api/v1/workload/1"), HttpStatus.OK)
+  fun `GET delegates once to canonical getWorkload and returns the server-derived log delivery mode`() {
+    every { workloadHandler.getWorkload("1") }.returns(ApiWorkload(logDeliveryMode = LogDeliveryMode.FLEX))
+
+    val workload =
+      client
+        .get()
+        .toBlocking()
+        .exchange(HttpRequest.GET<Any>("/api/v1/workload/1"), ApiWorkload::class.java)
+        .body()
+
+    assertEquals(LogDeliveryMode.FLEX, workload.logDeliveryMode)
+    verify(exactly = 1) { workloadHandler.getWorkload("1") }
+  }
+
+  @Test
+  fun `generated Workload schema makes log delivery mode read only and optional`() {
+    val contract =
+      requireNotNull(
+        javaClass.classLoader.getResourceAsStream("META-INF/swagger/airbyte-workload-api-server-1.0.0.yml"),
+      ) { "generated workload OpenAPI contract must be available on the test classpath" }.use { input ->
+        ObjectMapper(YAMLFactory()).readTree(input)
+      }
+    val workloadSchema = contract["components"]["schemas"]["Workload"]
+
+    assertEquals(true, workloadSchema["properties"]["logDeliveryMode"]["readOnly"].asBoolean())
+    assertEquals(false, workloadSchema["required"].map(JsonNode::asText).contains("logDeliveryMode"))
+  }
+
+  @Test
+  fun `POST log upload authorization is bodyless and returns a fresh authorization`() {
+    val authorization =
+      GcsDownscopedOAuthLogUploadAuthorization(
+        accessToken = "opaque-token",
+        expiresAt = OffsetDateTime.parse("2026-09-02T13:00:00Z"),
+        bucketName = "managed-log-bucket",
+        objectKeyPrefix = "job-logging/job/7/attempt/2/",
+      )
+    every { logUploadAuthorizationService.authorize("1") } returns authorization
+
+    val response =
+      client
+        .get()
+        .toBlocking()
+        .exchange(
+          HttpRequest.create<Any>(HttpMethod.POST, "/api/v1/workload/1/log-upload-authorization"),
+          GcsDownscopedOAuthLogUploadAuthorization::class.java,
+        )
+
+    assertEquals(HttpStatus.OK, response.status)
+    assertEquals(authorization, response.body())
+  }
+
+  @Test
+  fun `POST log upload authorization returns no content when issuance is disabled`() {
+    every { logUploadAuthorizationService.authorize("1") } returns null
+
+    testEndpointStatus(
+      HttpRequest.create(HttpMethod.POST, "/api/v1/workload/1/log-upload-authorization"),
+      HttpStatus.NO_CONTENT,
+    )
+  }
+
+  @Test
+  fun `POST log upload authorization inherits authenticated-only controller security`() {
+    val security = WorkloadApi::class.java.getAnnotation(Secured::class.java)
+
+    assertEquals(listOf(SecurityRule.IS_AUTHENTICATED), security.value.toList())
+  }
+
+  @Test
+  fun `POST log upload authorization maps sanitized service rejections`() {
+    val cases =
+      listOf(
+        UnauthorizedException("Log upload authorization is unavailable.") to HttpStatus.UNAUTHORIZED,
+        NotFoundException("Log upload authorization is unavailable.") to HttpStatus.NOT_FOUND,
+        ForbiddenException("Log upload authorization is unavailable.") to HttpStatus.FORBIDDEN,
+        ConflictException("Log upload authorization is unavailable.") to HttpStatus.CONFLICT,
+        InvalidStatusTransitionException("Log upload authorization is unavailable.") to HttpStatus.GONE,
+        LogUploadAuthorizationBrokerException() to HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+
+    cases.forEach { (failure, status) ->
+      every { logUploadAuthorizationService.authorize("1") } throws failure
+      testErrorEndpointResponse(
+        HttpRequest.create(HttpMethod.POST, "/api/v1/workload/1/log-upload-authorization"),
+        status,
+        "Log upload authorization is unavailable.",
+      )
+    }
   }
 
   @Test
@@ -160,15 +266,17 @@ class WorkloadApiTest(
   @Test
   fun `test heartbeat success`() {
     every { workloadHandler.heartbeat(any(), any(), any()) }.returns(Unit)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testEndpointStatus(HttpRequest.PUT("/api/v1/workload/heartbeat", Jsons.serialize(WorkloadHeartbeatRequest())), HttpStatus.NO_CONTENT)
+    verify(exactly = 1) { workloadHandler.getWorkloadOrganizationId(any()) }
+    verify(exactly = 0) { workloadHandler.getWorkload(any()) }
   }
 
   @Test
   fun `test heartbeat workload id not found`() {
     val exceptionMessage = "workload id not found"
     every { workloadHandler.heartbeat(any(), any(), any()) } throws NotFoundException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/heartbeat", WorkloadHeartbeatRequest()),
       HttpStatus.NOT_FOUND,
@@ -180,7 +288,7 @@ class WorkloadApiTest(
   fun `test heartbeat workload in invalid status`() {
     val exceptionMessage = "workload in invalid status"
     every { workloadHandler.heartbeat(any(), any(), any()) } throws InvalidStatusTransitionException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/heartbeat", WorkloadHeartbeatRequest()),
       HttpStatus.GONE,
@@ -197,7 +305,7 @@ class WorkloadApiTest(
   @Test
   fun `test cancel success`() {
     every { workloadHandler.cancelWorkload(any(), any(), any()) } just Runs
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testEndpointStatus(HttpRequest.PUT("/api/v1/workload/cancel", WorkloadCancelRequest()), HttpStatus.NO_CONTENT)
   }
 
@@ -205,7 +313,7 @@ class WorkloadApiTest(
   fun `test cancel workload id not found`() {
     val exceptionMessage = "workload id not found"
     every { workloadHandler.cancelWorkload(any(), any(), any()) } throws NotFoundException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/cancel", WorkloadCancelRequest()),
       HttpStatus.NOT_FOUND,
@@ -217,7 +325,7 @@ class WorkloadApiTest(
   fun `test cancel workload in invalid status`() {
     val exceptionMessage = "workload in invalid status"
     every { workloadHandler.cancelWorkload(any(), any(), any()) } throws InvalidStatusTransitionException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/cancel", WorkloadCancelRequest()),
       HttpStatus.GONE,
@@ -228,7 +336,7 @@ class WorkloadApiTest(
   @Test
   fun `test failure success`() {
     every { workloadHandler.failWorkload(any(), any(), any(), any()) } just Runs
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testEndpointStatus(HttpRequest.PUT("/api/v1/workload/failure", WorkloadFailureRequest()), HttpStatus.NO_CONTENT)
   }
 
@@ -236,7 +344,7 @@ class WorkloadApiTest(
   fun `test failure workload id not found`() {
     val exceptionMessage = "workload id not found"
     every { workloadHandler.failWorkload(any(), any(), any(), any()) } throws NotFoundException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/failure", WorkloadFailureRequest()),
       HttpStatus.NOT_FOUND,
@@ -248,7 +356,7 @@ class WorkloadApiTest(
   fun `test failure workload in invalid status`() {
     val exceptionMessage = "workload in invalid status"
     every { workloadHandler.failWorkload(any(), any(), any(), any()) } throws InvalidStatusTransitionException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/failure", WorkloadFailureRequest()),
       HttpStatus.GONE,
@@ -259,7 +367,7 @@ class WorkloadApiTest(
   @Test
   fun `test success succeeded`() {
     every { workloadHandler.succeedWorkload(any(), any()) } just Runs
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testEndpointStatus(HttpRequest.PUT("/api/v1/workload/success", WorkloadSuccessRequest()), HttpStatus.NO_CONTENT)
   }
 
@@ -267,7 +375,7 @@ class WorkloadApiTest(
   fun `test success workload id not found`() {
     val exceptionMessage = "workload id not found"
     every { workloadHandler.succeedWorkload(any(), any()) } throws NotFoundException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/success", WorkloadSuccessRequest()),
       HttpStatus.NOT_FOUND,
@@ -278,7 +386,7 @@ class WorkloadApiTest(
   @Test
   fun `test success workload in invalid status`() {
     val exceptionMessage = "workload in invalid status"
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     every { workloadHandler.succeedWorkload(any(), any()) } throws InvalidStatusTransitionException(exceptionMessage)
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/success", WorkloadSuccessRequest()),
@@ -290,7 +398,7 @@ class WorkloadApiTest(
   @Test
   fun `test running succeeded`() {
     every { workloadHandler.setWorkloadStatusToRunning(any(), any(), any()) } just Runs
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testEndpointStatus(HttpRequest.PUT("/api/v1/workload/running", Jsons.serialize(WorkloadRunningRequest())), HttpStatus.NO_CONTENT)
   }
 
@@ -298,7 +406,7 @@ class WorkloadApiTest(
   fun `test running workload id not found`() {
     val exceptionMessage = "workload id not found"
     every { workloadHandler.setWorkloadStatusToRunning(any(), any(), any()) } throws NotFoundException(exceptionMessage)
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/running", WorkloadRunningRequest()),
       HttpStatus.NOT_FOUND,
@@ -310,7 +418,7 @@ class WorkloadApiTest(
   fun `test running workload in invalid status`() {
     val exceptionMessage = "workload in invalid status"
     every { workloadHandler.setWorkloadStatusToRunning(any(), any(), any()) } throws InvalidStatusTransitionException("workload in invalid status")
-    every { workloadHandler.getWorkload(any()) } returns ApiWorkload()
+    every { workloadHandler.getWorkloadOrganizationId(any()) } returns null
     testErrorEndpointResponse(
       HttpRequest.PUT("/api/v1/workload/running", WorkloadRunningRequest()),
       HttpStatus.GONE,

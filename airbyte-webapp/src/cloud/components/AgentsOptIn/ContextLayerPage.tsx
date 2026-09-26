@@ -8,25 +8,28 @@ import { Heading } from "components/ui/Heading";
 import { Icon } from "components/ui/Icon";
 import { ExternalLink } from "components/ui/Link";
 import { LoadingPage } from "components/ui/LoadingPage";
-import { Message } from "components/ui/Message";
 import { Switch } from "components/ui/Switch";
 import { Text } from "components/ui/Text";
 
 import { useCurrentOrganizationId } from "area/organization/utils";
 import {
-  useAgentsProvisioningStatus,
+  useAgentsProvisioningStatusQuery,
+  useUnenrollOrganizationFromAgents,
   useEnrollOrganizationInAgents,
   useExternalWorkspaceConnectors,
   useListWorkspacesInOrganization,
   useSetExternalActorEnabled,
 } from "core/api";
+import { useConfirmationModalService } from "core/services/ConfirmationModal";
 import { useModalService } from "core/services/Modal";
+import { useNotificationService } from "core/services/Notification";
 import { useIsCloudApp } from "core/utils/app";
 import { links } from "core/utils/links";
 import { Intent, useGeneratedIntent } from "core/utils/rbac";
 
 import styles from "./ContextLayerPage.module.scss";
 import { ContextLayerTosModal } from "./ContextLayerTosModal";
+import { useConfirmContextLayerDisable } from "./useConfirmContextLayerDisable";
 import { useShowAgentsOptIn } from "./useShowAgentsOptIn";
 
 interface Connector {
@@ -50,10 +53,13 @@ const WorkspaceConnectorCard: React.FC<{
 }> = ({ workspace, enabledConnectors, onToggle, onClearOptimistic, canManageOrganizationPermissions }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [pendingConnectors, setPendingConnectors] = useState<Record<string, boolean>>({});
+  const { formatMessage } = useIntl();
+  const { registerNotification } = useNotificationService();
   const { sources, destinations, isLoading, sourcesError, destinationsError } = useExternalWorkspaceConnectors(
     workspace.workspaceId
   );
   const { mutateAsync: setExternalActorEnabled } = useSetExternalActorEnabled();
+  const confirmDisable = useConfirmContextLayerDisable();
   const sourceCount = sources.filter(
     (connector) =>
       connector.supported && (enabledConnectors[`${workspace.workspaceId}:${connector.id}`] ?? connector.enabled)
@@ -82,6 +88,9 @@ const WorkspaceConnectorCard: React.FC<{
               canManageOrganizationPermissions
                 ? async (event) => {
                     const enabled = event.target.checked;
+                    if (!enabled && !(await confirmDisable(connector.name))) {
+                      return;
+                    }
                     setPendingConnectors((current) => ({ ...current, [key]: true }));
                     onToggle(key, enabled);
                     try {
@@ -94,6 +103,14 @@ const WorkspaceConnectorCard: React.FC<{
                       onClearOptimistic(key);
                     } catch {
                       onClearOptimistic(key);
+                      registerNotification({
+                        id: `context-layer-connector-toggle-error-${key}`,
+                        text: formatMessage(
+                          { id: "cloud.contextLayer.connectors.toggleError" },
+                          { name: connector.name }
+                        ),
+                        type: "error",
+                      });
                     } finally {
                       setPendingConnectors((current) => ({ ...current, [key]: false }));
                     }
@@ -273,21 +290,6 @@ const WorkspaceConnectorAccess: React.FC<{
   );
 };
 
-const BillingCallout: React.FC = () => (
-  <Message
-    className={styles.callout}
-    type="info"
-    text={
-      <>
-        <FormattedMessage id="cloud.contextLayer.billing" />{" "}
-        <ExternalLink href="https://airbyte.com/pricing" opensInNewTab>
-          <FormattedMessage id="cloud.contextLayer.pricing" />
-        </ExternalLink>
-      </>
-    }
-  />
-);
-
 const ContextLayerToggle: React.FC<{ enabled: boolean; onClick?: () => void }> = ({ enabled, onClick }) => {
   const { formatMessage } = useIntl();
 
@@ -308,7 +310,7 @@ const ContextLayerToggle: React.FC<{ enabled: boolean; onClick?: () => void }> =
         <Switch
           size="sm"
           checked={enabled}
-          disabled={enabled || !onClick}
+          disabled={!onClick}
           onChange={onClick ? () => onClick() : undefined}
           aria-label={formatMessage({ id: "cloud.contextLayer.toggle.label" })}
         />
@@ -317,23 +319,97 @@ const ContextLayerToggle: React.FC<{ enabled: boolean; onClick?: () => void }> =
   );
 };
 
+const ContextLayerUnavailable: React.FC = () => {
+  const { formatMessage } = useIntl();
+
+  return (
+    <div className={styles.page}>
+      <FlexContainer direction="column" gap="xl">
+        <div className={styles.header}>
+          <Heading as="h1" size="md">
+            <FormattedMessage id="cloud.contextLayer.title" />
+          </Heading>
+          <Text className={styles.subtitle}>
+            <FormattedMessage id="cloud.contextLayer.subtitle" />
+          </Text>
+        </div>
+        <Card
+          title={formatMessage({ id: "cloud.contextLayer.unavailable.title" })}
+          dataTestId="context-layer-unavailable"
+        >
+          <div className={styles.cardContent}>
+            <Text>
+              <FormattedMessage id="cloud.contextLayer.unavailable.description" />
+            </Text>
+            <ExternalLink href={links.agentsDocs} opensInNewTab>
+              <FormattedMessage id="cloud.contextLayer.docs" />
+            </ExternalLink>
+          </div>
+        </Card>
+      </FlexContainer>
+    </div>
+  );
+};
+
+const ContextLayerLoadError: React.FC<{ onRetry: () => void }> = ({ onRetry }) => {
+  const { formatMessage } = useIntl();
+
+  return (
+    <div className={styles.page}>
+      <FlexContainer direction="column" gap="xl">
+        <div className={styles.header}>
+          <Heading as="h1" size="md">
+            <FormattedMessage id="cloud.contextLayer.title" />
+          </Heading>
+          <Text className={styles.subtitle}>
+            <FormattedMessage id="cloud.contextLayer.subtitle" />
+          </Text>
+        </div>
+        <Card title={formatMessage({ id: "cloud.contextLayer.loadError.title" })} dataTestId="context-layer-load-error">
+          <div className={styles.cardContent}>
+            <Text>
+              <FormattedMessage id="cloud.contextLayer.loadError.description" />
+            </Text>
+            <FlexContainer>
+              <Button variant="secondary" onClick={onRetry}>
+                <FormattedMessage id="form.tryAgain" />
+              </Button>
+            </FlexContainer>
+          </div>
+        </Card>
+      </FlexContainer>
+    </div>
+  );
+};
+
 const ContextLayerPageContent: React.FC<{ showAgentsOptIn: boolean }> = ({ showAgentsOptIn }) => {
   const organizationId = useCurrentOrganizationId();
   const isCloudApp = useIsCloudApp();
-  const status = useAgentsProvisioningStatus({ enabled: isCloudApp && showAgentsOptIn });
+  const statusQuery = useAgentsProvisioningStatusQuery({ enabled: isCloudApp });
+  const status = statusQuery.data;
+  const isEligible = Boolean(status && (status.is_enrolled || (status.external_cloud_eligible && showAgentsOptIn)));
   const enrollOrganization = useEnrollOrganizationInAgents();
+  const unenrollOrganization = useUnenrollOrganizationFromAgents();
   const { openModal } = useModalService();
+  const { openConfirmationModal, closeConfirmationModal } = useConfirmationModalService();
+  const { registerNotification } = useNotificationService();
   const { formatMessage } = useIntl();
   const canManageOrganizationPermissions = useGeneratedIntent(Intent.UpdateOrganizationPermissions, { organizationId });
   const workspacesQuery = useListWorkspacesInOrganization({
     organizationId,
     pagination: { pageSize: 25, rowOffset: 0 },
-    enabled: Boolean(status && (status.is_enrolled || status.external_cloud_eligible)),
+    enabled: isEligible,
   });
   const [isOpeningModal, setIsOpeningModal] = useState(false);
 
-  if (!isCloudApp || !status || (!status.is_enrolled && !status.external_cloud_eligible)) {
-    return null;
+  if (isCloudApp && statusQuery.isInitialLoading) {
+    return <LoadingPage />;
+  }
+  if (isCloudApp && statusQuery.isError) {
+    return <ContextLayerLoadError onRetry={() => statusQuery.refetch()} />;
+  }
+  if (!isCloudApp || !isEligible || !status) {
+    return <ContextLayerUnavailable />;
   }
 
   const openTermsModal = () => {
@@ -376,6 +452,28 @@ const ContextLayerPageContent: React.FC<{ showAgentsOptIn: boolean }> = ({ showA
     }).finally(() => setIsOpeningModal(false));
   };
 
+  const openDisableConfirmation = () => {
+    openConfirmationModal({
+      title: "cloud.contextLayer.disableOrg.title",
+      text: "cloud.contextLayer.disableOrg.text",
+      submitButtonText: "cloud.contextLayer.disableOrg.submit",
+      submitButtonVariant: "danger",
+      submitButtonDataId: "context-layer-disable-org-confirm",
+      onSubmit: async () => {
+        try {
+          await unenrollOrganization.mutateAsync();
+          closeConfirmationModal();
+        } catch {
+          registerNotification({
+            id: "context-layer-disable-org-error",
+            text: formatMessage({ id: "cloud.contextLayer.disableOrg.error" }),
+            type: "error",
+          });
+        }
+      },
+    });
+  };
+
   return (
     <div className={styles.page}>
       <FlexContainer direction="column" gap="xl">
@@ -401,10 +499,15 @@ const ContextLayerPageContent: React.FC<{ showAgentsOptIn: boolean }> = ({ showA
                 }
               />
             </Text>
-            <BillingCallout />
             <ContextLayerToggle
               enabled={status.is_enrolled}
-              onClick={status.is_enrolled || !canManageOrganizationPermissions ? undefined : openTermsModal}
+              onClick={
+                canManageOrganizationPermissions
+                  ? status.is_enrolled
+                    ? openDisableConfirmation
+                    : openTermsModal
+                  : undefined
+              }
             />
             {!status.is_enrolled && (
               <>
@@ -455,10 +558,6 @@ const ContextLayerPageContent: React.FC<{ showAgentsOptIn: boolean }> = ({ showA
 
 export const ContextLayerPage: React.FC = () => {
   const showAgentsOptIn = useShowAgentsOptIn();
-
-  if (!showAgentsOptIn) {
-    return null;
-  }
 
   return (
     <React.Suspense fallback={<LoadingPage />}>

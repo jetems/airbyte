@@ -4,12 +4,11 @@ import { ConnectorIds } from "area/connector/utils/constants";
 import { useCurrentOrganizationId } from "area/organization/utils";
 import { useWebappConfig } from "core/config/webappConfig";
 
+import { AGENTS_SUPPORTED_SOURCE_DEFINITION_IDS } from "./agentsSupportedSourceDefinitionIds.generated";
 import { SCOPE_ORGANIZATION } from "../scopes";
 import { useRequestOptions } from "../useRequestOptions";
 
-// Temporary hardcoded list pending a Sonar endpoint for supported source definitions.
-const DEFAULT_SUPPORTED_SOURCE_DEFINITIONS = ["GitHub", "Stripe", "Salesforce", "Google Sheets", "Postgres", "Shopify"];
-const AGENTS_SUPPORTED_SOURCE_DEFINITIONS = new Set(DEFAULT_SUPPORTED_SOURCE_DEFINITIONS);
+const AGENTS_SUPPORTED_SOURCE_DEFINITION_IDS_SET = new Set(AGENTS_SUPPORTED_SOURCE_DEFINITION_IDS);
 
 // Destination definitions supported by Sonar SQL passthrough (airbytehq/sonar#6449).
 const AGENTS_SUPPORTED_DESTINATION_DEFINITION_IDS = new Set([
@@ -34,7 +33,7 @@ export const agentsPlatformKeys = {
     [SCOPE_ORGANIZATION, "agentsPlatform", "externalWorkspaceConnectors", organizationId, workspaceId] as const,
 };
 
-export const useAgentsProvisioningStatus = ({ enabled = true }: { enabled?: boolean } = {}) => {
+export const useAgentsProvisioningStatusQuery = ({ enabled = true }: { enabled?: boolean } = {}) => {
   const { sonarApiUrl: baseUrl } = useWebappConfig();
   const organizationId = useCurrentOrganizationId();
   const { getAccessToken } = useRequestOptions();
@@ -43,38 +42,38 @@ export const useAgentsProvisioningStatus = ({ enabled = true }: { enabled?: bool
   return useQuery<AgentsProvisioningStatus | null>(
     queryKey,
     async () => {
-      try {
-        const accessToken = await getAccessToken();
-        const response = await fetch(`${baseUrl}/api/v1/internal/account/provisioning-check`, {
-          headers: {
-            "X-Organization-Id": organizationId,
-            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-          },
-        });
+      const accessToken = await getAccessToken();
+      const response = await fetch(`${baseUrl}/api/v1/internal/account/provisioning-check`, {
+        headers: {
+          "X-Organization-Id": organizationId,
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error(`Agents provisioning status request failed: ${response.status}`);
-        }
-
-        const status = (await response.json()) as AgentsProvisioningStatus;
-        if (
-          (status.is_enrolled && status.organization_id === organizationId) ||
-          (status.external_cloud_eligible && status.eligible_external_organization_id === organizationId)
-        ) {
-          return status;
-        }
-
-        return null;
-      } catch {
-        return null;
+      if (!response.ok) {
+        throw new Error(`Agents provisioning status request failed: ${response.status}`);
       }
+
+      const status = (await response.json()) as AgentsProvisioningStatus;
+      if (
+        (status.is_enrolled && status.organization_id === organizationId) ||
+        (status.external_cloud_eligible && status.eligible_external_organization_id === organizationId)
+      ) {
+        return status;
+      }
+
+      return null;
     },
     {
       enabled: !!baseUrl && enabled,
       retry: false,
       staleTime: 5 * 60 * 1000,
     }
-  ).data;
+  );
+};
+
+export const useAgentsProvisioningStatus = ({ enabled = true }: { enabled?: boolean } = {}) => {
+  return useAgentsProvisioningStatusQuery({ enabled }).data;
 };
 
 export const useEnrollOrganizationInAgents = () => {
@@ -117,8 +116,48 @@ export const useEnrollOrganizationInAgents = () => {
   );
 };
 
-export const useAgentsSupportedSourceDefinitions = (): Set<string> => {
-  return AGENTS_SUPPORTED_SOURCE_DEFINITIONS;
+export const useUnenrollOrganizationFromAgents = () => {
+  const { sonarApiUrl: baseUrl } = useWebappConfig();
+  const organizationId = useCurrentOrganizationId();
+  const { getAccessToken } = useRequestOptions();
+  const queryClient = useQueryClient();
+  const queryKey = agentsPlatformKeys.provisioningStatus(organizationId);
+
+  return useMutation(
+    async () => {
+      if (!baseUrl) {
+        throw new Error("Agents API URL is not configured");
+      }
+
+      const accessToken = await getAccessToken();
+      const response = await fetch(`${baseUrl}/api/v1/organizations/external/${organizationId}`, {
+        method: "DELETE",
+        headers: {
+          "X-Organization-Id": organizationId,
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Agents disable request failed: ${response.status}`);
+      }
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(queryKey);
+        await queryClient.invalidateQueries([
+          SCOPE_ORGANIZATION,
+          "agentsPlatform",
+          "externalWorkspaceConnectors",
+          organizationId,
+        ]);
+      },
+    }
+  );
+};
+
+export const useAgentsSupportedSourceDefinitionIds = (): Set<string> => {
+  return AGENTS_SUPPORTED_SOURCE_DEFINITION_IDS_SET;
 };
 
 export const useAgentsSupportedDestinationDefinitionIds = (): Set<string> => {

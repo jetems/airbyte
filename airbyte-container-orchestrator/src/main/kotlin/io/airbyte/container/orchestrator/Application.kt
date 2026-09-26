@@ -19,24 +19,40 @@ internal const val FAILURE_EXIT_CODE = 1
 internal const val SUCCESS_EXIT_CODE = 0
 
 fun main(args: Array<String>) {
-  // To mimic previous behavior, assume an exit code of 1 unless Application.run returns otherwise.
-  var exitCode = FAILURE_EXIT_CODE
-  try {
-    build(*args)
+  runApplication(args)
+}
+
+@SuppressWarnings("PMD.DoNotTerminateVM")
+internal fun runApplication(
+  args: Array<String>,
+  startApplication: (Array<String>) -> Int = { applicationArgs ->
+    build(*applicationArgs)
       .deduceCloudEnvironment(false)
       .deduceEnvironment(false)
       .mainClass(Application::class.java)
       .start()
       .use { ctx ->
-        exitCode = ctx.getBean(Application::class.java).run()
+        ctx.getBean(Application::class.java).run()
       }
-  } catch (t: Throwable) {
-    logger.error(t) { "could not run ${t.message}" }
-  } finally {
-    // this mimics the pre-micronaut code, unsure if there is a better way in micronaut to ensure a
-    // non-zero exit code
-    exitProcess(status = exitCode)
-  }
+  },
+  reportFailure: (String) -> Unit = { message -> logger.error { message } },
+  exit: (Int) -> Unit = ::exitProcess,
+) {
+  val exitCode =
+    try {
+      startApplication(args)
+    } catch (failure: Throwable) {
+      if (failure is VirtualMachineError) throw failure
+      if (failure is InterruptedException) Thread.currentThread().interrupt()
+      try {
+        reportFailure("Could not run container orchestrator.")
+      } catch (reportingFailure: Throwable) {
+        if (reportingFailure is VirtualMachineError) throw reportingFailure
+        if (reportingFailure is InterruptedException) Thread.currentThread().interrupt()
+      }
+      FAILURE_EXIT_CODE
+    }
+  exit(exitCode)
 }
 
 @SuppressWarnings("PMD.AvoidCatchingThrowable", "PMD.DoNotTerminateVM", "PMD.AvoidFieldNameMatchingTypeName", "PMD.UnusedLocalVariable")
@@ -44,6 +60,7 @@ fun main(args: Array<String>) {
 class Application(
   private val jobOrchestrator: ReplicationJobOrchestrator,
   @Named("replicationMdcScopeBuilder") private val replicationLogMdcBuilder: MdcScope.Builder,
+  private val flexLogAppenderInitializer: FlexLogAppenderInitializer,
 ) {
   /**
    * Configures logging/mdc scope, and creates all objects necessary to handle state updates.
@@ -54,16 +71,27 @@ class Application(
    * is updated appropriately.
    */
   @InternalForTesting
-  fun run(): Int =
+  fun run(): Int {
+    try {
+      flexLogAppenderInitializer.initialize()
+    } catch (failure: Throwable) {
+      if (failure is VirtualMachineError) throw failure
+      if (failure is InterruptedException) Thread.currentThread().interrupt()
+      logger.warn { "Unable to initialize workload log delivery. Continuing workload execution." }
+    }
+
     // set mdc scope for the remaining execution
-    replicationLogMdcBuilder.build().use { _ ->
+    return replicationLogMdcBuilder.build().use { _ ->
       try {
         val result: String = jobOrchestrator.runJob().orElse("")
         logger.debug { "Job orchestrator completed with result: $result" }
         SUCCESS_EXIT_CODE
       } catch (t: Throwable) {
+        if (t is VirtualMachineError) throw t
+        if (t is InterruptedException) Thread.currentThread().interrupt()
         logger.error(t) { "Killing orchestrator because of an Exception" }
         FAILURE_EXIT_CODE
       }
     }
+  }
 }

@@ -13,6 +13,7 @@ import io.airbyte.api.model.generated.PermissionUpdate
 import io.airbyte.api.model.generated.PermissionsCheckMultipleWorkspacesRequest
 import io.airbyte.commons.enums.convertTo
 import io.airbyte.commons.server.errors.ConflictException
+import io.airbyte.commons.server.errors.OperationNotAllowedException
 import io.airbyte.config.AuthenticatedUser
 import io.airbyte.config.Permission
 import io.airbyte.config.StandardWorkspace
@@ -30,6 +31,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -280,6 +282,8 @@ internal class PermissionHandlerTest {
 
     @Test
     fun deletesPermission() {
+      whenever(permissionService.getPermission(permissionWorkspaceReader.getPermissionId())).thenReturn(permissionWorkspaceReader)
+
       permissionHandler.deletePermission(PermissionIdRequestBody().permissionId(permissionWorkspaceReader.getPermissionId()))
 
       verify(permissionService).deletePermission(permissionWorkspaceReader.getPermissionId())
@@ -287,6 +291,7 @@ internal class PermissionHandlerTest {
 
     @Test
     fun throwsConflictIfPersistenceBlocks() {
+      whenever(permissionService.getPermission(permissionOrganizationAdmin.getPermissionId())).thenReturn(permissionOrganizationAdmin)
       doAnswer { throw RemoveLastOrgAdminPermissionException("test") }
         .whenever(permissionService)
         .deletePermission(anyOrNull())
@@ -307,7 +312,7 @@ internal class PermissionHandlerTest {
 
     @Test
     fun mismatchedUserId() {
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
@@ -328,7 +333,7 @@ internal class PermissionHandlerTest {
 
     @Test
     fun mismatchedWorkspaceId() {
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
@@ -336,6 +341,9 @@ internal class PermissionHandlerTest {
             .withUserId(userId),
         ),
       )
+
+      whenever(workspaceService.listStandardWorkspacesWithIds(listOf(workspaceId), false))
+        .thenReturn(listOf(StandardWorkspace().withWorkspaceId(workspaceId)))
 
       val request =
         PermissionCheckRequest()
@@ -350,7 +358,7 @@ internal class PermissionHandlerTest {
 
     @Test
     fun mismatchedOrganizationId() {
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(Permission.PermissionType.ORGANIZATION_ADMIN)
@@ -373,7 +381,7 @@ internal class PermissionHandlerTest {
     @Test
     fun permissionsCheckMultipleWorkspaces() {
       val otherWorkspaceId = UUID.randomUUID()
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
@@ -385,6 +393,14 @@ internal class PermissionHandlerTest {
             .withWorkspaceId(otherWorkspaceId),
         ),
       )
+
+      whenever(workspaceService.listStandardWorkspacesWithIds(listOf(workspaceId, otherWorkspaceId), false))
+        .thenReturn(
+          listOf(
+            StandardWorkspace().withWorkspaceId(workspaceId),
+            StandardWorkspace().withWorkspaceId(otherWorkspaceId),
+          ),
+        )
 
       // EDITOR fails because READER is below editor
       val editorResult =
@@ -412,7 +428,7 @@ internal class PermissionHandlerTest {
     @Test
     fun permissionsCheckMultipleWorkspacesOrgPermission() {
       val otherWorkspaceId = UUID.randomUUID()
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
@@ -424,6 +440,9 @@ internal class PermissionHandlerTest {
             .withOrganizationId(organizationId),
         ),
       )
+
+      whenever(workspaceService.listStandardWorkspacesWithIds(listOf(workspaceId), false))
+        .thenReturn(listOf(StandardWorkspace().withWorkspaceId(workspaceId)))
 
       // otherWorkspace is in the user's organization, so the user's Org Reader permission should apply
       whenever(workspaceService.getStandardWorkspaceNoSecrets(otherWorkspaceId, false))
@@ -454,7 +473,7 @@ internal class PermissionHandlerTest {
 
     @Test
     fun workspaceNotInOrganization() {
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(Permission.PermissionType.ORGANIZATION_ADMIN)
@@ -491,7 +510,7 @@ internal class PermissionHandlerTest {
       ],
     )
     fun workspaceLevelPermissions(userPermissionType: Permission.PermissionType?) {
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(userPermissionType)
@@ -499,6 +518,9 @@ internal class PermissionHandlerTest {
             .withUserId(userId),
         ),
       )
+
+      whenever(workspaceService.listStandardWorkspacesWithIds(listOf(workspaceId), false))
+        .thenReturn(listOf(StandardWorkspace().withWorkspaceId(workspaceId)))
 
       if (userPermissionType == Permission.PermissionType.WORKSPACE_OWNER) {
         Assertions.assertEquals(
@@ -697,7 +719,7 @@ internal class PermissionHandlerTest {
       names = ["ORGANIZATION_ADMIN", "ORGANIZATION_EDITOR", "ORGANIZATION_READER", "ORGANIZATION_MEMBER"],
     )
     fun organizationLevelPermissions(userPermissionType: Permission.PermissionType?) {
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(userPermissionType)
@@ -866,7 +888,7 @@ internal class PermissionHandlerTest {
 
     @Test
     fun instanceAdminPermissions() {
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(Permission.PermissionType.INSTANCE_ADMIN)
@@ -952,7 +974,7 @@ internal class PermissionHandlerTest {
     fun ensureNoExceptionOnOrgPermissionCheckForWorkspaceOutsideTheOrg() {
       // Ensure that when we check permissions for a workspace that's not in an organization against an
       // org permission, we don't throw an exception.
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(Permission.PermissionType.ORGANIZATION_ADMIN)
@@ -964,6 +986,9 @@ internal class PermissionHandlerTest {
             .withUserId(userId),
         ),
       )
+
+      whenever(workspaceService.listStandardWorkspacesWithIds(listOf(workspaceId), false))
+        .thenReturn(listOf(StandardWorkspace().withWorkspaceId(workspaceId)))
 
       whenever(workspaceService.getStandardWorkspaceNoSecrets(workspaceId, false))
         .thenReturn(StandardWorkspace().withWorkspaceId(workspaceId))
@@ -984,7 +1009,7 @@ internal class PermissionHandlerTest {
     fun ensureFailedPermissionCheckForWorkspaceOutsideTheOrg() {
       // Ensure that when we check permissions for a workspace that's not in an organization against an
       // org permission, we fail the check if the workspace has no org ID set
-      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
         listOf<Permission>(
           Permission()
             .withPermissionType(Permission.PermissionType.ORGANIZATION_ADMIN)
@@ -996,6 +1021,9 @@ internal class PermissionHandlerTest {
             .withUserId(userId),
         ),
       )
+
+      whenever(workspaceService.listStandardWorkspacesWithIds(listOf(workspaceId), false))
+        .thenReturn(listOf(StandardWorkspace().withWorkspaceId(workspaceId)))
 
       whenever(workspaceService.getStandardWorkspaceNoSecrets(workspaceId, false))
         .thenReturn(StandardWorkspace().withWorkspaceId(workspaceId))
@@ -1010,6 +1038,95 @@ internal class PermissionHandlerTest {
               .userId(userId),
           ).getStatus(),
       )
+    }
+
+    @Test
+    fun `checkPermissions succeeds with a group-derived permission`() {
+      // group-derived rows have a null userId on the underlying permission row; the effective
+      // projection stamps the requested userId so the mismatched-userId guard still passes.
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
+        listOf<Permission>(
+          Permission()
+            .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
+            .withWorkspaceId(workspaceId)
+            .withGroupId(UUID.randomUUID()),
+        ),
+      )
+
+      Assertions.assertEquals(
+        PermissionCheckRead.StatusEnum.SUCCEEDED,
+        permissionHandler.checkPermissions(getWorkspacePermissionCheck(Permission.PermissionType.WORKSPACE_ADMIN)).getStatus(),
+      )
+    }
+
+    @Test
+    fun `checkPermissions fails when an effective permission belongs to a different user`() {
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
+        listOf<Permission>(
+          Permission()
+            .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
+            .withWorkspaceId(workspaceId)
+            .withUserId(UUID.randomUUID()), // direct row owned by another user
+        ),
+      )
+
+      Assertions.assertEquals(
+        PermissionCheckRead.StatusEnum.FAILED,
+        permissionHandler.checkPermissions(getWorkspacePermissionCheck(Permission.PermissionType.WORKSPACE_ADMIN)).getStatus(),
+      )
+    }
+
+    @Test
+    fun `effectivePermissionReadListForUser stamps userId only on group-derived rows`() {
+      val groupId = UUID.randomUUID()
+      val groupPermissionId = UUID.randomUUID()
+      val directPermissionId = UUID.randomUUID()
+      val directOwnerId = UUID.randomUUID()
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(
+        listOf<Permission>(
+          Permission()
+            .withPermissionId(groupPermissionId)
+            .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
+            .withWorkspaceId(workspaceId)
+            .withGroupId(groupId),
+          Permission()
+            .withPermissionId(directPermissionId)
+            .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
+            .withWorkspaceId(workspaceId)
+            .withUserId(directOwnerId),
+        ),
+      )
+
+      val reads = permissionHandler.effectivePermissionReadListForUser(userId).permissions
+
+      val groupRead = reads.single { it.permissionId == groupPermissionId }
+      Assertions.assertEquals(userId, groupRead.userId)
+      Assertions.assertEquals(groupId, groupRead.groupId)
+      Assertions.assertEquals(workspaceId, groupRead.workspaceId)
+
+      val directRead = reads.single { it.permissionId == directPermissionId }
+      Assertions.assertEquals(directOwnerId, directRead.userId)
+      Assertions.assertNull(directRead.groupId)
+    }
+
+    @Test
+    fun `permissionReadListForUser still uses direct permissions`() {
+      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+        listOf<Permission>(
+          Permission()
+            .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
+            .withWorkspaceId(workspaceId)
+            .withUserId(userId),
+        ),
+      )
+
+      whenever(workspaceService.listStandardWorkspacesWithIds(listOf(workspaceId), false))
+        .thenReturn(listOf(StandardWorkspace().withWorkspaceId(workspaceId)))
+
+      val result = permissionHandler.permissionReadListForUser(userId)
+
+      Assertions.assertEquals(1, result.permissions.size)
+      verify(permissionService, times(0)).getEffectivePermissionsForUser(anyOrNull())
     }
 
     @Test
@@ -1039,6 +1156,183 @@ internal class PermissionHandlerTest {
         .permissionType(targetPermissionType.convertTo<PermissionType>())
         .userId(userId)
         .organizationId(organizationId)
+  }
+
+  @Nested
+  internal inner class PermissionReadListForUser {
+    private val userId: UUID = UUID.randomUUID()
+    private val liveWorkspaceId: UUID = UUID.randomUUID()
+    private val tombstonedWorkspaceId1: UUID = UUID.randomUUID()
+    private val tombstonedWorkspaceId2: UUID = UUID.randomUUID()
+
+    @Test
+    fun filtersOutPermissionsForTombstonedWorkspaces() {
+      val liveWorkspacePermission =
+        Permission()
+          .withPermissionId(UUID.randomUUID())
+          .withUserId(userId)
+          .withWorkspaceId(liveWorkspaceId)
+          .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
+      val tombstonedWorkspacePermission1 =
+        Permission()
+          .withPermissionId(UUID.randomUUID())
+          .withUserId(userId)
+          .withWorkspaceId(tombstonedWorkspaceId1)
+          .withPermissionType(Permission.PermissionType.WORKSPACE_ADMIN)
+      val tombstonedWorkspacePermission2 =
+        Permission()
+          .withPermissionId(UUID.randomUUID())
+          .withUserId(userId)
+          .withWorkspaceId(tombstonedWorkspaceId2)
+          .withPermissionType(Permission.PermissionType.WORKSPACE_READER)
+      val organizationPermission =
+        Permission()
+          .withPermissionId(UUID.randomUUID())
+          .withUserId(userId)
+          .withOrganizationId(UUID.randomUUID())
+          .withPermissionType(Permission.PermissionType.ORGANIZATION_ADMIN)
+      val instancePermission =
+        Permission()
+          .withPermissionId(UUID.randomUUID())
+          .withUserId(userId)
+          .withPermissionType(Permission.PermissionType.INSTANCE_ADMIN)
+
+      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+        listOf<Permission>(
+          liveWorkspacePermission,
+          tombstonedWorkspacePermission1,
+          tombstonedWorkspacePermission2,
+          organizationPermission,
+          instancePermission,
+        ),
+      )
+      whenever(workspaceService.listStandardWorkspacesWithIds(listOf(liveWorkspaceId, tombstonedWorkspaceId1, tombstonedWorkspaceId2), false))
+        .thenReturn(listOf(StandardWorkspace().withWorkspaceId(liveWorkspaceId)))
+
+      val result = permissionHandler.permissionReadListForUser(userId)
+
+      Assertions.assertEquals(
+        setOf(liveWorkspacePermission.getPermissionId(), organizationPermission.getPermissionId(), instancePermission.getPermissionId()),
+        result.permissions.map { it.permissionId }.toSet(),
+      )
+      verify(workspaceService, times(1))
+        .listStandardWorkspacesWithIds(listOf(liveWorkspaceId, tombstonedWorkspaceId1, tombstonedWorkspaceId2), false)
+    }
+
+    @Test
+    fun skipsWorkspaceLookupWhenNoWorkspacePermissions() {
+      val organizationPermission =
+        Permission()
+          .withPermissionId(UUID.randomUUID())
+          .withUserId(userId)
+          .withOrganizationId(UUID.randomUUID())
+          .withPermissionType(Permission.PermissionType.ORGANIZATION_ADMIN)
+      val instancePermission =
+        Permission()
+          .withPermissionId(UUID.randomUUID())
+          .withUserId(userId)
+          .withPermissionType(Permission.PermissionType.INSTANCE_ADMIN)
+
+      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(
+        listOf<Permission>(organizationPermission, instancePermission),
+      )
+
+      val result = permissionHandler.permissionReadListForUser(userId)
+
+      Assertions.assertEquals(2, result.permissions.size)
+      verify(workspaceService, times(0)).listStandardWorkspacesWithIds(anyOrNull(), eq(false))
+    }
+
+    @Test
+    fun returnsEmptyListWhenUserHasNoPermissions() {
+      whenever(permissionService.getPermissionsForUser(userId)).thenReturn(emptyList())
+
+      val result = permissionHandler.permissionReadListForUser(userId)
+
+      Assertions.assertTrue(result.permissions.isEmpty())
+      verify(workspaceService, times(0)).listStandardWorkspacesWithIds(anyOrNull(), eq(false))
+    }
+  }
+
+  @Nested
+  internal inner class GroupOwnedPermissionAccess {
+    private val userId: UUID = UUID.randomUUID()
+    private val workspaceId: UUID = UUID.randomUUID()
+    private val permissionId: UUID = UUID.randomUUID()
+
+    private val groupOwnedPermission: Permission =
+      Permission()
+        .withPermissionId(permissionId)
+        .withPermissionType(Permission.PermissionType.WORKSPACE_READER)
+        .withWorkspaceId(workspaceId)
+        .withGroupId(UUID.randomUUID())
+
+    @Test
+    fun `getPermissionRead rejects group-owned permission`() {
+      whenever(permissionService.getPermission(permissionId)).thenReturn(groupOwnedPermission)
+
+      Assertions.assertThrows(OperationNotAllowedException::class.java) {
+        permissionHandler.getPermissionRead(PermissionIdRequestBody().permissionId(permissionId))
+      }
+    }
+
+    @Test
+    fun `updatePermission rejects group-owned permission`() {
+      whenever(permissionService.getPermission(permissionId)).thenReturn(groupOwnedPermission)
+
+      Assertions.assertThrows(OperationNotAllowedException::class.java) {
+        permissionHandler.updatePermission(
+          PermissionUpdate().permissionId(permissionId).permissionType(PermissionType.WORKSPACE_ADMIN),
+        )
+      }
+
+      verify(permissionService, times(0)).updatePermission(anyOrNull())
+    }
+
+    @Test
+    fun `permissionId returned by effectivePermissionReadListForUser is rejected by getPermissionRead`() {
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(listOf<Permission>(groupOwnedPermission))
+      whenever(permissionService.getPermission(permissionId)).thenReturn(groupOwnedPermission)
+
+      val listed = permissionHandler.effectivePermissionReadListForUser(userId).permissions.single()
+      Assertions.assertEquals(permissionId, listed.permissionId)
+
+      Assertions.assertThrows(OperationNotAllowedException::class.java) {
+        permissionHandler.getPermissionRead(PermissionIdRequestBody().permissionId(listed.permissionId))
+      }
+    }
+
+    @Test
+    fun `permissionId returned by effectivePermissionReadListForUser is rejected by updatePermission`() {
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(listOf<Permission>(groupOwnedPermission))
+      whenever(permissionService.getPermission(permissionId)).thenReturn(groupOwnedPermission)
+
+      val listed = permissionHandler.effectivePermissionReadListForUser(userId).permissions.single()
+      Assertions.assertEquals(permissionId, listed.permissionId)
+
+      Assertions.assertThrows(OperationNotAllowedException::class.java) {
+        permissionHandler.updatePermission(
+          PermissionUpdate().permissionId(listed.permissionId).permissionType(PermissionType.WORKSPACE_ADMIN),
+        )
+      }
+
+      verify(permissionService, times(0)).updatePermission(anyOrNull())
+    }
+
+    @Test
+    fun `permissionId returned by effectivePermissionReadListForUser is rejected by deletePermission`() {
+      whenever(permissionService.getEffectivePermissionsForUser(userId)).thenReturn(listOf<Permission>(groupOwnedPermission))
+      whenever(permissionService.getPermission(permissionId)).thenReturn(groupOwnedPermission)
+
+      val listed = permissionHandler.effectivePermissionReadListForUser(userId).permissions.single()
+      Assertions.assertEquals(permissionId, listed.permissionId)
+
+      Assertions.assertThrows(OperationNotAllowedException::class.java) {
+        permissionHandler.deletePermission(PermissionIdRequestBody().permissionId(listed.permissionId))
+      }
+
+      verify(permissionService, times(0)).deletePermission(anyOrNull())
+    }
   }
 
   @Nested

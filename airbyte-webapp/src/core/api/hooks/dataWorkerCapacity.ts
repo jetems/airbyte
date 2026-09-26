@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
@@ -13,13 +13,15 @@ import { useRequestOptions } from "core/api/useRequestOptions";
 import { useSuspenseQuery } from "core/api/useSuspenseQuery";
 import { useNotificationService } from "core/services/Notification";
 
-import { SCOPE_ORGANIZATION } from "../scopes";
+import { SCOPE_ORGANIZATION, SCOPE_WORKSPACE } from "../scopes";
 import { DataWorkerAllocationListResponse } from "../types/AirbyteClient";
 
 export const dataWorkerCapacityKeys = {
   all: [SCOPE_ORGANIZATION, "dataWorkerCapacity"] as const,
   allocations: () => [...dataWorkerCapacityKeys.all, "allocations"] as const,
   allocationList: (organizationId: string) => [...dataWorkerCapacityKeys.allocations(), organizationId] as const,
+  workspaceAvailability: (workspaceId: string) =>
+    [SCOPE_WORKSPACE, "dataWorkerCapacity", "availability", workspaceId] as const,
 };
 
 export const useGetDataWorkerAvailability = () => {
@@ -31,6 +33,18 @@ export const useGetDataWorkerAvailability = () => {
     () => getWorkspaceDataWorkerAvailability({ workspaceId, organizationId }, requestOptions),
     [workspaceId, organizationId, requestOptions]
   );
+};
+
+export const useWorkspaceDataWorkerCapacity = () => {
+  const requestOptions = useRequestOptions();
+  const workspaceId = useCurrentWorkspaceId();
+  const organizationId = useCurrentOrganizationId();
+
+  const { committedDataWorkers } = useSuspenseQuery(dataWorkerCapacityKeys.workspaceAvailability(workspaceId), () =>
+    getWorkspaceDataWorkerAvailability({ workspaceId, organizationId }, requestOptions)
+  );
+
+  return committedDataWorkers;
 };
 
 /**
@@ -48,6 +62,32 @@ export const useListDataWorkerAllocations = () => {
 
   return useSuspenseQuery(dataWorkerCapacityKeys.allocationList(organizationId), () =>
     listDataWorkerAllocations({ organization_id: organizationId }, requestOptions)
+  );
+};
+
+/**
+ * The capacity the organization holds in one region, or `undefined` until it is known.
+ *
+ * Reads the same list as {@link useListDataWorkerAllocations} but does not suspend, so the usage
+ * graph renders before the number arrives. `enabled: false` makes no request at all.
+ */
+export const useRegionDataWorkerCapacity = (dataplaneGroupId: string | null, enabled: boolean) => {
+  const requestOptions = useRequestOptions();
+  const organizationId = useCurrentOrganizationId();
+
+  const { data } = useQuery(
+    dataWorkerCapacityKeys.allocationList(organizationId),
+    () => listDataWorkerAllocations({ organization_id: organizationId }, requestOptions),
+    { enabled }
+  );
+
+  if (!dataplaneGroupId || !data) {
+    return undefined;
+  }
+
+  // A region with no capacity is absent from the response rather than listed with a zero.
+  return (
+    data.allocations.find((allocation) => allocation.dataplane_group_id === dataplaneGroupId)?.allocated_capacity ?? 0
   );
 };
 

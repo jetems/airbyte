@@ -13,14 +13,18 @@ import io.airbyte.metrics.MetricClient
 import io.airbyte.micronaut.runtime.AirbyteContextConfig
 import io.airbyte.workers.models.InitContainerConstants
 import io.airbyte.workload.api.client.WorkloadApiClient
+import io.airbyte.workload.api.domain.LogDeliveryMode
 import io.airbyte.workload.api.domain.Workload
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
+import io.mockk.verifyOrder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import secrets.persistence.SecretCoordinateException
 import java.util.UUID
 
@@ -53,14 +57,46 @@ internal class InputFetcherTest {
   }
 
   @Test
-  fun `fetches input and processes it`() {
+  fun `STANDARD SYNC passes the fetched workload directly to hydration`() {
     every { workloadApiClient.workloadGet(WORKLOAD_ID) } returns workload
     every { inputProcessor.process(workload) } returns Unit
 
     fetcher.fetch()
 
-    verify { workloadApiClient.workloadGet(WORKLOAD_ID) }
-    verify { inputProcessor.process(workload) }
+    verifyOrder {
+      workloadApiClient.workloadGet(WORKLOAD_ID)
+      inputProcessor.process(workload)
+    }
+    verify(exactly = 0) { workloadApiClient.workloadLogUploadAuthorization(any()) }
+  }
+
+  @Test
+  fun `FLEX SYNC passes mode through workload hydration without fetching or serializing authorization`() {
+    val flexWorkload = workload.copy(logDeliveryMode = LogDeliveryMode.FLEX)
+    every { workloadApiClient.workloadGet(WORKLOAD_ID) } returns flexWorkload
+    every { inputProcessor.process(flexWorkload) } returns Unit
+
+    fetcher.fetch()
+
+    verifyOrder {
+      workloadApiClient.workloadGet(WORKLOAD_ID)
+      inputProcessor.process(flexWorkload)
+    }
+    verify(exactly = 0) { workloadApiClient.workloadLogUploadAuthorization(any()) }
+    verifyHydrationContinued(flexWorkload)
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = WorkloadType::class, names = ["SYNC"], mode = EnumSource.Mode.EXCLUDE)
+  fun `non-SYNC workloads process without authorization lookup`(workloadType: WorkloadType) {
+    val nonSyncWorkload = workload.copy(type = workloadType, logDeliveryMode = LogDeliveryMode.FLEX)
+    every { workloadApiClient.workloadGet(WORKLOAD_ID) } returns nonSyncWorkload
+    every { inputProcessor.process(nonSyncWorkload) } returns Unit
+
+    fetcher.fetch()
+
+    verify(exactly = 0) { workloadApiClient.workloadLogUploadAuthorization(any()) }
+    verifyHydrationContinued(nonSyncWorkload)
   }
 
   @Test
@@ -110,6 +146,12 @@ internal class InputFetcherTest {
     fetcher.fetch()
 
     verify { systemClient.exitProcess(any()) }
+  }
+
+  private fun verifyHydrationContinued(expectedWorkload: Workload) {
+    verify(exactly = 1) { inputProcessor.process(expectedWorkload) }
+    verify(exactly = 0) { workloadApiClient.workloadFailure(any()) }
+    verify(exactly = 0) { systemClient.exitProcess(any()) }
   }
 
   object Fixtures {

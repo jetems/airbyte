@@ -3,7 +3,6 @@ import { FormattedMessage } from "react-intl";
 
 import { Button } from "components/ui/Button";
 import { ExternalLink } from "components/ui/Link";
-import { Message } from "components/ui/Message";
 
 import { StandardDowngradeConsequences } from "cloud/area/billing/components/PlanCards";
 import { useRedirectToCustomerPortal } from "cloud/area/billing/utils/useRedirectToCustomerPortal";
@@ -20,6 +19,8 @@ interface StandardPlanGridCardProps {
   mode?: StandardPlanGridCardMode;
   isCurrentPlan?: boolean;
   cancellationDate?: string;
+  /** A downgrade to Standard is already scheduled on the subscription. */
+  downgradePending?: boolean;
 }
 
 export const StandardPlanGridCard: React.FC<StandardPlanGridCardProps> = ({
@@ -27,6 +28,7 @@ export const StandardPlanGridCard: React.FC<StandardPlanGridCardProps> = ({
   mode = "subscribe",
   isCurrentPlan = false,
   cancellationDate,
+  downgradePending = false,
 }) => {
   const isDowngrade = mode === "downgrade";
   const { goToCustomerPortal, redirecting } = useRedirectToCustomerPortal(
@@ -56,25 +58,6 @@ export const StandardPlanGridCard: React.FC<StandardPlanGridCardProps> = ({
   return (
     <PlanGridCard
       data-testid="standard-plan-card"
-      banner={
-        <Message
-          type="info"
-          data-testid="pricing-changes-banner"
-          text={
-            <>
-              <FormattedMessage id="planGrid.standard.pricingChanges.banner" />
-              <ul className={styles.pricingChangesList}>
-                <li>
-                  <FormattedMessage id="planGrid.standard.pricingChanges.minimum" />
-                </li>
-                <li>
-                  <FormattedMessage id="planGrid.standard.pricingChanges.beyond" />
-                </li>
-              </ul>
-            </>
-          }
-        />
-      }
       title={<FormattedMessage id="plans.standard.title" />}
       price={<FormattedMessage id="planGrid.standard.price" />}
       pricePeriod={<FormattedMessage id="planGrid.perMonth" />}
@@ -102,11 +85,19 @@ export const StandardPlanGridCard: React.FC<StandardPlanGridCardProps> = ({
           <Button
             full
             isLoading={redirecting}
-            disabled={disabled || (isDowngrade && !!cancellationDate)}
+            disabled={disabled || (isDowngrade && (!!cancellationDate || downgradePending))}
             variant={isDowngrade ? "secondary" : "primary"}
             onClick={onClick}
           >
-            <FormattedMessage id={isDowngrade ? "plans.standard.downgrade" : "plans.standard.subscribe"} />
+            <FormattedMessage
+              id={
+                isDowngrade && downgradePending
+                  ? "plans.standard.downgradePending"
+                  : isDowngrade
+                  ? "plans.standard.downgrade"
+                  : "plans.standard.subscribe"
+              }
+            />
           </Button>
         )
       }

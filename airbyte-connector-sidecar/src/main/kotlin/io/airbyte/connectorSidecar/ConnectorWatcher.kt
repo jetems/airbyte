@@ -42,6 +42,7 @@ import java.nio.file.Path
 import java.time.Duration
 import java.util.Optional
 import kotlin.system.exitProcess
+import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 import kotlin.time.toJavaDuration
 
@@ -60,12 +61,25 @@ class ConnectorWatcher(
   private val workloadApiClient: WorkloadApiClient,
   private val outputWriter: WorkloadOutputWriter,
   private val logContextFactory: SidecarLogContextFactory,
+  private val flexLogAppenderInitializer: FlexLogAppenderInitializer,
   private val heartbeatMonitor: HeartbeatMonitor,
   private val metricClient: MetricClient,
 ) {
   fun run() {
+    when (sidecarInput.operationType) {
+      SidecarInput.OperationType.CHECK,
+      SidecarInput.OperationType.DISCOVER,
+      ->
+        try {
+          flexLogAppenderInitializer.initialize()
+        } catch (failure: Exception) {
+          if (failure is InterruptedException) Thread.currentThread().interrupt()
+          logger.warn { FLEX_INITIALIZATION_FAILURE_MESSAGE }
+        }
+      SidecarInput.OperationType.SPEC -> Unit
+    }
     withLoggingContext(logContextFactory.create(sidecarInput.logPath)) {
-      LineGobbler.startSection(sidecarInput.operationType.toString())
+      logger.info { LineGobbler.formatStartSection(sidecarInput.operationType.toString()) }
       var heartbeatStarted = false
       var throwableHandled = false
       try {
@@ -101,7 +115,7 @@ class ConnectorWatcher(
         if (heartbeatStarted) {
           heartbeatMonitor.stopHeartbeatThread()
         }
-        LineGobbler.endSection(sidecarInput.operationType.toString())
+        logger.info { LineGobbler.formatEndSection(sidecarInput.operationType.toString()) }
         if (throwableHandled) {
           exitInternalError()
         } else {
@@ -112,7 +126,7 @@ class ConnectorWatcher(
   }
 
   private fun waitForConnectorOutput(input: SidecarInput) {
-    val stopwatch = TimeSource.Monotonic
+    val stopwatch = TimeSource.Monotonic.markNow()
     while (!areNeededFilesPresent()) {
       Thread.sleep(100)
       if (heartbeatMonitor.shouldAbort()) {
@@ -310,11 +324,11 @@ class ConnectorWatcher(
   }
 
   fun hasFileTimeoutReached(
-    stopwatch: TimeSource.Monotonic,
+    stopwatch: TimeMark,
     withinSync: Boolean,
   ): Boolean {
     val timeoutMinutes = if (withinSync) airbyteSidecarConfig.fileTimeoutMinutesWithinSync else airbyteSidecarConfig.fileTimeoutMinutes
-    return stopwatch.markNow().elapsedNow().toJavaDuration() > Duration.ofMinutes(timeoutMinutes.toLong())
+    return stopwatch.elapsedNow().toJavaDuration() > Duration.ofMinutes(timeoutMinutes.toLong())
   }
 
   @InternalForTesting

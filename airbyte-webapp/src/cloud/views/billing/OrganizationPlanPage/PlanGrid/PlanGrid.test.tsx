@@ -6,6 +6,7 @@ import { useOrganizationPlan } from "area/organization/utils/useOrganizationPlan
 import { useRedirectToCustomerPortal } from "cloud/area/billing/utils/useRedirectToCustomerPortal";
 import { useGetOrganizationSubscriptionInfo, useOrgInfo, useUnschedulePlanChange } from "core/api";
 import { useConfirmationModalService } from "core/services/ConfirmationModal";
+import { useExperiment } from "core/services/Experiment";
 import { useGeneratedIntent } from "core/utils/rbac";
 
 import { PlanGrid } from "./PlanGrid";
@@ -40,6 +41,10 @@ jest.mock("cloud/area/billing/utils/useRedirectToCustomerPortal", () => ({
 jest.mock("core/services/ConfirmationModal", () => ({
   ...jest.requireActual("core/services/ConfirmationModal"),
   useConfirmationModalService: jest.fn(),
+}));
+
+jest.mock("core/services/Experiment", () => ({
+  useExperiment: jest.fn(),
 }));
 
 const CARD_TEST_IDS = ["standard-plan-card", "plus-plan-card", "pro-plan-card", "flex-plan-card"] as const;
@@ -85,6 +90,7 @@ const expectDisabledCta = (testId: (typeof CARD_TEST_IDS)[number], buttonName: R
 beforeEach(() => {
   jest.clearAllMocks();
   mocked(useGeneratedIntent).mockReturnValue(true);
+  mocked(useExperiment).mockReturnValue(false);
   mocked(useOrganizationPlan).mockReturnValue(planFlags());
   mocked(useGetOrganizationSubscriptionInfo).mockReturnValue(subscriptionInfo(undefined));
   mocked(useUnschedulePlanChange).mockReturnValue({
@@ -183,6 +189,23 @@ describe("PlanGrid", () => {
     expect(card("standard-plan-card").getByRole("button", { name: /Downgrade/i })).toBeEnabled();
     expect(card("pro-plan-card").getByRole("link", { name: /Talk to Sales/i })).toBeInTheDocument();
     expect(card("flex-plan-card").getByRole("link", { name: /Talk to Sales/i })).toBeInTheDocument();
+  });
+
+  it("shows a disabled Downgrade pending CTA on the Standard card when a downgrade is scheduled", async () => {
+    mocked(useOrgInfo).mockReturnValue(billingState());
+    mocked(useOrganizationPlan).mockReturnValue(planFlags({ isPlusPlan: true }));
+    mocked(useGetOrganizationSubscriptionInfo).mockReturnValue(
+      subscriptionInfo({
+        name: "Plus",
+        selfServePlan: "plus_500",
+        pendingPlanChange: { effectiveDate: "2030-10-01T00:00:00Z", planName: "Standard", selfServePlan: "standard" },
+      })
+    );
+
+    await render(<PlanGrid />);
+
+    expect(card("standard-plan-card").getByRole("button", { name: /Downgrade pending/i })).toBeDisabled();
+    expect(card("standard-plan-card").queryByRole("button", { name: /^Downgrade$/i })).not.toBeInTheDocument();
   });
 
   it("marks the Plus tier from the subscription current and offers the next tier up", async () => {
@@ -292,7 +315,8 @@ describe("PlanGrid", () => {
     expect(card("flex-plan-card").queryByText(/Cancels/)).not.toBeInTheDocument();
   });
 
-  it("shows the pending plan change banner when a plan change is scheduled", async () => {
+  it("shows the pending plan change banner when a plan change is scheduled and the flag is on", async () => {
+    mocked(useExperiment).mockReturnValue(true);
     mocked(useOrgInfo).mockReturnValue(billingState());
     mocked(useOrganizationPlan).mockReturnValue(planFlags({ isStandardPlan: true }));
     mocked(useGetOrganizationSubscriptionInfo).mockReturnValue(
@@ -309,7 +333,24 @@ describe("PlanGrid", () => {
     expect(banner).toHaveTextContent("Plus");
   });
 
+  it("hides the pending plan change banner when the flag is off even if a plan change is scheduled", async () => {
+    mocked(useOrgInfo).mockReturnValue(billingState());
+    mocked(useOrganizationPlan).mockReturnValue(planFlags({ isStandardPlan: true }));
+    mocked(useGetOrganizationSubscriptionInfo).mockReturnValue(
+      subscriptionInfo({
+        name: "Standard",
+        pendingPlanChange: { effectiveDate: "2030-10-01T00:00:00Z", planName: "Plus" },
+      })
+    );
+
+    await render(<PlanGrid />);
+
+    expect(useExperiment).toHaveBeenCalledWith("billing.plan-downgrade-banner");
+    expect(screen.queryByTestId("pending-plan-change-banner")).not.toBeInTheDocument();
+  });
+
   it("hides the pending plan change banner when there is no pending plan change", async () => {
+    mocked(useExperiment).mockReturnValue(true);
     mocked(useOrgInfo).mockReturnValue(billingState());
     mocked(useOrganizationPlan).mockReturnValue(planFlags({ isStandardPlan: true }));
     mocked(useGetOrganizationSubscriptionInfo).mockReturnValue(subscriptionInfo({ name: "Standard" }));
@@ -317,5 +358,87 @@ describe("PlanGrid", () => {
     await render(<PlanGrid />);
 
     expect(screen.queryByTestId("pending-plan-change-banner")).not.toBeInTheDocument();
+  });
+
+  it("shows the Plus promo credits callout for a Standard org", async () => {
+    mocked(useOrgInfo).mockReturnValue(billingState());
+    mocked(useOrganizationPlan).mockReturnValue(planFlags({ isStandardPlan: true }));
+
+    await render(<PlanGrid />);
+
+    expect(screen.getByTestId("plus-promo-credits-callout")).toHaveTextContent("Upgrade to Plus by September 29");
+  });
+
+  it.each([
+    ["from the subscription", subscriptionInfo({ name: "Plus", selfServePlan: "plus_500" })],
+    ["from the entitlement plan only", subscriptionInfo(undefined)],
+  ])("hides the Plus promo credits callout for a Plus org resolved %s", async (_label, subscription) => {
+    mocked(useOrgInfo).mockReturnValue(billingState());
+    mocked(useOrganizationPlan).mockReturnValue(planFlags({ isPlusPlan: true }));
+    mocked(useGetOrganizationSubscriptionInfo).mockReturnValue(subscription);
+
+    await render(<PlanGrid />);
+
+    expect(screen.queryByTestId("plus-promo-credits-callout")).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["Pro", { isProPlan: true }],
+    ["SME", { isSmePlan: true }],
+    ["Flex", { isFlexPlan: true }],
+  ])("hides the Plus promo credits callout for a %s org", async (_label, flags) => {
+    mocked(useOrgInfo).mockReturnValue(billingState());
+    mocked(useOrganizationPlan).mockReturnValue(planFlags(flags));
+
+    await render(<PlanGrid />);
+
+    expect(screen.queryByTestId("plus-promo-credits-callout")).not.toBeInTheDocument();
+  });
+
+  it("hides the Plus promo credits callout when the org is not subscribed", async () => {
+    mocked(useOrgInfo).mockReturnValue(billingState({ subscriptionStatus: "unsubscribed" }));
+    mocked(useOrganizationPlan).mockReturnValue(planFlags({ isStandardPlan: true }));
+
+    await render(<PlanGrid />);
+
+    expect(screen.queryByTestId("plus-promo-credits-callout")).not.toBeInTheDocument();
+  });
+
+  it("shows the Plus promo credits callout for a Standard Trial org", async () => {
+    mocked(useOrgInfo).mockReturnValue(billingState({ subscriptionStatus: "unsubscribed" }));
+    mocked(useOrganizationPlan).mockReturnValue(planFlags({ isStandardTrialPlan: true, isStiggPlanEnabled: true }));
+
+    await render(<PlanGrid />);
+
+    expect(screen.getByTestId("plus-promo-credits-callout")).toHaveTextContent("Upgrade to Plus by September 29");
+  });
+
+  it.each([
+    ["Pro", { isProPlan: true }],
+    ["SME", { isSmePlan: true }],
+    ["Flex", { isFlexPlan: true }],
+  ])("hides the pricing calculator for a %s org", async (_label, flags) => {
+    mocked(useOrgInfo).mockReturnValue(billingState());
+    mocked(useOrganizationPlan).mockReturnValue(planFlags(flags));
+
+    await render(<PlanGrid />);
+
+    expect(screen.queryByTestId("pricing-calculator")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Pricing calculator" })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["Standard", planFlags({ isStandardPlan: true }), billingState()],
+    ["Plus", planFlags({ isPlusPlan: true }), billingState()],
+    ["unsubscribed", planFlags(), billingState({ subscriptionStatus: "unsubscribed" })],
+  ])("shows the pricing calculator for a %s org", async (_label, flags, billing) => {
+    mocked(useOrgInfo).mockReturnValue(billing);
+    mocked(useOrganizationPlan).mockReturnValue(flags);
+
+    await render(<PlanGrid />);
+
+    expect(screen.getByTestId("pricing-calculator")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Pricing calculator" })).toBeInTheDocument();
+    expect(screen.getByRole("slider", { name: "Monthly credits" })).toBeEnabled();
   });
 });

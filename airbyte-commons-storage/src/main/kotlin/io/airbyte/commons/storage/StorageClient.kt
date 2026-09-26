@@ -13,7 +13,6 @@ import com.google.cloud.storage.BucketInfo
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions
 import io.airbyte.commons.annotation.InternalForTesting
-import io.airbyte.commons.io.IOs
 import io.airbyte.micronaut.runtime.AirbyteStorageConfig
 import io.airbyte.micronaut.runtime.StorageType
 import io.micronaut.context.annotation.Parameter
@@ -43,7 +42,9 @@ import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.pathString
+import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
+import kotlin.io.path.writeText
 
 private fun prependIfMissing(
   prefix: String,
@@ -255,24 +256,32 @@ class AzureStorageClient(
  * @param gcsClient the [Storage] client, should only be specified for testing purposes
  */
 @Prototype
-class GcsStorageClient(
-  bucketConfig: AirbyteStorageConfig.AirbyteStorageBucketConfig,
+class GcsStorageClient private constructor(
+  override val bucketName: String,
   private val type: DocumentType,
   private val gcsClient: Storage,
+  checkBucketAccess: Boolean,
 ) : StorageClient {
   override val storageType = StorageType.GCS
   override val documentType = type
-  override val bucketName = bucketConfig.bucketName(type)
 
   @Inject
   constructor(
     bucketConfig: AirbyteStorageConfig.AirbyteStorageBucketConfig,
     storageConfig: AirbyteStorageConfig.GcsStorageConfig,
     @Parameter type: DocumentType,
-  ) : this(bucketConfig = bucketConfig, type = type, gcsClient = storageConfig.gcsClient())
+  ) : this(bucketName = bucketConfig.bucketName(type), type = type, gcsClient = storageConfig.gcsClient(), checkBucketAccess = true)
+
+  constructor(
+    bucketConfig: AirbyteStorageConfig.AirbyteStorageBucketConfig,
+    type: DocumentType,
+    gcsClient: Storage,
+  ) : this(bucketName = bucketConfig.bucketName(type), type = type, gcsClient = gcsClient, checkBucketAccess = true)
 
   init {
-    runCatching { createBucketIfNotExists() }
+    if (checkBucketAccess) {
+      runCatching { createBucketIfNotExists() }
+    }
   }
 
   override fun list(id: String): List<String> =
@@ -310,6 +319,15 @@ class GcsStorageClient(
       gcsClient.create(BucketInfo.of(bucketName))
     }
   }
+
+  companion object {
+    /** Builds a client around a preconfigured GCS client without requiring bucket metadata permissions. */
+    fun fromPrebuiltClient(
+      bucketName: String,
+      type: DocumentType,
+      gcsClient: Storage,
+    ): GcsStorageClient = GcsStorageClient(bucketName, type, gcsClient, checkBucketAccess = false)
+  }
 }
 
 /**
@@ -346,13 +364,13 @@ class LocalStorageClient(
   ) {
     val path =
       toPath(id).also { it.createParentDirectories() }
-    IOs.writeFile(path, document)
+    path.writeText(document)
   }
 
   override fun read(id: String): String? =
     toPath(id)
       .takeIf { it.exists() }
-      ?.let { IOs.readFile(it) }
+      ?.readText()
 
   override fun delete(id: String): Boolean =
     toPath(id)

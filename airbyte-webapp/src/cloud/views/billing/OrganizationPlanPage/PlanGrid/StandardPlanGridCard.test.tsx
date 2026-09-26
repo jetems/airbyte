@@ -38,32 +38,16 @@ describe("StandardPlanGridCard", () => {
   it("renders the price, description, and feature list", async () => {
     await render(<StandardPlanGridCard disabled={false} />);
 
-    expect(screen.getByText("$10")).toBeInTheDocument();
+    expect(screen.getByText("$20")).toBeInTheDocument();
     expect(screen.getByText("/ month")).toBeInTheDocument();
     expect(screen.getByText(/For practitioners looking for fully managed software/)).toBeInTheDocument();
 
     const features = within(screen.getByTestId("plan-grid-feature-list")).getAllByRole("listitem");
     expect(features).toHaveLength(6);
-    expect(features[0]).toHaveTextContent("4 credits per month");
-    expect(features[1]).toHaveTextContent("Buy credits from $2.50");
+    expect(features[0]).toHaveTextContent("5 credits included per month");
+    expect(features[1]).toHaveTextContent("Buy credits from $5");
     expect(features[features.length - 1]).toHaveTextContent("Cancel any time");
     expect(screen.getByRole("link", { name: "credits" })).toHaveAttribute("href", links.creditDescription);
-  });
-
-  it("renders the pricing changes callout between the separator and the feature list", async () => {
-    await render(<StandardPlanGridCard disabled={false} />);
-
-    const banner = screen.getByTestId("pricing-changes-banner");
-    expect(banner).toHaveTextContent("Pricing change effective September 22, 2026:");
-    const bannerItems = within(banner).getAllByRole("listitem");
-    expect(bannerItems).toHaveLength(2);
-    expect(bannerItems[0]).toHaveTextContent("$20/month for 5 credits");
-    expect(bannerItems[1]).toHaveTextContent("$5 / credit");
-
-    const title = screen.getByRole("heading", { name: "Standard" });
-    const featureList = screen.getByTestId("plan-grid-feature-list");
-    expect(title.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(banner.compareDocumentPosition(featureList) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("renders the Subscribe label and uses the setup flow by default", async () => {
@@ -139,6 +123,19 @@ describe("StandardPlanGridCard", () => {
     await render(<StandardPlanGridCard disabled={false} mode="downgrade" cancellationDate="2030-01-15T00:00:00Z" />);
 
     expect(screen.getByRole("button", { name: /Downgrade/i })).toBeDisabled();
+  });
+
+  it("shows a disabled Downgrade pending CTA when a downgrade to Standard is pending", async () => {
+    await render(<StandardPlanGridCard disabled={false} mode="downgrade" downgradePending />);
+
+    expect(screen.getByRole("button", { name: /Downgrade pending/i })).toBeDisabled();
+    expect(screen.queryByRole("button", { name: /^Downgrade$/i })).not.toBeInTheDocument();
+  });
+
+  it("ignores downgradePending in subscribe mode", async () => {
+    await render(<StandardPlanGridCard disabled={false} downgradePending />);
+
+    expect(screen.getByRole("button", { name: /Subscribe/i })).toBeEnabled();
   });
 
   it("keeps the Subscribe CTA enabled when a cancellation is pending", async () => {

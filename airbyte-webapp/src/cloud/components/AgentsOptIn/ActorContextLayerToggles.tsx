@@ -12,6 +12,8 @@ import { useIsCloudApp } from "core/utils/app";
 import { Intent, useGeneratedIntent } from "core/utils/rbac";
 
 import styles from "./ActorContextLayerToggles.module.scss";
+import { useContextLayerSettingTitle } from "./ContextLayerSettingLabel";
+import { useConfirmContextLayerDisable } from "./useConfirmContextLayerDisable";
 import { useShowAgentsOptIn } from "./useShowAgentsOptIn";
 
 type ActorType = "source" | "destination";
@@ -44,6 +46,8 @@ const ActorAgentAccessToggleContent: React.FC<ActorContextLayerToggleProps> = ({
     }
   );
   const { mutateAsync: setExternalActorEnabled } = useSetExternalActorEnabled();
+  const confirmDisable = useConfirmContextLayerDisable();
+  const agentAccessTitle = useContextLayerSettingTitle("agentAccess");
   const [optimisticEnabled, setOptimisticEnabled] = useState<boolean>();
   const [status, setStatus] = useState<"loading" | "success" | "warning">();
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -70,6 +74,9 @@ const ActorAgentAccessToggleContent: React.FC<ActorContextLayerToggleProps> = ({
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const enabled = event.target.checked;
+    if (!enabled && !(await confirmDisable(connector?.name ?? ""))) {
+      return;
+    }
     setStatus("loading");
     setErrorMessage(undefined);
     setOptimisticEnabled(enabled);
@@ -98,7 +105,7 @@ const ActorAgentAccessToggleContent: React.FC<ActorContextLayerToggleProps> = ({
         onChange={!unavailable && canManage ? handleChange : undefined}
         onClick={(event) => event.stopPropagation()}
         onKeyDown={(event) => event.stopPropagation()}
-        aria-label={formatMessage({ id: "cloud.contextLayer.actor.agentAccess" })}
+        aria-label={agentAccessTitle}
       />
     </span>
   );
@@ -147,7 +154,7 @@ const ActorSemanticSearchToggleContent: React.FC<ActorContextLayerToggleProps> =
   const isVisible = useShowActorContextLayerToggles();
   const status = useAgentsProvisioningStatus({ enabled: isVisible });
   const isEnrolled = status?.is_enrolled === true;
-  const { formatMessage } = useIntl();
+  const semanticSearchTitle = useContextLayerSettingTitle("semanticSearch");
 
   if (!isVisible) {
     return null;
@@ -161,7 +168,7 @@ const ActorSemanticSearchToggleContent: React.FC<ActorContextLayerToggleProps> =
         disabled
         onClick={(event) => event.stopPropagation()}
         onKeyDown={(event) => event.stopPropagation()}
-        aria-label={formatMessage({ id: "cloud.contextLayer.actor.semanticSearch" })}
+        aria-label={semanticSearchTitle}
       />
     </span>
   );

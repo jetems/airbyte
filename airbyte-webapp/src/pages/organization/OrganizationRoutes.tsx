@@ -4,12 +4,12 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import OrganizationSettingsLayout from "area/organization/OrganizationSettingsLayout";
 import { useCurrentOrganizationId } from "area/organization/utils";
 import { UserSettingsRoutes } from "area/settings/UserSettingsRoutes";
-import { useShowAgentsOptIn } from "cloud/components/AgentsOptIn/useShowAgentsOptIn";
 import { CloudSettingsRoutePaths } from "cloud/views/settings/routePaths";
 import { useExperiment } from "core/services/Experiment";
 import { FeatureItem, useFeature } from "core/services/features";
 import { useIsCloudApp } from "core/utils/app";
 import { Intent, useGeneratedIntent } from "core/utils/rbac";
+import { ContextLayerPage } from "pages/ContextLayerPage/ContextLayerPage";
 import { OrganizationSettingsPage } from "pages/SettingsPage/OrganizationSettingsPage";
 import { DestinationsPage, SourcesPage } from "pages/SettingsPage/pages/ConnectorsPage";
 import { LicenseSettingsPage } from "pages/SettingsPage/pages/LicenseDetailsPage/LicenseSettingsPage";
@@ -25,7 +25,8 @@ const OrganizationWorkspacesPage = React.lazy(() => import("pages/workspaces/Org
 const OrganizationBillingPage = React.lazy(() => import("cloud/views/billing/OrganizationBillingPage"));
 const OrganizationPlanPage = React.lazy(() => import("cloud/views/billing/OrganizationPlanPage"));
 const OrganizationUsagePage = React.lazy(() => import("cloud/views/billing/OrganizationUsagePage"));
-const OrganizationContextLayerPage = React.lazy(() => import("pages/SettingsPage/pages/OrganizationContextLayerPage"));
+const OrganizationContextLayerPage = React.lazy(() => import("pages/ContextLayerPage/OrganizationContextLayerPage"));
+const OrganizationInstallMcpPage = React.lazy(() => import("pages/SettingsPage/pages/OrganizationInstallMcpPage"));
 
 export const OrganizationRoutes: React.FC = () => {
   const organizationId = useCurrentOrganizationId();
@@ -38,7 +39,6 @@ export const OrganizationRoutes: React.FC = () => {
   const isSelfServePlusPlanEnabled = useExperiment("billing.selfServePlusPlan");
   const isScimProvisioningEnabled = useExperiment("settings.scimProvisioning");
   const isCloudApp = useIsCloudApp();
-  const showAgentsOptIn = useShowAgentsOptIn();
   const isAuditLogsUiEnabled = useExperiment("audit-log-ui");
   // UpdateOrganizationPermissions is the generated intent whose allow-list
   // (organization_admin, instance_admin) exactly matches the ORGANIZATION_ADMIN
@@ -54,6 +54,26 @@ export const OrganizationRoutes: React.FC = () => {
         <Route path={RoutePaths.Workspaces} element={<OrganizationWorkspacesPage />} />
         <Route path="*" element={<Navigate to={RoutePaths.Workspaces} replace />} />
       </Route>
+      {isCloudApp && (
+        <>
+          <Route path={CloudSettingsRoutePaths.InstallMcp} element={<OrganizationInstallMcpPage />} />
+          <Route path={`${RoutePaths.ContextLayer}/*`} element={<ContextLayerPage />}>
+            <Route index element={<OrganizationContextLayerPage />} />
+            <Route
+              path="*"
+              element={
+                <Navigate to={`/${RoutePaths.Organization}/${organizationId}/${RoutePaths.ContextLayer}`} replace />
+              }
+            />
+          </Route>
+          <Route
+            path={`${RoutePaths.Settings}/${CloudSettingsRoutePaths.ContextLayer}`}
+            element={
+              <Navigate to={`/${RoutePaths.Organization}/${organizationId}/${RoutePaths.ContextLayer}`} replace />
+            }
+          />
+        </>
+      )}
       {canViewOrgSettings && (
         <Route path={`${RoutePaths.Settings}/*`} element={<OrganizationSettingsPage />}>
           <Route path={SettingsRoutePaths.Organization} element={<GeneralOrganizationSettingsPage />} />
@@ -79,18 +99,9 @@ export const OrganizationRoutes: React.FC = () => {
           {canViewOrganizationUsage && (
             <Route path={CloudSettingsRoutePaths.OrganizationUsage} element={<OrganizationUsagePage />} />
           )}
-          {isCloudApp && showAgentsOptIn && (
-            <Route path={CloudSettingsRoutePaths.ContextLayer} element={<OrganizationContextLayerPage />} />
-          )}
           <Route path={SettingsRoutePaths.Source} element={<SourcesPage />} />
           <Route path={SettingsRoutePaths.Destination} element={<DestinationsPage />} />
           <Route path="*" element={<Navigate to={SettingsRoutePaths.Organization} replace />} />
-        </Route>
-      )}
-      {!canViewOrgSettings && isCloudApp && showAgentsOptIn && (
-        <Route path={`${RoutePaths.Settings}/*`} element={<OrganizationSettingsPage />}>
-          <Route path={CloudSettingsRoutePaths.ContextLayer} element={<OrganizationContextLayerPage />} />
-          <Route path="*" element={<Navigate to={`../../${RoutePaths.Workspaces}`} replace />} />
         </Route>
       )}
     </Routes>

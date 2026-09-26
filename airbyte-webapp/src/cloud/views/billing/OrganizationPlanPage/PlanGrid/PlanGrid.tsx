@@ -4,14 +4,17 @@ import { isOrganizationSubscribed, useCurrentOrganizationId } from "area/organiz
 import { useOrganizationPlan } from "area/organization/utils/useOrganizationPlan";
 import { PricingComparisonLink } from "cloud/area/billing/components/PlanCards";
 import { useGetOrganizationSubscriptionInfo, useOrgInfo } from "core/api";
+import { useExperiment } from "core/services/Experiment";
 import { Intent, useGeneratedIntent } from "core/utils/rbac";
 
 import { FlexPlanGridCard } from "./FlexPlanGridCard";
 import { PendingPlanChangeBanner } from "./PendingPlanChangeBanner";
 import styles from "./PlanGrid.module.scss";
 import { PlusPlanGridCard } from "./PlusPlanGridCard";
+import { PlusPromoCreditsCallout } from "./PlusPromoCreditsCallout";
 import { ProPlanGridCard } from "./ProPlanGridCard";
 import { StandardPlanGridCard } from "./StandardPlanGridCard";
+import { PricingCalculator } from "../PricingCalculator";
 
 type PlanTier = "standard" | "plus" | "pro" | "flex";
 
@@ -22,8 +25,9 @@ export const PlanGrid: React.FC = () => {
 
   const isSubscribed = isOrganizationSubscribed(billing);
   const isLockedSubscription = billing?.paymentStatus === "locked";
+  const isPlanDowngradeBannerEnabled = useExperiment("billing.plan-downgrade-banner");
 
-  const { isStandardPlan, isPlusPlan, isProPlan, isSmePlan, isFlexPlan } = useOrganizationPlan();
+  const { isStandardPlan, isStandardTrialPlan, isPlusPlan, isProPlan, isSmePlan, isFlexPlan } = useOrganizationPlan();
 
   const { data: subscription } = useGetOrganizationSubscriptionInfo(organizationId, isSubscribed);
   const cancellationDate = subscription?.cancellationDate;
@@ -44,10 +48,15 @@ export const PlanGrid: React.FC = () => {
     : null;
   const activeTier: PlanTier | null = isSubscribed ? selfServeTier ?? entitlementTier : null;
   const isTopTier = activeTier === "pro" || activeTier === "flex";
+  // Trial orgs are never subscribed, so they have no active tier and are matched on the entitlement plan instead.
+  const showPlusPromo = activeTier === "standard" || (activeTier === null && isStandardTrialPlan);
 
   return (
     <>
-      <PendingPlanChangeBanner organizationId={organizationId} pendingPlanChange={subscription?.pendingPlanChange} />
+      {isPlanDowngradeBannerEnabled && (
+        <PendingPlanChangeBanner organizationId={organizationId} pendingPlanChange={subscription?.pendingPlanChange} />
+      )}
+      {showPlusPromo && <PlusPromoCreditsCallout />}
       <div className={styles.page}>
         <div className={styles.grid}>
           <StandardPlanGridCard
@@ -55,6 +64,7 @@ export const PlanGrid: React.FC = () => {
             mode={activeTier === "plus" ? "downgrade" : "subscribe"}
             isCurrentPlan={activeTier === "standard"}
             cancellationDate={cancellationDate}
+            downgradePending={subscription?.pendingPlanChange?.selfServePlan === "standard"}
           />
           <PlusPlanGridCard
             disabled={isLockedSubscription || isTopTier}
@@ -72,6 +82,7 @@ export const PlanGrid: React.FC = () => {
         </div>
       </div>
       <PricingComparisonLink />
+      {!isTopTier && <PricingCalculator />}
     </>
   );
 };

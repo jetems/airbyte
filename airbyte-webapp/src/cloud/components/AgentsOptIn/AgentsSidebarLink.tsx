@@ -8,9 +8,24 @@ import { useAgentsProvisioningStatus } from "core/api";
 import { useIsCloudApp } from "core/utils/app";
 import { RoutePaths } from "pages/routePaths";
 
+import styles from "./AgentsSidebarLink.module.scss";
 import { useShowAgentsOptIn } from "./useShowAgentsOptIn";
 
-const AgentsSidebarLinkContent: React.FC = () => {
+interface AgentsSidebarLinkContentProps {
+  labelId: string;
+  icon: "aiStars" | "mcp";
+  organizationPath: string;
+  testId: string;
+  isContextLayer?: boolean;
+}
+
+const AgentsSidebarLinkContent: React.FC<AgentsSidebarLinkContentProps> = ({
+  labelId,
+  icon,
+  organizationPath,
+  testId,
+  isContextLayer,
+}) => {
   const isCloudApp = useIsCloudApp();
   const showAgentsOptIn = useShowAgentsOptIn();
   const organizationId = useCurrentOrganizationId();
@@ -20,14 +35,17 @@ const AgentsSidebarLinkContent: React.FC = () => {
     return null;
   }
 
-  const href = `/${RoutePaths.Organization}/${organizationId}/${RoutePaths.Settings}/${CloudSettingsRoutePaths.ContextLayer}`;
+  const href = `/${RoutePaths.Organization}/${organizationId}/${organizationPath}`;
 
   return (
     <NavItem
-      label={<FormattedMessage id="cloud.contextLayer.sidebar" />}
-      icon={status.is_enrolled ? "file" : "aiStars"}
+      label={<FormattedMessage id={labelId} />}
+      icon={icon}
       to={href}
-      testId="agentsSidebarLink"
+      testId={testId}
+      className={isContextLayer ? styles.contextLayerLink : styles.installMcpLink}
+      labelColor={isContextLayer ? "blue" : undefined}
+      withBadge={isContextLayer ? "new" : "beta"}
     />
   );
 };
@@ -35,7 +53,26 @@ const AgentsSidebarLinkContent: React.FC = () => {
 export const AgentsSidebarLink: React.FC = () => {
   return (
     <React.Suspense>
-      <AgentsSidebarLinkContent />
+      <AgentsSidebarLinkContent
+        labelId="cloud.contextLayer.sidebar"
+        icon="aiStars"
+        organizationPath={RoutePaths.ContextLayer}
+        testId="agentsSidebarLink"
+        isContextLayer
+      />
+    </React.Suspense>
+  );
+};
+
+export const InstallMcpSidebarLink: React.FC = () => {
+  return (
+    <React.Suspense>
+      <AgentsSidebarLinkContent
+        labelId="cloud.installMcp.sidebar"
+        icon="mcp"
+        organizationPath={CloudSettingsRoutePaths.InstallMcp}
+        testId="installMcpSidebarLink"
+      />
     </React.Suspense>
   );
 };

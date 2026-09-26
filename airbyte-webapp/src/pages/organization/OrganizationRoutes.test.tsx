@@ -61,7 +61,11 @@ jest.mock("core/utils/rbac", () => ({
 jest.mock("pages/SettingsPage/OrganizationSettingsPage", () => ({
   OrganizationSettingsPage: () => {
     const { Outlet: MockOutlet } = jest.requireActual("react-router-dom");
-    return <MockOutlet />;
+    return (
+      <div data-testid="organization-settings-layout">
+        <MockOutlet />
+      </div>
+    );
   },
 }));
 
@@ -99,6 +103,23 @@ jest.mock("pages/workspaces/OrganizationWorkspacesPage", () => ({
   default: () => <div data-testid="organization-workspaces-page" />,
 }));
 
+jest.mock("pages/ContextLayerPage/ContextLayerPage", () => ({
+  ContextLayerPage: () => {
+    const { Outlet: MockOutlet } = jest.requireActual("react-router-dom");
+    return <MockOutlet />;
+  },
+}));
+
+jest.mock("pages/ContextLayerPage/OrganizationContextLayerPage", () => ({
+  __esModule: true,
+  default: () => <div data-testid="organization-context-layer-page" />,
+}));
+
+jest.mock("pages/SettingsPage/pages/OrganizationInstallMcpPage", () => ({
+  __esModule: true,
+  default: () => <div data-testid="organization-install-mcp-page" />,
+}));
+
 const mockUseCurrentOrganizationId = useCurrentOrganizationId as jest.MockedFunction<typeof useCurrentOrganizationId>;
 const mockUseShowAgentsOptIn = useShowAgentsOptIn as jest.MockedFunction<typeof useShowAgentsOptIn>;
 const mockUseExperiment = useExperiment as jest.MockedFunction<typeof useExperiment>;
@@ -124,16 +145,144 @@ describe("OrganizationRoutes", () => {
 
   it("redirects non-admin organization settings wildcard routes to organization workspaces", async () => {
     render(
-      <MemoryRouter initialEntries={["/organizations/test-org/settings/unknown"]}>
+      <MemoryRouter initialEntries={["/organization/test-org/settings/unknown"]}>
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
-            <Route path="/organizations/:organizationId/*" element={<OrganizationRoutes />} />
+            <Route path="/organization/:organizationId/*" element={<OrganizationRoutes />} />
           </Routes>
           <LocationDisplay />
         </Suspense>
       </MemoryRouter>
     );
 
-    await waitFor(() => expect(screen.getByTestId("location")).toHaveTextContent("/organizations/test-org/workspaces"));
+    await waitFor(() => expect(screen.getByTestId("location")).toHaveTextContent("/organization/test-org/workspaces"));
+  });
+
+  it("registers the first-class context layer route for non-admin cloud viewers", async () => {
+    mockUseShowAgentsOptIn.mockReturnValue(false);
+
+    render(
+      <MemoryRouter initialEntries={["/organization/test-org/context-layer"]}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/organization/:organizationId/*" element={<OrganizationRoutes />} />
+          </Routes>
+          <LocationDisplay />
+        </Suspense>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByTestId("organization-context-layer-page")).toBeInTheDocument());
+    expect(screen.getByTestId("location")).toHaveTextContent("/organization/test-org/context-layer");
+  });
+
+  it("does not register the first-class context layer route outside cloud", async () => {
+    mockUseIsCloudApp.mockReturnValue(false);
+
+    render(
+      <MemoryRouter initialEntries={["/organization/test-org/context-layer"]}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/organization/:organizationId/*" element={<OrganizationRoutes />} />
+          </Routes>
+          <LocationDisplay />
+        </Suspense>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByTestId("location")).toHaveTextContent("/organization/test-org/workspaces"));
+    expect(screen.queryByTestId("organization-context-layer-page")).not.toBeInTheDocument();
+  });
+
+  it("redirects unknown Context Layer routes to the first-class page", async () => {
+    render(
+      <MemoryRouter initialEntries={["/organization/test-org/context-layer/unknown"]}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/organization/:organizationId/*" element={<OrganizationRoutes />} />
+          </Routes>
+          <LocationDisplay />
+        </Suspense>
+      </MemoryRouter>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("location")).toHaveTextContent("/organization/test-org/context-layer")
+    );
+    expect(screen.getByTestId("organization-context-layer-page")).toBeInTheDocument();
+  });
+
+  it("registers the first-class context layer route for org settings viewers", async () => {
+    mockUseShowAgentsOptIn.mockReturnValue(false);
+    mockUseGeneratedIntent.mockImplementation((intent) => intent === "ViewOrganizationSettings");
+
+    render(
+      <MemoryRouter initialEntries={["/organization/test-org/context-layer"]}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/organization/:organizationId/*" element={<OrganizationRoutes />} />
+          </Routes>
+          <LocationDisplay />
+        </Suspense>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByTestId("organization-context-layer-page")).toBeInTheDocument());
+    expect(screen.getByTestId("location")).toHaveTextContent("/organization/test-org/context-layer");
+  });
+
+  it("redirects the organization settings Context Layer URL to the first-class page", async () => {
+    render(
+      <MemoryRouter initialEntries={["/organization/test-org/settings/context-layer"]}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/organization/:organizationId/*" element={<OrganizationRoutes />} />
+          </Routes>
+          <LocationDisplay />
+        </Suspense>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByTestId("organization-context-layer-page")).toBeInTheDocument());
+    expect(screen.getByTestId("location")).toHaveTextContent("/organization/test-org/context-layer");
+  });
+
+  it("registers the install MCP route for non-admin cloud viewers even when the agents opt-in flag is off", async () => {
+    mockUseShowAgentsOptIn.mockReturnValue(false);
+
+    render(
+      <MemoryRouter initialEntries={["/organization/test-org/install-mcp"]}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/organization/:organizationId/*" element={<OrganizationRoutes />} />
+          </Routes>
+          <LocationDisplay />
+        </Suspense>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByTestId("organization-install-mcp-page")).toBeInTheDocument());
+    expect(screen.getByTestId("location")).toHaveTextContent("/organization/test-org/install-mcp");
+    expect(screen.queryByTestId("organization-settings-layout")).not.toBeInTheDocument();
+  });
+
+  it("registers the install MCP route for org settings viewers even when the agents opt-in flag is off", async () => {
+    mockUseShowAgentsOptIn.mockReturnValue(false);
+    mockUseGeneratedIntent.mockImplementation((intent) => intent === "ViewOrganizationSettings");
+
+    render(
+      <MemoryRouter initialEntries={["/organization/test-org/install-mcp"]}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/organization/:organizationId/*" element={<OrganizationRoutes />} />
+          </Routes>
+          <LocationDisplay />
+        </Suspense>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByTestId("organization-install-mcp-page")).toBeInTheDocument());
+    expect(screen.getByTestId("location")).toHaveTextContent("/organization/test-org/install-mcp");
+    expect(screen.queryByTestId("organization-settings-layout")).not.toBeInTheDocument();
   });
 });

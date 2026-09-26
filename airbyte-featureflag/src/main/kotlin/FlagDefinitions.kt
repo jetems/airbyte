@@ -216,6 +216,8 @@ object ReplicationDebugLogLevelEnabled : Permanent<Boolean>(key = "platform.repl
 
 object UseDeadlineInWorkloadMonitorQueries : Temporary<Boolean>(key = "platform.use-deadline-in-workload-monitor-queries", default = false)
 
+object FlexSyncLogging : Temporary<Boolean>(key = "platform.flex-sync-logging", default = false)
+
 object ForceDdRemoteConfigVar : Temporary<Boolean>(key = "platform.force-dd-remote-config-var", default = false)
 
 object ReplicationCommandFallsBackToWorkloadStatus : Temporary<Boolean>(
@@ -243,6 +245,10 @@ object BypassStiggEntitlementChecks : Permanent<Boolean>(key = "platform.bypass-
 object EnableDataWorkerUsage : Temporary<Boolean>(key = "platform.enable-data-worker-usage", default = false)
 
 object EnforceDataWorkerCapacity : Temporary<Boolean>(key = "platform.enforce-data-worker-capacity", default = false)
+
+// When on, committed Data Worker capacity is read per region from the data_worker_allocated_capacity
+// table. When off, it comes from the Stigg entitlement.
+object EnableDataWorkerAllocation : Temporary<Boolean>(key = "platform.enable-data-worker-allocation", default = false)
 
 // IMPORTANT: These defaults intentionally point in opposite directions. The code default is true so
 // a missing flag or failed LaunchDarkly evaluation fails open and preserves SSO access. The production
